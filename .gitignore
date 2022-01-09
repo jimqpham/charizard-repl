@@ -1,3 +1,14 @@
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+# THE COMBINATION ABOVE IS TO IGNORE ALL BINARY FILES WITHOUT AN EXTENSION
+
 # Prerequisites
 *.d
 
@@ -30,3 +41,6 @@
 *.exe
 *.out
 *.app
+
+# VSCode Props
+.vscode
