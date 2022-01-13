@@ -11,11 +11,9 @@ void use_arguments (int argc, char** argv) {
                            "\t > No argument: Return\n"
                            "Exiting...\n";
 
-
     if (argc <= 1)
         return;
     else {
-
         bool printTestsPassed = false;
 
         for (int i = 1; i < argc; i++) {
