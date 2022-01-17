@@ -2,6 +2,10 @@
 #include <string>
 #include "cmdline.h"
 
+#define CATCH_CONFIG_RUNNER
+#include "../Testing/catch.h"
+#include "../Testing/tests.h"
+
 void use_arguments (int argc, char** argv) {
 
     std::string helpText = "Allowed arguments:\n"
@@ -14,6 +18,7 @@ void use_arguments (int argc, char** argv) {
     if (argc <= 1)
         return;
     else {
+
         bool printTestsPassed = false;
 
         for (int i = 1; i < argc; i++) {
@@ -22,7 +27,8 @@ void use_arguments (int argc, char** argv) {
                 exit(0);
             } else if (strcmp(argv[i], "--test") == 0) {
                 if (!printTestsPassed) {
-                    std::cout << "Tests passed!\n";
+                    if (Catch::Session().run(1, argv) != 0)
+                        exit(1);
                     printTestsPassed = true;
                 }
                 else {
