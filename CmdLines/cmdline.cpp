@@ -4,7 +4,6 @@
 
 #define CATCH_CONFIG_RUNNER
 #include "../Testing/catch.h"
-#include "../Testing/tests.h"
 
 void use_arguments (int argc, char** argv) {
 

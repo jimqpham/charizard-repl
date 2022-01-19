@@ -29,7 +29,7 @@ TEST_CASE("Add should be equal to Add of same components") {
 TEST_CASE("Add should not be equal to Add of different components") {
     Num firstNum = Num (10);
     Num secondNum =  Num (-10);
-    Add firstSum = Add(&firstNum, &secondNum); 
+    Add firstSum = Add(&firstNum, &secondNum);
     Num thirdNum = Num (10);
     Num fourthNum = Num (-10);
     Add sum = Add(&firstNum, &firstSum);
