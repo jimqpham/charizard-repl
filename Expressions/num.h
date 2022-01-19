@@ -8,7 +8,13 @@ class Num : public Expr {
 
         Num(int val);
 
-        virtual bool equals(Expr *o);
+        bool equals(Expr *o) override;
+
+        int interp() override;
+
+        bool has_variable() override;
+
+        Expr* subst(std::string stringToMatch, Expr* replcExpr) override;
 };
 
 

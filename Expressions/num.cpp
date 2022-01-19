@@ -11,3 +11,15 @@ bool Num::equals(Expr *o) {
     else
         return numExpr->val == this->val;
 }
+
+int Num::interp() {
+    return val;
+}
+
+bool Num::has_variable() {
+    return false;
+}
+
+Expr *Num::subst(std::string stringToMatch, Expr *replcExpr) {
+    return new Num(this->val);
+}
