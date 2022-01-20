@@ -9,5 +9,11 @@ class Add : public Expr {
 
         Add(Expr* lhs, Expr* rhs);
 
-        virtual bool equals(Expr *o);
+        bool equals(Expr *o) override;
+
+        int interp() override;
+
+        bool has_variable() override;
+
+        Expr* subst(std::string stringToMatch, Expr* replcExpr) override;
 };
