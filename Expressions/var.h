@@ -13,5 +13,5 @@ class Var: public Expr {
 
         bool has_variable() override;
 
-        Expr* subst(std::string stringToMatch, Expr* replcExpr);
+        Expr* subst(std::string stringToMatch, Expr* replcExpr) override;
 };

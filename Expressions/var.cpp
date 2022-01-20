@@ -15,7 +15,7 @@ bool Var::equals(Expr *o) {
 }
 
 int Var::interp() {
-    throw std::runtime_error("A variable has no value.");
+    throw std::runtime_error("No value for variable");
 }
 
 bool Var::has_variable() {
