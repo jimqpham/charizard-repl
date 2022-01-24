@@ -29,3 +29,6 @@ $(TEST_OBJS): %.o: %.cpp $(TESTING_LIB) $(OBJS)
 # Clean all the .o files - It won't run automatically
 clean:
 	rm */*.o
+
+test: msdscript
+	./msdscript --test
