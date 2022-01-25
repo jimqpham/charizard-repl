@@ -1,6 +1,9 @@
 #include <sstream>
 #include "expr.h"
 
+/*
+ * Convert to string. Using print by default with an option to use pretty_print
+ */
 std::string Expr::to_string(bool prettyPrint) {
     std::stringstream out("");
     if (!prettyPrint) {
