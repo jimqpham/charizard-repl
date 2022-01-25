@@ -28,3 +28,11 @@ Expr *Var::subst(std::string stringToMatch, Expr *replcExpr) {
 
     return new Var(this->name);
 }
+
+void Var::print(std::ostream &out) {
+    out << this->name;
+}
+
+void Var::pretty_print_at(std::ostream &out, precedence_t precedence) {
+    this->print(out);
+}

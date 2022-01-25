@@ -58,7 +58,9 @@ TEST_CASE("Mult should not be equal to Mult of different components") {
 
     Mult product = Mult(&firstSum, &secondNum);
     Mult anotherProduct = Mult(&secondSum, &secondNum);
+    Mult anotherProduct2 = Mult(&firstSum, &firstSum);
     CHECK(!product.equals(&anotherProduct));
+    CHECK(!product.equals(&anotherProduct2));
 }
 
 TEST_CASE("Var should be equal to Var of same name") {
@@ -77,12 +79,14 @@ TEST_CASE("Num should not equal Add") {
     Num num = Num(0);
     Add sum = Add(&num, &num);
     CHECK(!num.equals(&sum));
+    CHECK(!sum.equals(&num));
 }
 
 TEST_CASE("Num should not equal Mult") {
     Num num = Num(1);
     Mult product = Mult(&num, &num);
     CHECK(!num.equals(&product));
+    CHECK(!product.equals(&num));
 }
 
 TEST_CASE("Add should not equal Mult") {
@@ -90,12 +94,14 @@ TEST_CASE("Add should not equal Mult") {
     Add sum = Add(&num, &num);
     Mult product = Mult(&num, &num);
     CHECK(!sum.equals(&product));
+    CHECK(!product.equals(&sum));
 }
 
 TEST_CASE("Var should not equal Num") {
     Var var = Var("charizard");
     Num num = Num(070);
     CHECK(!var.equals(&num));
+    CHECK(!num.equals(&var));
 }
 
 TEST_CASE("Var should not equal Add") {
@@ -103,6 +109,7 @@ TEST_CASE("Var should not equal Add") {
     Var var = Var("charizard");
     Add sum = Add(&num, &num);
     CHECK(!var.equals(&sum));
+    CHECK(!sum.equals(&var));
 }
 
 TEST_CASE("Var should not equal Mult") {
@@ -110,6 +117,7 @@ TEST_CASE("Var should not equal Mult") {
     Var var = Var("charizard");
     Mult product = Mult(&num, &num);
     CHECK(!var.equals(&product));
+    CHECK(!product.equals(&var));
 }
 
 

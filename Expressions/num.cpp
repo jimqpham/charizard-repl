@@ -23,3 +23,14 @@ bool Num::has_variable() {
 Expr *Num::subst(std::string stringToMatch, Expr *replcExpr) {
     return new Num(this->val);
 }
+
+void Num::print(std::ostream &out) {
+    out << std::to_string(val);
+}
+
+void Num::pretty_print_at(std::ostream &out, precedence_t precedence) {
+    this->print(out);
+}
+
+
+
