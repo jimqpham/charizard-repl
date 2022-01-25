@@ -27,3 +27,26 @@ Expr* Add::subst(std::string stringToMatch, Expr *replcExpr) {
     Add* result = new Add(substLhs, substRhs);
     return result;
 }
+
+void Add::print(std::ostream &out) {
+    out << std::string("(");
+    this->lhs->print(out);
+    out << std::string("+");
+    this->rhs->print(out);
+    out << std::string(")");
+}
+
+void Add::pretty_print_at(std::ostream &out, precedence_t precedence) {
+    if (precedence >= prec_add) {
+        out << std::string("(");
+        this->lhs->pretty_print_at(out, prec_add);
+        out << std::string(" + ");
+        this->rhs->pretty_print_at(out, prec_none);
+        out << std::string(")");
+    }
+    else {
+        this->lhs->pretty_print_at(out, prec_add);
+        out << std::string(" + ");
+        this->rhs->pretty_print_at(out, prec_none);
+    }
+}

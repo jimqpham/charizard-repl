@@ -7,70 +7,105 @@
 #include <stdexcept>
 
 TEST_CASE("Interp Tests on Num Objects") {
-    Num posNum = Num(10);
-    Num negNum = Num(-10);
 
-    SECTION("Should interp the correct val of Num") {
-        CHECK(posNum.interp() == 10);
-        CHECK(negNum.interp() == -10);
+    Num num1 = Num(30);
+    Num num2 = Num(-12);
+    Var var1 = Var("x");
+    Var var2 = Var("y");
+
+    Add add1 = Add(&num1, &num2); //"30 + -12"
+    Mult mult1 = Mult(&num1, &num2); //"30 * -12"
+
+    Add add2 = Add(&num1, &var1);
+    Add add3 = Add(&num1, &add1);
+    Add add4 = Add(&num1, &mult1);
+
+    Add add5 = Add(&var1, &num1);
+    Add add6 = Add(&var1, &var2);
+    Add add7 = Add(&var1, &add1);
+    Add add8 = Add(&var1, &mult1);
+
+    Add add9 = Add(&add1, &num1);
+    Add add10 = Add(&add1, &var1);
+    Add add11 = Add(&add1, &add1);
+    Add add12 = Add(&add1, &mult1);
+
+    Add add13 = Add(&mult1, &num1);
+    Add add14 = Add(&mult1, &var1);
+    Add add15 = Add(&mult1, &add1);
+    Add add16 = Add(&mult1, &mult1);
+
+    Mult mult2 = Mult(&num1, &var1);
+    Mult mult3 = Mult(&num1, &add1);
+    Mult mult4 = Mult(&num1, &mult1);
+
+    Mult mult5 = Mult(&var1, &num1);
+    Mult mult6 = Mult(&var1, &var2);
+    Mult mult7 = Mult(&var1, &add1);
+    Mult mult8 = Mult(&var1, &mult1);
+
+    Mult mult9 = Mult(&add1, &num1);
+    Mult mult10 = Mult(&add1, &var1);
+    Mult mult11 = Mult(&add1, &add1);
+    Mult mult12 = Mult(&add1, &mult1);
+
+    Mult mult13 = Mult(&mult1, &num1);
+    Mult mult14 = Mult(&mult1, &var1);
+    Mult mult15 = Mult(&mult1, &add1);
+    Mult mult16 = Mult(&mult1, &mult1);
+
+    SECTION("Should evaluate Number") {
+        CHECK(num1.interp() == 30);
+        CHECK(num2.interp() == -12);
     }
 
-    SECTION("Interps of two equal Num objects should be equal") {
-        Num otherPosNum = Num(10);
-        CHECK(posNum.interp() == otherPosNum.interp());
-    }
-}
-
-TEST_CASE("Interp Tests on Add Objects") {
-    Num numOne = Num(10);
-    Num numTwo = Num(-20);
-    Add addOne = Add(&numOne, &numTwo);
-    Add addTwo = Add(&addOne, &numTwo);
-    Add addThree = Add(&addOne, &addTwo);
-
-    SECTION("Should interp the correct val of Add") {
-        CHECK(addOne.interp() == -10);
-        CHECK(addTwo.interp() == -30);
-        CHECK(addThree.interp() == -40);
+    SECTION("Should evaluate Var") {
+        CHECK_THROWS_WITH( var1.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( var2.interp(), "No value for variable" );
     }
 
-    SECTION("Interps of two equal Add objects should be equal") {
-        Num otherNumOne = Num(10);
-        Num otherNumTwo = Num(-20);
-        CHECK(addOne.interp() == Add(&otherNumOne, &otherNumTwo).interp());
-    }
-}
+    SECTION("Should evaluate Add") {
+        CHECK(add1.interp() == 18);
+        CHECK_THROWS_WITH( add2.interp(), "No value for variable" );
+        CHECK(add3.interp() == 48);
+        CHECK(add4.interp() == -330);
 
-TEST_CASE("Interp Tests on Mult Objects") {
-    Num numOne = Num(10);
-    Num numTwo = Num(-20);
-    Mult multOne = Mult(&numOne, &numTwo);
-    Mult multTwo = Mult(&multOne, &numTwo);
-    Mult multThree = Mult(&multOne, &multTwo);
+        CHECK_THROWS_WITH( add5.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( add6.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( add7.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( add8.interp(), "No value for variable" );
 
-    SECTION("Should interp the correct val of Mult") {
-        CHECK(multOne.interp() == -200);
-        CHECK(multTwo.interp() == 4000);
-        CHECK(multThree.interp() == -800000);
-    }
+        CHECK(add9.interp() == 48);
+        CHECK_THROWS_WITH( add10.interp(), "No value for variable" );
+        CHECK(add11.interp() == 36);
+        CHECK(add12.interp() == -342);
 
-    SECTION("Interps of two equal Mult objects should be equal") {
-        Num otherNumOne = Num(10);
-        Num otherNumTwo = Num(-20);
-        CHECK(multOne.interp() == Mult(&otherNumOne, &otherNumTwo).interp());
-    }
-}
-
-TEST_CASE("Interp Tests on Var Objects") {
-    Var var = Var("elephant");
-    Num num = Num(10);
-    Add add = Add(&num, &var);
-
-    SECTION("Interp on Var objects should throw an error") {
-        CHECK_THROWS_WITH( var.interp(), "No value for variable" );
+        CHECK(add13.interp() == -330);
+        CHECK_THROWS_WITH( add14.interp(), "No value for variable" );
+        CHECK(add15.interp() == -342);
+        CHECK(add16.interp() == -720);
     }
 
-    SECTION("Interp on Expr objects encapsulating a Var should throw an error") {
-        CHECK_THROWS_WITH( add.interp(), "No value for variable" );
+
+    SECTION("Should evaluate Mult") {
+        CHECK(mult1.interp() == -360);
+        CHECK_THROWS_WITH( mult2.interp(), "No value for variable" );
+        CHECK(mult3.interp() == 540);
+        CHECK(mult4.interp() == -10800);
+
+        CHECK_THROWS_WITH( mult5.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( mult6.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( mult7.interp(), "No value for variable" );
+        CHECK_THROWS_WITH( mult8.interp(), "No value for variable" );
+
+        CHECK(mult9.interp() == 540);
+        CHECK_THROWS_WITH( mult10.interp(), "No value for variable" );
+        CHECK(mult11.interp() == 324);
+        CHECK(mult12.interp() == -6480);
+
+        CHECK(mult13.interp() == -10800);
+        CHECK_THROWS_WITH( mult14.interp(), "No value for variable" );
+        CHECK(mult15.interp() == -6480);
+        CHECK(mult16.interp() == 129600);
     }
 }

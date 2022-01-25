@@ -3,7 +3,7 @@
 Mult::Mult(Expr *lhs, Expr *rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
-};
+}
 
 bool Mult::equals(Expr *o) {
     Mult *multExpr = dynamic_cast<Mult*>(o);
@@ -26,4 +26,27 @@ Expr *Mult::subst(std::string stringToMatch, Expr *replcExpr) {
     Expr* substRhs = this->rhs->subst(stringToMatch, replcExpr);
     Mult* result = new Mult(substLhs, substRhs);
     return result;
+}
+
+void Mult::print(std::ostream &out) {
+    out << std::string("(");
+    this->lhs->print(out);
+    out << std::string("*");
+    this->rhs->print(out);
+    out << std::string(")");
+}
+
+void Mult::pretty_print_at(std::ostream &out, precedence_t precedence) {
+    if (precedence >= prec_mult) {
+        out << std::string("(");
+        this->lhs->pretty_print_at(out, prec_mult);
+        out << std::string(" * ");
+        this->rhs->pretty_print_at(out, prec_add);
+        out << std::string(")");
+    }
+    else {
+        this->lhs->pretty_print_at(out, prec_mult);
+        out << std::string(" * ");
+        this->rhs->pretty_print_at(out, prec_add);
+    }
 }
