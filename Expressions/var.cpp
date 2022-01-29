@@ -1,5 +1,5 @@
 #include "var.h"
-#include "string"
+#include <cstring>
 #include <stdexcept>
 
 Var::Var(std::string name) {
@@ -23,7 +23,7 @@ bool Var::has_variable() {
 }
 
 Expr *Var::subst(std::string stringToMatch, Expr *replcExpr) {
-    if (strcmp(this->name.c_str(), stringToMatch.c_str()) == 0)
+    if (std::strcmp(this->name.c_str(), stringToMatch.c_str()) == 0)
         return replcExpr;
 
     return new Var(this->name);
