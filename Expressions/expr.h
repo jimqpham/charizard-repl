@@ -26,7 +26,7 @@ public:
      */
     std::string to_string(bool prettyPrint = false);
 
-    virtual void pretty_print_at(std::ostream &out, precedence_t precedence) = 0;
+    virtual void pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) = 0;
 
     /*
     * This is a wrapper class that automatically set the accumulator so the user don't have to

@@ -36,17 +36,17 @@ void Mult::print(std::ostream &out) {
     out << std::string(")");
 }
 
-void Mult::pretty_print_at(std::ostream &out, precedence_t precedence) {
+void Mult::pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) {
     if (precedence >= prec_mult) {
         out << std::string("(");
-        this->lhs->pretty_print_at(out, prec_mult);
+        this->lhs->pretty_print_at(out, prec_mult, true);
         out << std::string(" * ");
-        this->rhs->pretty_print_at(out, prec_add);
+        this->rhs->pretty_print_at(out, prec_add, needsParenthesesForLet);
         out << std::string(")");
     }
     else {
-        this->lhs->pretty_print_at(out, prec_mult);
+        this->lhs->pretty_print_at(out, prec_mult, true);
         out << std::string(" * ");
-        this->rhs->pretty_print_at(out, prec_add);
+        this->rhs->pretty_print_at(out, prec_add, needsParenthesesForLet);
     }
 }

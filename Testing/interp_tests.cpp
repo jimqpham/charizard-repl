@@ -3,6 +3,7 @@
 #include "../Expressions/add.h"
 #include "../Expressions/mult.h"
 #include "../Expressions/var.h"
+#include "../Expressions/_let.h"
 
 #include <stdexcept>
 
@@ -107,5 +108,11 @@ TEST_CASE("Interp Tests on Num Objects") {
         CHECK_THROWS_WITH( mult14.interp(), "No value for variable" );
         CHECK(mult15.interp() == -6480);
         CHECK(mult16.interp() == 129600);
+    }
+
+    SECTION("Should evaluate Let") {
+        Let subLet = Let(&var2, &num1, &add2);
+        Let let = Let(&var1, &num2, &subLet);
+        CHECK(let.interp() == 18);
     }
 }

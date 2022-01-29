@@ -1,8 +1,10 @@
+#include <sstream>
 #include "catch.h"
 #include "../Expressions/num.h"
 #include "../Expressions/add.h"
 #include "../Expressions/mult.h"
 #include "../Expressions/var.h"
+#include "../Expressions/_let.h"
 
 TEST_CASE("Should print or pretty print expressions") {
     Num num1 = Num(30);
@@ -158,11 +160,14 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult15.to_string(true).c_str(), "(30 * -12) * (30 + -12)") == 0);
         CHECK(strcmp(mult16.to_string(true).c_str(), "(30 * -12) * 30 * -12") == 0);
     }
-    
-    
-    
-    /////////
 
-
+    SECTION("Test print Let") {
+        Expr* letOne =
+                new Let(new Var("x"), new Num(5), new Add(new Var("x"), new Num(1)))
+                ;
+        std::stringstream out ("");
+        letOne->pretty_print(out);
+        std::cout << out.str() << "\nInterp: " << letOne->interp() << "\n";
+    }
 }
 
