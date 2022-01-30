@@ -115,7 +115,37 @@ TEST_CASE("Test Var equals") {
     }
 }
 
+TEST_CASE("Test Let equals") {
+    SECTION("Let should equal Let of same components") {
+        Num num1 = Num(4);
+        Num num2 = Num(5);
+        Var var1 = Var("x");
+        Add add1 = Add(&var1, &num1);
+        CHECK((new Let(&var1, &num2, &add1))
+                ->equals(new Let(&var1, &num2, &add1)));
+    }
 
+    SECTION("Let should not equal Let of different components") {
+        Num num1 = Num(4);
+        Num num2 = Num(5);
+        Var var1 = Var("x");
+        Var var2 = Var("y");
+        Add add1 = Add(&var1, &num1);
+        CHECK(!(new Let(&var1, &num2, &add1))
+                      ->equals(new Let(&var2, &num2, &add1))); // difference in var (lhs)
+        CHECK(!(new Let(&var1, &num1, &add1))
+                ->equals(new Let(&var1, &num2, &add1))); //difference in rhs
+        CHECK(!(new Let(&var1, &num1, &add1))
+                ->equals(new Let(&var1, &num1, &num2))); //difference in body
+    }
+
+    SECTION("Let should not equal objects of other classes") {
+        Num num1 = Num(4);
+        Var var1 = Var("x");
+        Add add1 = Add(&var1, &num1);
+        CHECK(!(new Let(&var1, &num1, &add1))->equals( &add1));
+    }
+}
 
 
 
