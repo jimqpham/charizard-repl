@@ -20,6 +20,6 @@ std::string Expr::to_string(bool prettyPrint) {
  * This is a wrapper class that automatically set the accumulator so the user don't have to
  */
 void Expr::pretty_print(std::ostream &out) {
-
-    this->pretty_print_at(out, prec_none, false);
+    std::streampos newLinePos = 0;
+    this->pretty_print_at(out, prec_none, false, newLinePos);
 }

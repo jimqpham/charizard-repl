@@ -36,17 +36,20 @@ void Add::print(std::ostream &out) {
     out << std::string(")");
 }
 
-void Add::pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) {
+void Add::pretty_print_at(std::ostream &out,
+                          precedence_t precedence,
+                          bool needsParenthesesForLet,
+                          std::streampos &newLinePos) {
     if (precedence >= prec_add) {
         out << std::string("(");
-        this->lhs->pretty_print_at(out, prec_add, true);
+        this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
         out << std::string(" + ");
-        this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet);
+        this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet, newLinePos);
         out << std::string(")");
     }
     else {
-        this->lhs->pretty_print_at(out, prec_add, true);
+        this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
         out << std::string(" + ");
-        this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet);
+        this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet, newLinePos);
     }
 }

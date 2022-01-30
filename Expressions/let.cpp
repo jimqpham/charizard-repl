@@ -2,7 +2,7 @@
 // Created by Quang Pham on 1/28/22.
 //
 
-#include "_let.h"
+#include "let.h"
 #include "num.h"
 
 Let::Let(Var* variable, Expr *rhs, Expr *body) {
@@ -57,22 +57,32 @@ void Let::print(std::ostream &out) {
     out << ")";
 }
 
-void Let::pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) {
-    if (needsParenthesesForLet) {
-        out << "(_let ";
-        variable->pretty_print(out);
-        out << " = ";
-        rhs->pretty_print(out);
-        out << "\n _in  ";
-        body->pretty_print(out);
-        out << ")";
+void Let::pretty_print_at(std::ostream &out,
+                          precedence_t precedence,
+                          bool needsParenthesesForLet,
+                          std::streampos &newLinePos) {
+
+    std::streampos letColumn = needsParenthesesForLet
+                               ? out.tellp() - newLinePos + 1 // add one more column for the opening parenthesis
+                               : out.tellp() - newLinePos;
+    std::string openingBracket = needsParenthesesForLet ? "(" : "";
+    std::string closingBracket = needsParenthesesForLet ? ")" : "";
+
+    // PRINT LINE 1
+    out << openingBracket << "_let ";
+    variable->print(out);
+    out << " = ";
+    rhs->pretty_print_at(out, prec_none, true, newLinePos);
+
+    // PRINT LINE 2
+    out << "\n";
+    newLinePos = out.tellp();
+    // Pad with whitespaces till letColumn
+    for (int i = 0; i < letColumn; i++) {
+        out << " ";
     }
-    else {
-        out << "_let ";
-        variable->pretty_print(out);
-        out << " = ";
-        rhs->pretty_print(out);
-        out << "\n_in  ";
-        body->pretty_print(out);
-    }
+    // Start content of line 2
+    out << "_in  ";
+    body->pretty_print_at(out, prec_none, true, newLinePos);
+    out << closingBracket;
 }

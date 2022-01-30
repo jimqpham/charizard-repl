@@ -20,5 +20,8 @@ class Add : public Expr {
 
         void print(std::ostream &out) override;
 
-        void pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) override;
+        void pretty_print_at(std::ostream &out,
+                             precedence_t precedence,
+                             bool needsParenthesesForLet,
+                             std::streampos &newLinePos) override;
 };

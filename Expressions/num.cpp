@@ -28,7 +28,10 @@ void Num::print(std::ostream &out) {
     out << std::to_string(val);
 }
 
-void Num::pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) {
+void Num::pretty_print_at(std::ostream &out,
+                          precedence_t precedence,
+                          bool needsParenthesesForLet,
+                          std::streampos &newLinePos) {
     this->print(out);
 }
 

@@ -4,7 +4,7 @@
 #include "../Expressions/add.h"
 #include "../Expressions/mult.h"
 #include "../Expressions/var.h"
-#include "../Expressions/_let.h"
+#include "../Expressions/let.h"
 
 TEST_CASE("Should print or pretty print expressions") {
     Num num1 = Num(30);
@@ -162,12 +162,28 @@ TEST_CASE("Should print or pretty print expressions") {
     }
 
     SECTION("Test print Let") {
-        Expr* letOne =
-                new Let(new Var("x"), new Num(5), new Add(new Var("x"), new Num(1)))
-                ;
+        Expr* subLet = new Let(
+                        new Var("x"),
+                        new Num(7),
+                        new Add(
+                                new Var("x"),
+                                new Num(10)
+                                    )
+                                );
+        Let* letOne = new Let(
+                new Var("var"),
+                new Num(12),
+                subLet
+                );
+        Expr* letTwo = new Let(
+                new Var("y"),
+                subLet,
+                letOne
+                );
+
         std::stringstream out ("");
-        letOne->pretty_print(out);
-        std::cout << out.str() << "\nInterp: " << letOne->interp() << "\n";
+        letTwo->pretty_print(out);
+        std::cout << out.str();
     }
 }
 

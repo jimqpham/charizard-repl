@@ -33,6 +33,9 @@ void Var::print(std::ostream &out) {
     out << this->name;
 }
 
-void Var::pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet) {
+void Var::pretty_print_at(std::ostream &out,
+                          precedence_t precedence,
+                          bool needsParenthesesForLet,
+                          std::streampos &newLinePos) {
     this->print(out);
 }
