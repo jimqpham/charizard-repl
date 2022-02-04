@@ -1,6 +1,5 @@
 #include "expr.h"
-
-class Var;
+#include "var.h"
 
 class Let : public Expr {
 public:
