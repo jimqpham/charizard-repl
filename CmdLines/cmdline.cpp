@@ -3,9 +3,10 @@
 #include "cmdline.h"
 
 #define CATCH_CONFIG_RUNNER
+
 #include "../Testing/catch.h"
 
-void use_arguments (int argc, char** argv) {
+void use_arguments(int argc, char **argv) {
 
     std::string helpText = "Allowed arguments:\n"
                            "\t > --help: Show manual\n"
@@ -29,11 +30,22 @@ void use_arguments (int argc, char** argv) {
                     if (Catch::Session().run(1, argv) != 0)
                         exit(1);
                     printTestsPassed = true;
-                }
-                else {
+                } else {
                     std::cerr << "Duplicate --test params! Exit with an error...\n";
                     exit(1);
                 }
+            } else if (strcmp(argv[i], "--interp") == 0) {
+                /* TODO: PARSING */
+                std::cout << "Parsing expressions...\n";
+                exit(0);
+            } else if (strcmp(argv[i], "--print") == 0) {
+                /* TODO: PRINTING */
+                std::cout << "Printing expressions...\n";
+                exit(0);
+            } else if (strcmp(argv[i], "--pretty-print") == 0) {
+                /* TODO: PRETTY PRINTING */
+                std::cout << "Pretty printing expressions...\n";
+                exit(0);
             } else {
                 std::cerr << "Invalid arguments! Exit with an error...\n";
                 exit(1);
