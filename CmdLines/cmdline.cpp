@@ -5,6 +5,16 @@
 #define CATCH_CONFIG_RUNNER
 
 #include "../Testing/catch.h"
+#include "../Expressions/expr.h"
+#include "../Expressions/parse.h"
+
+typedef enum {
+    INTERP,
+    PRINT,
+    PRETTY_PRINT
+} command_t;
+
+void interactiveCommand(command_t command);
 
 void use_arguments(int argc, char **argv) {
 
@@ -35,16 +45,13 @@ void use_arguments(int argc, char **argv) {
                     exit(1);
                 }
             } else if (strcmp(argv[i], "--interp") == 0) {
-                /* TODO: PARSING */
-                std::cout << "Parsing expressions...\n";
+                interactiveCommand(INTERP);
                 exit(0);
             } else if (strcmp(argv[i], "--print") == 0) {
-                /* TODO: PRINTING */
-                std::cout << "Printing expressions...\n";
+                interactiveCommand(PRINT);
                 exit(0);
             } else if (strcmp(argv[i], "--pretty-print") == 0) {
-                /* TODO: PRETTY PRINTING */
-                std::cout << "Pretty printing expressions...\n";
+                interactiveCommand(PRETTY_PRINT);
                 exit(0);
             } else {
                 std::cerr << "Invalid arguments! Exit with an error...\n";
@@ -52,5 +59,32 @@ void use_arguments(int argc, char **argv) {
             }
         }
         return;
+    }
+}
+
+void interactiveCommand(command_t command) {
+    while (true) {
+        // Expr *e = parse(std::cin); – not working, needs to press Enter repeatedly
+        std::string input;
+        getline(std::cin, input);
+        Expr *e = parse_str(input);
+
+        std::string output;
+        switch (command) {
+            case INTERP:
+                output = std::to_string(e->interp());
+                break;
+            case PRINT:
+                output = e->to_string();
+                break;
+            case PRETTY_PRINT:
+                output = e->to_string(true);
+                break;
+        }
+        std::cout << output << "\n";
+
+        skip_whitespace(std::cin);
+        if (std::cin.eof())
+            break;
     }
 }
