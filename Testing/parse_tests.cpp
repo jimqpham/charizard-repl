@@ -71,10 +71,10 @@ TEST_CASE("Parse Let expressions") {
                                            new Num(0),
                                            new Mult(new Var("y"), new Num(2))))));
 
-    CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Consume error");
+    CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Missing character: Expect =");
     CHECK_THROWS_WITH(parse_str("x=3 _in y + 1"), "Unexpected input after expression!");
     CHECK_THROWS_WITH(parse_str("_let"), "Whitespace error after _let");
-    CHECK_THROWS_WITH(parse_str("_let x = 3"), "Consume error");
+    CHECK_THROWS_WITH(parse_str("_let x = 3"), "Missing character: Expect _");
     CHECK_THROWS_WITH(parse_str("_letx = 3 _in x+2"), "Whitespace error after _let");
     CHECK_THROWS_WITH(parse_str("_let x = 2 _inx + 3"), "Whitespace error after _in");
 }

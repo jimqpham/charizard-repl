@@ -22,6 +22,8 @@ Expr *parse(std::istream &in);
 
 void parse_keyword(std::istream &in, std::string expected);
 
+void check_and_consume(std::istream &in, char expected);
+
 void consume(std::istream &in, int expect);
 
 void skip_whitespace(std::istream &in);

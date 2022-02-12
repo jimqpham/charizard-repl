@@ -61,7 +61,7 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    consume(in, '=');
+    check_and_consume(in, '=');
 
     skip_whitespace(in);
 
@@ -158,10 +158,21 @@ Expr *parse_str(std::string s) {
     return parse(in);
 }
 
+void check_and_consume(std::istream &in, char expected) {
+
+    std::string message = "Missing character: Expect ";
+    message += expected;
+
+    if (in.peek() != expected)
+        throw std::runtime_error(message);
+    else
+        consume(in, expected);
+}
+
 void parse_keyword(std::istream &in, std::string expected) {
     for (std::string::iterator iterator = expected.begin();
          iterator < expected.end(); iterator++) {
-        consume(in, *iterator);
+        check_and_consume(in, *iterator);
     }
 }
 
