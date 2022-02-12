@@ -178,7 +178,7 @@ void parse_keyword(std::istream &in, std::string expected) {
 
 void consume(std::istream &in, int expect) {
     int c = in.get();
-    assert (c != expect)
+    assert (c == expect);
 }
 
 void skip_whitespace(std::istream &in) {
