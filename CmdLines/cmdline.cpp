@@ -34,28 +34,21 @@ void use_arguments(int argc, char **argv) {
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "--help") == 0) {
                 std::cout << helpText;
-                exit(0);
             } else if (strcmp(argv[i], "--test") == 0) {
                 if (!printTestsPassed) {
-                    if (Catch::Session().run(1, argv) != 0)
-                        exit(1);
+                    assert(Catch::Session().run(1, argv) == 0);
                     printTestsPassed = true;
                 } else {
-                    std::cerr << "Duplicate --test params! Exit with an error...\n";
-                    exit(1);
+                    throw std::runtime_error("Duplicate --test params!");
                 }
             } else if (strcmp(argv[i], "--interp") == 0) {
                 interactiveCommand(INTERP);
-                exit(0);
             } else if (strcmp(argv[i], "--print") == 0) {
                 interactiveCommand(PRINT);
-                exit(0);
             } else if (strcmp(argv[i], "--pretty-print") == 0) {
                 interactiveCommand(PRETTY_PRINT);
-                exit(0);
             } else {
-                std::cerr << "Invalid arguments! Exit with an error...\n";
-                exit(1);
+                throw std::runtime_error("Invalid command line arguments!");
             }
         }
         return;
