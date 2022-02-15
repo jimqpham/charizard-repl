@@ -259,11 +259,11 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(let2.to_string(true).c_str(), "_let x = -2\n"
                                                    "_in  _let x = 3\n"
                                                    "     _in  x + -2") == 0);
-        CHECK(strcmp(let3.to_string(true).c_str(), "_let x = (_let x = 3\n"
-                                                   "          _in  x + -2)\n"
+        CHECK(strcmp(let3.to_string(true).c_str(), "_let x = _let x = 3\n"
+                                                   "         _in  x + -2\n"
                                                    "_in  x + -2") == 0);
-        CHECK(strcmp(let4.to_string(true).c_str(), "_let x = (_let x = 3\n"
-                                                   "          _in  x + -2)\n"
+        CHECK(strcmp(let4.to_string(true).c_str(), "_let x = _let x = 3\n"
+                                                   "         _in  x + -2\n"
                                                    "_in  _let x = 3\n"
                                                    "     _in  x + -2") == 0);
         CHECK(strcmp(add2.to_string(true).c_str(), "(_let x = 3\n"
