@@ -68,7 +68,7 @@ void Let::pretty_print_at(std::ostream &out,
     out << openingBracket << "_let ";
     variable->print(out);
     out << " = ";
-    rhs->pretty_print_at(out, prec_none, true, newLinePos);
+    rhs->pretty_print_at(out, prec_none, false, newLinePos);
 
     // PRINT LINE 2
     out << "\n";
@@ -79,6 +79,6 @@ void Let::pretty_print_at(std::ostream &out,
     }
     // Start content of line 2
     out << "_in  ";
-    body->pretty_print_at(out, prec_none, true, newLinePos);
+    body->pretty_print_at(out, prec_none, false, newLinePos);
     out << closingBracket;
 }
