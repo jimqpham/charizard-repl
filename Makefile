@@ -30,6 +30,9 @@ clean:
 	rm *.o
 	rm */*.o
 
+test: msdscript
+	./msdscript --test
+
 # Random Testing Script
 test_msdscript: RandomTesting/test_msdscript.o RandomTesting/exec.o
 	$(CXX) -o $@ $^
