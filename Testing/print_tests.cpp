@@ -11,7 +11,7 @@ TEST_CASE("Should print or pretty print expressions") {
     Num num2 = Num(-2);
     Var var1 = Var("x");
     Var var2 = Var("y");
-    
+
     Add add1 = Add(&num1, &num2); //"3 + -2"
     Mult mult1 = Mult(&num1, &num2); //"3 * -2"
     Let let1 = Let(&var1, &num1, new Add(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
@@ -122,7 +122,7 @@ TEST_CASE("Should print or pretty print expressions") {
         Add add2 = Add(&let1, &num1);
 
         // Let is rhs of a parenthesized +/* expr
-        Mult mult2 = Mult(&num1,new Add (&num1,&let1));
+        Mult mult2 = Mult(&num1, new Add(&num1, &let1));
 
         // Let is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
         Mult mult3 = Mult(&num1, &let1);
@@ -149,7 +149,7 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(var1.to_string(true).c_str(), "x") == 0);
         CHECK(strcmp(var2.to_string(true).c_str(), "y") == 0);
     }
-    
+
     SECTION("Should pretty print Add") {
         Add add2 = Add(&num1, &var1);
         Add add3 = Add(&num1, &add1);
@@ -246,7 +246,7 @@ TEST_CASE("Should print or pretty print expressions") {
         Add add2 = Add(&let1, &num1);
 
         // Let is rhs of a parenthesized +/* expr
-        Mult mult2 = Mult(&num1,new Add (&num1,&let1));
+        Mult mult2 = Mult(&num1, new Add(&num1, &let1));
 
         // Let is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
         Mult mult3 = Mult(&num1, &let1);
@@ -257,15 +257,15 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(let1.to_string(true).c_str(), "_let x = 3\n"
                                                    "_in  x + -2") == 0);
         CHECK(strcmp(let2.to_string(true).c_str(), "_let x = -2\n"
-                                                   "_in  (_let x = 3\n"
-                                                   "      _in  x + -2)") == 0);
+                                                   "_in  _let x = 3\n"
+                                                   "     _in  x + -2") == 0);
         CHECK(strcmp(let3.to_string(true).c_str(), "_let x = (_let x = 3\n"
                                                    "          _in  x + -2)\n"
                                                    "_in  x + -2") == 0);
         CHECK(strcmp(let4.to_string(true).c_str(), "_let x = (_let x = 3\n"
                                                    "          _in  x + -2)\n"
-                                                   "_in  (_let x = 3\n"
-                                                   "      _in  x + -2)") == 0);
+                                                   "_in  _let x = 3\n"
+                                                   "     _in  x + -2") == 0);
         CHECK(strcmp(add2.to_string(true).c_str(), "(_let x = 3\n"
                                                    " _in  x + -2) + 3") == 0);
         CHECK(strcmp(mult2.to_string(true).c_str(), "3 * (3 + _let x = 3\n"
