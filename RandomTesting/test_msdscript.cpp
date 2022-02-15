@@ -25,31 +25,34 @@ static std::string make_var();
 std::string expr_string(expr_type_t expr_type);
 
 // Test when there's only a single msdscript program
-void test_single(const char *msdscript_path, const char *operation);
+int test_single(const char *msdscript_path, const char *operation);
 
 std::string exec_res_to_string(ExecResult exec_res);
 
 // Compare outputs of two msdscripts
-void compare_output(const char *msds1_path, const char *msds2_path, const char *operation);
+int compare_output(const char *msds1_path, const char *msds2_path, const char *operation);
 
 int main(int argc, char **argv) {
+
+    int interp_tests = 0, print_tests = 0, pretty_print_tests = 0;
 
     if (argc <= 1) {
         std::cerr << "No msdscript path detected. Exiting...\n";
         exit(1);
     } else if (argc == 2) {
-        test_single(argv[1], "--interp");
-        test_single(argv[1], "--print");
-        test_single(argv[1], "--pretty-print");
-
-        std::cout << "\nAll tests passed!";
+        interp_tests = test_single(argv[1], "--interp");
+        print_tests = test_single(argv[1], "--print");
+        pretty_print_tests = test_single(argv[1], "--pretty-print");
     } else {
-        compare_output(argv[1], argv[2], "--interp");
-        compare_output(argv[1], argv[2], "--print");
-        compare_output(argv[1], argv[2], "--pretty-print");
-
-        std::cout << "\nAll tests passed!";
+        interp_tests = compare_output(argv[1], argv[2], "--interp");
+        print_tests = compare_output(argv[1], argv[2], "--print");
+        pretty_print_tests = compare_output(argv[1], argv[2], "--pretty-print");
     }
+
+    std::cout << "\nTEST SUMMARY\n";
+    std::cout << "Interp: Passed " << interp_tests << "/100 test cases\n";
+    std::cout << "Print: Passed " << print_tests << "/100 test cases\n";
+    std::cout << "Pretty print: Passed " << pretty_print_tests << "/100 test cases\n";
 }
 
 // Make a random var with < 32 chars in name
@@ -103,8 +106,10 @@ std::string expr_string(expr_type_t expr_type) {
 }
 
 // Test when there's only a single msdscript program
-void test_single(const char *msdscript_path, const char *operation) {
+int test_single(const char *msdscript_path, const char *operation) {
     const char *const argv[] = {msdscript_path, operation};
+    int numTestsPassed = 0;
+
     for (int i = 0; i < 100; i++) {
         // If interp, use no-var expressions. If print/pretty-print, use expressions with vars
         std::string in = strcmp(operation, "--interp") == 0
@@ -117,7 +122,7 @@ void test_single(const char *msdscript_path, const char *operation) {
             std::cerr << "bad " << operation << " output\n";
             std::cerr << "input: " << in << "\n";
             std::cerr << "error: " << result.err;
-            exit(1);
+            continue;
         }
 
         // Additional test for print:
@@ -128,16 +133,20 @@ void test_single(const char *msdscript_path, const char *operation) {
             ExecResult reprint_result = exec_program(2, argv, result.out);
             if (reprint_result.exit_code != 0) {
                 std::cerr << "bad reprint output\n" << "initial print output: " << in << "\n" << reprint_result.err;
-                exit(1);
+                continue;
             }
             if (strcmp(reprint_result.out.c_str(), result.out.c_str()) != 0) {
                 std::cerr << "inconsistencies between print and reprint\n";
                 std::cerr << "print output: " << result.out << "\n";
                 std::cerr << "reprint output: " << reprint_result.out << "\n";
-                exit(1);
+                continue;
             }
         }
+
+        numTestsPassed++;
     }
+
+    return numTestsPassed;
 }
 
 std::string exec_res_to_string(ExecResult exec_res) {
@@ -152,9 +161,11 @@ std::string exec_res_to_string(ExecResult exec_res) {
 }
 
 // Compare outputs of two msdscripts
-void compare_output(const char *msds1_path, const char *msds2_path, const char *operation) {
+int compare_output(const char *msds1_path, const char *msds2_path, const char *operation) {
     const char *const interp1_argv[] = {msds1_path, operation};
     const char *const interp2_argv[] = {msds2_path, operation};
+    int numOutputsMatched = 0;
+
     for (int i = 0; i < 100; i++) {
         // If interp, use no-var expressions. If print/pretty-print, use expressions with vars
         std::string in = strcmp(operation, "--interp") == 0
@@ -169,8 +180,11 @@ void compare_output(const char *msds1_path, const char *msds2_path, const char *
             std::cerr << "input: " << in << "\n";
             std::cerr << "result from msdscript1: \n" << exec_res_to_string(result1);
             std::cerr << "result from msdscript2: \n" << exec_res_to_string(result2);
-            exit(1);
+        } else {
+            numOutputsMatched++;
         }
     }
+
+    return numOutputsMatched;
 }
 
