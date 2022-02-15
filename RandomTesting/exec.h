@@ -1,8 +1,22 @@
-//
-// Created by Quang Pham on 2/14/22.
-//
+#ifndef exec_hpp
+#define exec_hpp
 
-#ifndef MSD_SCRIPT_CHARIZARD_EXEC_H
-#define MSD_SCRIPT_CHARIZARD_EXEC_H
+#include <string>
 
-#endif //MSD_SCRIPT_CHARIZARD_EXEC_H
+class ExecResult {
+public:
+    int exit_code;
+    std::string out;
+    std::string err;
+
+    ExecResult() {
+        exit_code = 0;
+        out = "";
+        err = "";
+    }
+};
+
+extern ExecResult exec_program(int argc, const char *const *argv, std::string
+input);
+
+#endif /* exec_hpp */
