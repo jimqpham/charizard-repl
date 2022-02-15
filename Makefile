@@ -26,9 +26,16 @@ $(OBJS): %.o: %.cpp %.h $(TESTING_LIB)
 $(TEST_OBJS): %.o: %.cpp $(TESTING_LIB) $(OBJS)
 	$(COMPILE) -c $< -o $@
 
-# Clean all the .o files - It won't run automatically
 clean:
+	rm *.o
 	rm */*.o
 
-test: msdscript
-	./msdscript --test
+# Random Testing Script
+test_msdscript: RandomTesting/test_msdscript.o RandomTesting/exec.o
+	$(CXX) -o $@ $^
+
+RandomTesting/test_msdscript.o: RandomTesting/test_msdscript.cpp RandomTesting/exec.o
+	$(CXX) -c $< -o $@
+
+RandomTesting/exec.o: RandomTesting/exec.cpp
+	$(CXX) -c $< -o $@
