@@ -1,34 +1,34 @@
-#include "add.h"
+#include "add_expr.h"
 
-Add::Add(Expr *lhs, Expr *rhs) {
+AddExpr::AddExpr(Expr *lhs, Expr *rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
 }
 
-bool Add::equals(Expr *o) {
-    Add* addExpr = dynamic_cast<Add*>(o);
+bool AddExpr::equals(Expr *o) {
+    AddExpr *addExpr = dynamic_cast<AddExpr *>(o);
     if (addExpr == nullptr)
         return false;
     else
         return (addExpr->lhs->equals(this->lhs)) && (addExpr->rhs->equals(this->rhs));
 }
 
-int Add::interp() {
+int AddExpr::interp() {
     return (this->lhs->interp() + this->rhs->interp());
 }
 
-bool Add::has_variable() {
+bool AddExpr::has_variable() {
     return (this->lhs->has_variable() || this->rhs->has_variable());
 }
 
-Expr* Add::subst(std::string stringToMatch, Expr *replcExpr) {
-    Expr* substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    Expr* substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    Add* result = new Add(substLhs, substRhs);
+Expr *AddExpr::subst(std::string stringToMatch, Expr *replcExpr) {
+    Expr *substLhs = this->lhs->subst(stringToMatch, replcExpr);
+    Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);
+    AddExpr *result = new AddExpr(substLhs, substRhs);
     return result;
 }
 
-void Add::print(std::ostream &out) {
+void AddExpr::print(std::ostream &out) {
     out << std::string("(");
     this->lhs->print(out);
     out << std::string("+");
@@ -36,18 +36,17 @@ void Add::print(std::ostream &out) {
     out << std::string(")");
 }
 
-void Add::pretty_print_at(std::ostream &out,
-                          precedence_t precedence,
-                          bool needsParenthesesForLet,
-                          std::streampos &newLinePos) {
+void AddExpr::pretty_print_at(std::ostream &out,
+                              precedence_t precedence,
+                              bool needsParenthesesForLet,
+                              std::streampos &newLinePos) {
     if (precedence >= prec_add) {
         out << std::string("(");
         this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
         out << std::string(" + ");
         this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet, newLinePos);
         out << std::string(")");
-    }
-    else {
+    } else {
         this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
         out << std::string(" + ");
         this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet, newLinePos);

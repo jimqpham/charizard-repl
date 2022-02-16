@@ -2,13 +2,13 @@
 
 class Expr;
 
-class Var;
+class VarExpr;
 
 Expr *parse_num(std::istream &in);
 
 Expr *parse_str(std::string s);
 
-Var *parse_var(std::istream &in);
+VarExpr *parse_var(std::istream &in);
 
 Expr *parse_let(std::istream &in);
 

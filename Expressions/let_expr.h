@@ -1,13 +1,13 @@
 #include "expr.h"
-#include "var.h"
+#include "var_expr.h"
 
-class Let : public Expr {
+class LetExpr : public Expr {
 public:
-    Var *variable;
+    VarExpr *variable;
     Expr *rhs;
     Expr *body;
 
-    Let(Var *variable, Expr *rhs, Expr *body);
+    LetExpr(VarExpr *variable, Expr *rhs, Expr *body);
 
     bool equals(Expr *o) override;
 

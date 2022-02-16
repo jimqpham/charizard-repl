@@ -6,7 +6,7 @@
 
 #include "../Testing/catch.h"
 #include "../Expressions/expr.h"
-#include "../Expressions/parse.h"
+#include "parse.h"
 
 typedef enum {
     INTERP,

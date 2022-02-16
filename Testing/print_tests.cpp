@@ -1,50 +1,50 @@
 #include <sstream>
 #include "catch.h"
-#include "../Expressions/num.h"
-#include "../Expressions/add.h"
-#include "../Expressions/mult.h"
-#include "../Expressions/var.h"
-#include "../Expressions/let.h"
+#include "../Expressions/num_expr.h"
+#include "../Expressions/add_expr.h"
+#include "../Expressions/mult_expr.h"
+#include "../Expressions/var_expr.h"
+#include "../Expressions/let_expr.h"
 
 TEST_CASE("Should print or pretty print expressions") {
-    Num num1 = Num(3);
-    Num num2 = Num(-2);
-    Var var1 = Var("x");
-    Var var2 = Var("y");
+    NumExpr num1 = NumExpr(3);
+    NumExpr num2 = NumExpr(-2);
+    VarExpr var1 = VarExpr("x");
+    VarExpr var2 = VarExpr("y");
 
-    Add add1 = Add(&num1, &num2); //"3 + -2"
-    Mult mult1 = Mult(&num1, &num2); //"3 * -2"
-    Let let1 = Let(&var1, &num1, new Add(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
+    AddExpr add1 = AddExpr(&num1, &num2); //"3 + -2"
+    MultExpr mult1 = MultExpr(&num1, &num2); //"3 * -2"
+    LetExpr let1 = LetExpr(&var1, &num1, new AddExpr(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
 
     SECTION("Should print Number") {
         CHECK(strcmp(num1.to_string().c_str(), "3") == 0);
         CHECK(strcmp(num2.to_string().c_str(), "-2") == 0);
     }
 
-    SECTION("Should print Var") {
+    SECTION("Should print VarExpr") {
         CHECK(strcmp(var1.to_string().c_str(), "x") == 0);
         CHECK(strcmp(var2.to_string().c_str(), "y") == 0);
     }
 
-    SECTION("Should print Add") {
-        Add add2 = Add(&num1, &var1);
-        Add add3 = Add(&num1, &add1);
-        Add add4 = Add(&num1, &mult1);
+    SECTION("Should print AddExpr") {
+        AddExpr add2 = AddExpr(&num1, &var1);
+        AddExpr add3 = AddExpr(&num1, &add1);
+        AddExpr add4 = AddExpr(&num1, &mult1);
 
-        Add add5 = Add(&var1, &num1);
-        Add add6 = Add(&var1, &var2);
-        Add add7 = Add(&var1, &add1);
-        Add add8 = Add(&var1, &mult1);
+        AddExpr add5 = AddExpr(&var1, &num1);
+        AddExpr add6 = AddExpr(&var1, &var2);
+        AddExpr add7 = AddExpr(&var1, &add1);
+        AddExpr add8 = AddExpr(&var1, &mult1);
 
-        Add add9 = Add(&add1, &num1);
-        Add add10 = Add(&add1, &var1);
-        Add add11 = Add(&add1, &add1);
-        Add add12 = Add(&add1, &mult1);
+        AddExpr add9 = AddExpr(&add1, &num1);
+        AddExpr add10 = AddExpr(&add1, &var1);
+        AddExpr add11 = AddExpr(&add1, &add1);
+        AddExpr add12 = AddExpr(&add1, &mult1);
 
-        Add add13 = Add(&mult1, &num1);
-        Add add14 = Add(&mult1, &var1);
-        Add add15 = Add(&mult1, &add1);
-        Add add16 = Add(&mult1, &mult1);
+        AddExpr add13 = AddExpr(&mult1, &num1);
+        AddExpr add14 = AddExpr(&mult1, &var1);
+        AddExpr add15 = AddExpr(&mult1, &add1);
+        AddExpr add16 = AddExpr(&mult1, &mult1);
 
         CHECK(strcmp(add1.to_string().c_str(), "(3+-2)") == 0);
         CHECK(strcmp(add2.to_string().c_str(), "(3+x)") == 0);
@@ -67,25 +67,25 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(add16.to_string().c_str(), "((3*-2)+(3*-2))") == 0);
     }
 
-    SECTION("Should print Mult") {
-        Mult mult2 = Mult(&num1, &var1);
-        Mult mult3 = Mult(&num1, &add1);
-        Mult mult4 = Mult(&num1, &mult1);
+    SECTION("Should print MultExpr") {
+        MultExpr mult2 = MultExpr(&num1, &var1);
+        MultExpr mult3 = MultExpr(&num1, &add1);
+        MultExpr mult4 = MultExpr(&num1, &mult1);
 
-        Mult mult5 = Mult(&var1, &num1);
-        Mult mult6 = Mult(&var1, &var2);
-        Mult mult7 = Mult(&var1, &add1);
-        Mult mult8 = Mult(&var1, &mult1);
+        MultExpr mult5 = MultExpr(&var1, &num1);
+        MultExpr mult6 = MultExpr(&var1, &var2);
+        MultExpr mult7 = MultExpr(&var1, &add1);
+        MultExpr mult8 = MultExpr(&var1, &mult1);
 
-        Mult mult9 = Mult(&add1, &num1);
-        Mult mult10 = Mult(&add1, &var1);
-        Mult mult11 = Mult(&add1, &add1);
-        Mult mult12 = Mult(&add1, &mult1);
+        MultExpr mult9 = MultExpr(&add1, &num1);
+        MultExpr mult10 = MultExpr(&add1, &var1);
+        MultExpr mult11 = MultExpr(&add1, &add1);
+        MultExpr mult12 = MultExpr(&add1, &mult1);
 
-        Mult mult13 = Mult(&mult1, &num1);
-        Mult mult14 = Mult(&mult1, &var1);
-        Mult mult15 = Mult(&mult1, &add1);
-        Mult mult16 = Mult(&mult1, &mult1);
+        MultExpr mult13 = MultExpr(&mult1, &num1);
+        MultExpr mult14 = MultExpr(&mult1, &var1);
+        MultExpr mult15 = MultExpr(&mult1, &add1);
+        MultExpr mult16 = MultExpr(&mult1, &mult1);
 
         CHECK(strcmp(mult1.to_string().c_str(), "(3*-2)") == 0);
         CHECK(strcmp(mult2.to_string().c_str(), "(3*x)") == 0);
@@ -108,27 +108,27 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult16.to_string().c_str(), "((3*-2)*(3*-2))") == 0);
     }
 
-    SECTION("Should print Let") {
-        // Nested lets - body is a Let expr
-        Let let2 = Let(&var1, &num2, &let1); // "_let x=-2 _in (_let x=3 _in (x+-2))"
+    SECTION("Should print LetExpr") {
+        // Nested lets - body is a LetExpr expr
+        LetExpr let2 = LetExpr(&var1, &num2, &let1); // "_let x=-2 _in (_let x=3 _in (x+-2))"
 
-        // Nested lets - rhs is a Let expr
-        Let let3 = Let(&var1, &let1, new Add(&var1, &num2)); // "_let x=(_let x=3 _in (x+-2)) _in (x+-2)"
+        // Nested lets - rhs is a LetExpr expr
+        LetExpr let3 = LetExpr(&var1, &let1, new AddExpr(&var1, &num2)); // "_let x=(_let x=3 _in (x+-2)) _in (x+-2)"
 
-        // Nested lets - both body and rhs are Let expr's
-        Let let4 = Let(&var1, &let1, &let1);
+        // Nested lets - both body and rhs are LetExpr expr's
+        LetExpr let4 = LetExpr(&var1, &let1, &let1);
 
-        // Let is lhs of a +/* expr
-        Add add2 = Add(&let1, &num1);
+        // LetExpr is lhs of a +/* expr
+        AddExpr add2 = AddExpr(&let1, &num1);
 
-        // Let is rhs of a parenthesized +/* expr
-        Mult mult2 = Mult(&num1, new Add(&num1, &let1));
+        // LetExpr is rhs of a parenthesized +/* expr
+        MultExpr mult2 = MultExpr(&num1, new AddExpr(&num1, &let1));
 
-        // Let is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
-        Mult mult3 = Mult(&num1, &let1);
+        // LetExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
+        MultExpr mult3 = MultExpr(&num1, &let1);
 
-        // Let is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
-        Add add3 = Add(&mult3, &num1);
+        // LetExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
+        AddExpr add3 = AddExpr(&mult3, &num1);
 
         CHECK(strcmp(let1.to_string().c_str(), "(_let x=3 _in (x+-2))") == 0);
         CHECK(strcmp(let2.to_string().c_str(), "(_let x=-2 _in (_let x=3 _in (x+-2)))") == 0);
@@ -145,30 +145,30 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(num2.to_string(true).c_str(), "-2") == 0);
     }
 
-    SECTION("Should pretty print Var") {
+    SECTION("Should pretty print VarExpr") {
         CHECK(strcmp(var1.to_string(true).c_str(), "x") == 0);
         CHECK(strcmp(var2.to_string(true).c_str(), "y") == 0);
     }
 
-    SECTION("Should pretty print Add") {
-        Add add2 = Add(&num1, &var1);
-        Add add3 = Add(&num1, &add1);
-        Add add4 = Add(&num1, &mult1);
+    SECTION("Should pretty print AddExpr") {
+        AddExpr add2 = AddExpr(&num1, &var1);
+        AddExpr add3 = AddExpr(&num1, &add1);
+        AddExpr add4 = AddExpr(&num1, &mult1);
 
-        Add add5 = Add(&var1, &num1);
-        Add add6 = Add(&var1, &var2);
-        Add add7 = Add(&var1, &add1);
-        Add add8 = Add(&var1, &mult1);
+        AddExpr add5 = AddExpr(&var1, &num1);
+        AddExpr add6 = AddExpr(&var1, &var2);
+        AddExpr add7 = AddExpr(&var1, &add1);
+        AddExpr add8 = AddExpr(&var1, &mult1);
 
-        Add add9 = Add(&add1, &num1);
-        Add add10 = Add(&add1, &var1);
-        Add add11 = Add(&add1, &add1);
-        Add add12 = Add(&add1, &mult1);
+        AddExpr add9 = AddExpr(&add1, &num1);
+        AddExpr add10 = AddExpr(&add1, &var1);
+        AddExpr add11 = AddExpr(&add1, &add1);
+        AddExpr add12 = AddExpr(&add1, &mult1);
 
-        Add add13 = Add(&mult1, &num1);
-        Add add14 = Add(&mult1, &var1);
-        Add add15 = Add(&mult1, &add1);
-        Add add16 = Add(&mult1, &mult1);
+        AddExpr add13 = AddExpr(&mult1, &num1);
+        AddExpr add14 = AddExpr(&mult1, &var1);
+        AddExpr add15 = AddExpr(&mult1, &add1);
+        AddExpr add16 = AddExpr(&mult1, &mult1);
 
         CHECK(strcmp(add1.to_string(true).c_str(), "3 + -2") == 0);
         CHECK(strcmp(add2.to_string(true).c_str(), "3 + x") == 0);
@@ -191,25 +191,25 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(add16.to_string(true).c_str(), "3 * -2 + 3 * -2") == 0);
     }
 
-    SECTION("Should pretty print Mult") {
-        Mult mult2 = Mult(&num1, &var1);
-        Mult mult3 = Mult(&num1, &add1);
-        Mult mult4 = Mult(&num1, &mult1);
+    SECTION("Should pretty print MultExpr") {
+        MultExpr mult2 = MultExpr(&num1, &var1);
+        MultExpr mult3 = MultExpr(&num1, &add1);
+        MultExpr mult4 = MultExpr(&num1, &mult1);
 
-        Mult mult5 = Mult(&var1, &num1);
-        Mult mult6 = Mult(&var1, &var2);
-        Mult mult7 = Mult(&var1, &add1);
-        Mult mult8 = Mult(&var1, &mult1);
+        MultExpr mult5 = MultExpr(&var1, &num1);
+        MultExpr mult6 = MultExpr(&var1, &var2);
+        MultExpr mult7 = MultExpr(&var1, &add1);
+        MultExpr mult8 = MultExpr(&var1, &mult1);
 
-        Mult mult9 = Mult(&add1, &num1);
-        Mult mult10 = Mult(&add1, &var1);
-        Mult mult11 = Mult(&add1, &add1);
-        Mult mult12 = Mult(&add1, &mult1);
+        MultExpr mult9 = MultExpr(&add1, &num1);
+        MultExpr mult10 = MultExpr(&add1, &var1);
+        MultExpr mult11 = MultExpr(&add1, &add1);
+        MultExpr mult12 = MultExpr(&add1, &mult1);
 
-        Mult mult13 = Mult(&mult1, &num1);
-        Mult mult14 = Mult(&mult1, &var1);
-        Mult mult15 = Mult(&mult1, &add1);
-        Mult mult16 = Mult(&mult1, &mult1);
+        MultExpr mult13 = MultExpr(&mult1, &num1);
+        MultExpr mult14 = MultExpr(&mult1, &var1);
+        MultExpr mult15 = MultExpr(&mult1, &add1);
+        MultExpr mult16 = MultExpr(&mult1, &mult1);
 
         CHECK(strcmp(mult1.to_string(true).c_str(), "3 * -2") == 0);
         CHECK(strcmp(mult2.to_string(true).c_str(), "3 * x") == 0);
@@ -232,27 +232,27 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult16.to_string(true).c_str(), "(3 * -2) * 3 * -2") == 0);
     }
 
-    SECTION("Should pretty print Let") {
-        // Nested lets - body is a Let expr
-        Let let2 = Let(&var1, &num2, &let1); // "_let x=-2 _in (_let x=3 _in (x+-2))"
+    SECTION("Should pretty print LetExpr") {
+        // Nested lets - body is a LetExpr expr
+        LetExpr let2 = LetExpr(&var1, &num2, &let1); // "_let x=-2 _in (_let x=3 _in (x+-2))"
 
-        // Nested lets - rhs is a Let expr
-        Let let3 = Let(&var1, &let1, new Add(&var1, &num2)); // "_let x=(_let x=3 _in (x+-2)) _in (x+-2)"
+        // Nested lets - rhs is a LetExpr expr
+        LetExpr let3 = LetExpr(&var1, &let1, new AddExpr(&var1, &num2)); // "_let x=(_let x=3 _in (x+-2)) _in (x+-2)"
 
-        // Nested lets - both body and rhs are Let expr's
-        Let let4 = Let(&var1, &let1, &let1);
+        // Nested lets - both body and rhs are LetExpr expr's
+        LetExpr let4 = LetExpr(&var1, &let1, &let1);
 
-        // Let is lhs of a +/* expr
-        Add add2 = Add(&let1, &num1);
+        // LetExpr is lhs of a +/* expr
+        AddExpr add2 = AddExpr(&let1, &num1);
 
-        // Let is rhs of a parenthesized +/* expr
-        Mult mult2 = Mult(&num1, new Add(&num1, &let1));
+        // LetExpr is rhs of a parenthesized +/* expr
+        MultExpr mult2 = MultExpr(&num1, new AddExpr(&num1, &let1));
 
-        // Let is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
-        Mult mult3 = Mult(&num1, &let1);
+        // LetExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
+        MultExpr mult3 = MultExpr(&num1, &let1);
 
-        // Let is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
-        Add add3 = Add(&mult3, &num1);
+        // LetExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
+        AddExpr add3 = AddExpr(&mult3, &num1);
 
         CHECK(strcmp(let1.to_string(true).c_str(), "_let x = 3\n"
                                                    "_in  x + -2") == 0);

@@ -1,27 +1,27 @@
 #include "catch.h"
-#include "../Expressions/num.h"
-#include "../Expressions/add.h"
-#include "../Expressions/mult.h"
-#include "../Expressions/var.h"
-#include "../Expressions/let.h"
+#include "../Expressions/num_expr.h"
+#include "../Expressions/add_expr.h"
+#include "../Expressions/mult_expr.h"
+#include "../Expressions/var_expr.h"
+#include "../Expressions/let_expr.h"
 
 TEST_CASE("Default test: Subst after replacement - should be equal") {
-    CHECK ((new Mult(new Var("x"), new Num(7)))
-                   ->subst("x", new Var("y"))
-                   ->equals(new Mult(new Var("y"), new Num(7))));
+    CHECK ((new MultExpr(new VarExpr("x"), new NumExpr(7)))
+                   ->subst("x", new VarExpr("y"))
+                   ->equals(new MultExpr(new VarExpr("y"), new NumExpr(7))));
 }
 
 TEST_CASE("Expressions containing no matching variables should stay the same after subst") {
-    Num numOne = Num(10);
-    Mult multOne = Mult(&numOne, &numOne);
-    Add addOne = Add(&multOne, &numOne);
-    Var varOne = Var("y");
-    Add addTwo = Add(&numOne, &varOne);
-    Let letOne = Let(&varOne, &addTwo, &addTwo); // var "y" is in both rhs and body
+    NumExpr numOne = NumExpr(10);
+    MultExpr multOne = MultExpr(&numOne, &numOne);
+    AddExpr addOne = AddExpr(&multOne, &numOne);
+    VarExpr varOne = VarExpr("y");
+    AddExpr addTwo = AddExpr(&numOne, &varOne);
+    LetExpr letOne = LetExpr(&varOne, &addTwo, &addTwo); // var "y" is in both rhs and body
 
     // Random expression to put in place of variable "x"
     // Just a placeholder: No variable "x" in the expressions, so this random replacement expr should not be used
-    Mult randomExpr = Mult(&multOne, &addOne);
+    MultExpr randomExpr = MultExpr(&multOne, &addOne);
 
     Expr *substNumOne = numOne.subst("x", &randomExpr);
     Expr *substMultOne = multOne.subst("x", &randomExpr);
@@ -38,23 +38,23 @@ TEST_CASE("Expressions containing no matching variables should stay the same aft
 
 TEST_CASE("Expressions containing matching variables should change after subst") {
     // Set up
-    Num numOne = Num(10);
-    Var varOne = Var("thisShouldChange");
-    Var varTwo = Var("thisShouldNotChange");
-    Let letOne = Let(new Var("x"),
-                     new Add(&numOne, new Var("x")),
-                     new Add(&numOne, new Var("x")));
-    /*  Let Case 1: Var to replace and var bound by _let are the same. Should NOT go into the body
+    NumExpr numOne = NumExpr(10);
+    VarExpr varOne = VarExpr("thisShouldChange");
+    VarExpr varTwo = VarExpr("thisShouldNotChange");
+    LetExpr letOne = LetExpr(new VarExpr("x"),
+                             new AddExpr(&numOne, new VarExpr("x")),
+                             new AddExpr(&numOne, new VarExpr("x")));
+    /*  LetExpr Case 1: VarExpr to replace and var bound by _let are the same. Should NOT go into the body
      *  letOne pretty printed:
      *  _let x = 10 + x
      *  _in  10 + x
      *  Replacement: x -> changed
      *  Expected expression after subst: see variable substLetOne
      */
-    Let letTwo = Let(new Var("y"),
-                     new Add(&numOne, new Var("x")),
-                     new Add(&numOne, new Var("x")));
-    /*  Let Case 2: Var to replace and var bound by _let are different. Subst SHOULD go into the body
+    LetExpr letTwo = LetExpr(new VarExpr("y"),
+                             new AddExpr(&numOne, new VarExpr("x")),
+                             new AddExpr(&numOne, new VarExpr("x")));
+    /*  LetExpr Case 2: VarExpr to replace and var bound by _let are different. Subst SHOULD go into the body
      *  letTwo pretty printed:
      *  _let y = 10 + x
      *  _in  10 + x
@@ -63,28 +63,28 @@ TEST_CASE("Expressions containing matching variables should change after subst")
      */
 
     // Expressions before subst
-    Mult multOne = Mult(&numOne, &varOne);
-    Add addOne = Add(&multOne, &varTwo);
+    MultExpr multOne = MultExpr(&numOne, &varOne);
+    AddExpr addOne = AddExpr(&multOne, &varTwo);
 
     // Replacement variable
-    Var varThree = Var("changed");
+    VarExpr varThree = VarExpr("changed");
 
     // Expected expressions after subst
-    Mult substMultOne = Mult(&numOne, &varThree);
-    Add substAddOne = Add(&substMultOne, &varTwo);
-    Let substLetOne = Let(new Var("x"), // lhs variable should NOT be substituted
-                          new Add(&numOne, &varThree), // rhs var should be subst-ed
-                          new Add(&numOne, new Var("x"))); // body var should NOT be subst-ed
-    /*  Let Case 1: Var to replace and var bound by _let are the same. Should NOT go into the body
+    MultExpr substMultOne = MultExpr(&numOne, &varThree);
+    AddExpr substAddOne = AddExpr(&substMultOne, &varTwo);
+    LetExpr substLetOne = LetExpr(new VarExpr("x"), // lhs variable should NOT be substituted
+                                  new AddExpr(&numOne, &varThree), // rhs var should be subst-ed
+                                  new AddExpr(&numOne, new VarExpr("x"))); // body var should NOT be subst-ed
+    /*  LetExpr Case 1: VarExpr to replace and var bound by _let are the same. Should NOT go into the body
      *  Expected subst result substLetOne:
      *  _let x = 10 + changed
      *  _in  10 + x
      *  Replacement: x -> changed
      */
-    Let substLetTwo = Let(new Var("y"),
-                          new Add(&numOne, &varThree),
-                          new Add(&numOne, &varThree));
-    /*  Let Case 2: Var to replace and var bound by _let are different. Subst SHOULD go into the body
+    LetExpr substLetTwo = LetExpr(new VarExpr("y"),
+                                  new AddExpr(&numOne, &varThree),
+                                  new AddExpr(&numOne, &varThree));
+    /*  LetExpr Case 2: VarExpr to replace and var bound by _let are different. Subst SHOULD go into the body
      *  Expected subst result substLetTwo:
      *  _let y = 10 + changed
      *  _in  10 + changed

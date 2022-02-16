@@ -1,10 +1,10 @@
 #include <sstream>
 #include "parse.h"
-#include "num.h"
-#include "var.h"
-#include "mult.h"
-#include "add.h"
-#include "let.h"
+#include "../Expressions/num_expr.h"
+#include "../Expressions/var_expr.h"
+#include "../Expressions/mult_expr.h"
+#include "../Expressions/add_expr.h"
+#include "../Expressions/let_expr.h"
 
 
 Expr *parse_num(std::istream &in) {
@@ -31,10 +31,10 @@ Expr *parse_num(std::istream &in) {
     if (negative)
         n = -n;
 
-    return new Num(n);
+    return new NumExpr(n);
 }
 
-Var *parse_var(std::istream &in) {
+VarExpr *parse_var(std::istream &in) {
     std::string name = "";
 
     while (true) {
@@ -46,7 +46,7 @@ Var *parse_var(std::istream &in) {
             break;
     }
 
-    return new Var(name);
+    return new VarExpr(name);
 }
 
 Expr *parse_let(std::istream &in) {
@@ -57,7 +57,7 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    Var *variable = parse_var(in);
+    VarExpr *variable = parse_var(in);
 
     skip_whitespace(in);
 
@@ -78,7 +78,7 @@ Expr *parse_let(std::istream &in) {
 
     Expr *body = parse_expr(in);
 
-    return new Let(variable, rhs, body);
+    return new LetExpr(variable, rhs, body);
 }
 
 Expr *parse_multicand(std::istream &in) {
@@ -118,7 +118,7 @@ Expr *parse_addend(std::istream &in) {
     if (c == '*') {
         consume(in, '*');
         Expr *rhs = parse_addend(in);
-        return new Mult(e, rhs);
+        return new MultExpr(e, rhs);
     } else
         return e;
 }
@@ -134,7 +134,7 @@ Expr *parse_expr(std::istream &in) {
     if (c == '+') {
         consume(in, '+');
         Expr *rhs = parse_expr(in);
-        return new Add(e, rhs);
+        return new AddExpr(e, rhs);
     } else
         return e;
 }

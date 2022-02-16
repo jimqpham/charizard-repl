@@ -1,0 +1,27 @@
+#pragma once
+
+#include <cstring>
+#include "./expr.h"
+#include <iostream>
+
+class VarExpr : public Expr {
+public:
+    std::string name;
+
+    VarExpr(std::string name);
+
+    bool equals(Expr *o) override;
+
+    int interp() override;
+
+    bool has_variable() override;
+
+    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+
+    void print(std::ostream &out) override;
+
+    void pretty_print_at(std::ostream &out,
+                         precedence_t precedence,
+                         bool needsParenthesesForLet,
+                         std::streampos &newLinePos) override;
+};
