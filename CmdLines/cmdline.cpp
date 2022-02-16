@@ -1,12 +1,12 @@
+#define CATCH_CONFIG_RUNNER
+
 #include <iostream>
 #include <string>
 #include "cmdline.h"
-
-#define CATCH_CONFIG_RUNNER
-
+#include "parse.h"
 #include "../Testing/catch.h"
 #include "../Expressions/expr.h"
-#include "parse.h"
+#include "../Vals/num_val.h"
 
 typedef enum {
     INTERP,
@@ -65,7 +65,7 @@ void interactiveCommand(command_t command) {
         std::string output;
         switch (command) {
             case INTERP:
-                output = std::to_string(e->interp());
+                output = e->interp()->to_string();
                 break;
             case PRINT:
                 output = e->to_string();

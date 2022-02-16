@@ -1,4 +1,5 @@
 #include "num_expr.h"
+#include "../Vals/num_val.h"
 
 NumExpr::NumExpr(int val) {
     this->val = val;
@@ -12,8 +13,8 @@ bool NumExpr::equals(Expr *o) {
         return numExpr->val == this->val;
 }
 
-int NumExpr::interp() {
-    return val;
+Val *NumExpr::interp() {
+    return new NumVal(val);
 }
 
 bool NumExpr::has_variable() {

@@ -1,4 +1,5 @@
 #include "var_expr.h"
+#include "../Vals/val.h"
 #include <cstring>
 #include <stdexcept>
 
@@ -14,7 +15,7 @@ bool VarExpr::equals(Expr *o) {
         return (std::strcmp(this->name.c_str(), varExpr->name.c_str()) == 0);
 }
 
-int VarExpr::interp() {
+Val *VarExpr::interp() {
     throw std::runtime_error("No value for variable");
 }
 

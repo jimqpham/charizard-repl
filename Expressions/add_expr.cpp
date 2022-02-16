@@ -1,4 +1,5 @@
 #include "add_expr.h"
+#include "../Vals/val.h"
 
 AddExpr::AddExpr(Expr *lhs, Expr *rhs) {
     this->lhs = lhs;
@@ -13,8 +14,8 @@ bool AddExpr::equals(Expr *o) {
         return (addExpr->lhs->equals(this->lhs)) && (addExpr->rhs->equals(this->rhs));
 }
 
-int AddExpr::interp() {
-    return (this->lhs->interp() + this->rhs->interp());
+Val *AddExpr::interp() {
+    return (this->lhs->interp()->add_to(this->rhs->interp()));
 }
 
 bool AddExpr::has_variable() {

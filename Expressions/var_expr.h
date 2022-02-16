@@ -12,7 +12,7 @@ public:
 
     bool equals(Expr *o) override;
 
-    int interp() override;
+    Val *interp() override;
 
     bool has_variable() override;
 

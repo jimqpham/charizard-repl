@@ -4,6 +4,7 @@
 
 #include "let_expr.h"
 #include "num_expr.h"
+#include "../Vals/val.h"
 
 LetExpr::LetExpr(VarExpr *variable, Expr *rhs, Expr *body) {
     this->variable = variable;
@@ -20,9 +21,9 @@ bool LetExpr::equals(Expr *o) {
             this->body->equals(letExpr->body));
 }
 
-int LetExpr::interp() {
-    int evalRhs = this->rhs->interp();
-    Expr *substBody = this->body->subst(this->variable->name, new NumExpr(evalRhs));
+Val *LetExpr::interp() {
+    Val *evalRhs = this->rhs->interp();
+    Expr *substBody = this->body->subst(this->variable->name, evalRhs->to_expr());
     return substBody->interp();
 }
 

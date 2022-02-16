@@ -1,6 +1,8 @@
 #include "expr.h"
 #include "var_expr.h"
 
+class Val;
+
 class LetExpr : public Expr {
 public:
     VarExpr *variable;
@@ -11,7 +13,7 @@ public:
 
     bool equals(Expr *o) override;
 
-    int interp() override;
+    Val *interp() override;
 
     bool has_variable() override;
 

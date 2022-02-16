@@ -1,4 +1,5 @@
 #include "mult_expr.h"
+#include "../Vals/val.h"
 
 MultExpr::MultExpr(Expr *lhs, Expr *rhs) {
     this->lhs = lhs;
@@ -13,8 +14,8 @@ bool MultExpr::equals(Expr *o) {
         return (multExpr->lhs->equals(this->lhs)) && (multExpr->rhs->equals(this->rhs));
 }
 
-int MultExpr::interp() {
-    return (this->lhs->interp() * this->rhs->interp());
+Val *MultExpr::interp() {
+    return (this->lhs->interp()->times(this->rhs->interp()));
 }
 
 bool MultExpr::has_variable() {

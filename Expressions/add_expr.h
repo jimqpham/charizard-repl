@@ -3,6 +3,8 @@
 #include "expr.h"
 #include <iostream>
 
+class Val;
+
 class AddExpr : public Expr {
 public:
     Expr *lhs;
@@ -12,7 +14,7 @@ public:
 
     bool equals(Expr *o) override;
 
-    int interp() override;
+    Val *interp() override;
 
     bool has_variable() override;
 
