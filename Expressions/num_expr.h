@@ -4,9 +4,10 @@
 #include <iostream>
 
 class NumExpr : public Expr {
-public:
+private:
     int val;
 
+public:
     NumExpr(int val);
 
     bool equals(Expr *o) override;

@@ -4,10 +4,11 @@
 #include <iostream>
 
 class MultExpr : public Expr {
-public:
+private:
     Expr *lhs;
     Expr *rhs;
 
+public:
     MultExpr(Expr *lhs, Expr *rhs);
 
     bool equals(Expr *o) override;

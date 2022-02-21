@@ -5,9 +5,10 @@
 #include <iostream>
 
 class VarExpr : public Expr {
-public:
+private:
     std::string name;
 
+public:
     VarExpr(std::string name);
 
     bool equals(Expr *o) override;

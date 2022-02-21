@@ -4,11 +4,12 @@
 class Val;
 
 class LetExpr : public Expr {
-public:
+private:
     VarExpr *variable;
     Expr *rhs;
     Expr *body;
 
+public:
     LetExpr(VarExpr *variable, Expr *rhs, Expr *body);
 
     bool equals(Expr *o) override;

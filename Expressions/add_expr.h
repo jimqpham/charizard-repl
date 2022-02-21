@@ -6,10 +6,11 @@
 class Val;
 
 class AddExpr : public Expr {
-public:
+private:
     Expr *lhs;
     Expr *rhs;
 
+public:
     AddExpr(Expr *lhs, Expr *rhs);
 
     bool equals(Expr *o) override;
