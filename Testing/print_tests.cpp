@@ -5,20 +5,28 @@
 #include "../Expressions/mult_expr.h"
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
+#include "../Expressions/bool_expr.h"
 
 TEST_CASE("Should print or pretty print expressions") {
     NumExpr num1 = NumExpr(3);
     NumExpr num2 = NumExpr(-2);
     VarExpr var1 = VarExpr("x");
     VarExpr var2 = VarExpr("y");
+    BoolExpr tr = BoolExpr(true);
+    BoolExpr fls = BoolExpr(false);
 
     AddExpr add1 = AddExpr(&num1, &num2); //"3 + -2"
     MultExpr mult1 = MultExpr(&num1, &num2); //"3 * -2"
     LetExpr let1 = LetExpr(&var1, &num1, new AddExpr(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
 
-    SECTION("Should print Number") {
+    SECTION("Should print NumExpr") {
         CHECK(strcmp(num1.to_string().c_str(), "3") == 0);
         CHECK(strcmp(num2.to_string().c_str(), "-2") == 0);
+    }
+
+    SECTION("Should print BoolExpr") {
+        CHECK(strcmp(tr.to_string().c_str(), "_true") == 0);
+        CHECK(strcmp(fls.to_string().c_str(), "_false") == 0);
     }
 
     SECTION("Should print VarExpr") {

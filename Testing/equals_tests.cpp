@@ -4,6 +4,7 @@
 #include "../Expressions/mult_expr.h"
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
+#include "../Expressions/bool_expr.h"
 
 TEST_CASE("Test NumExpr equals") {
     SECTION("NumExpr should be equal to NumExpr of same value") {
@@ -23,6 +24,28 @@ TEST_CASE("Test NumExpr equals") {
         AddExpr sum = AddExpr(&num, &num);
         CHECK(!num.equals(&sum));
         CHECK(!sum.equals(&num));
+    }
+}
+
+TEST_CASE("Test BoolExpr equals") {
+    BoolExpr tr = BoolExpr(true);
+    BoolExpr otherTr = BoolExpr(10);
+    BoolExpr fls = BoolExpr(false);
+    BoolExpr otherFls = BoolExpr(fls);
+    NumExpr num = NumExpr(0);
+
+    SECTION("BoolExpr should be equal to BoolExpr of same value") {
+        CHECK(tr.equals(&otherTr));
+        CHECK(fls.equals(&otherFls));
+    }
+
+    SECTION("BoolExpr should not be equal to BoolExpr of different value") {
+        CHECK(!tr.equals(&fls));
+    }
+
+    SECTION("BoolExpr should not equal objects of other classes") {
+        CHECK(!fls.equals(&num));
+        CHECK(!tr.equals(&num));
     }
 }
 

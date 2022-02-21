@@ -4,12 +4,18 @@
 #include "../Expressions/mult_expr.h"
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
+#include "../Expressions/bool_expr.h"
 
 #include <stdexcept>
 
 TEST_CASE("Test NumExpr has_variable") {
     NumExpr numOne = NumExpr(5);
     CHECK(!numOne.has_variable());
+}
+
+TEST_CASE("Test BoolExpr has_variable") {
+    BoolExpr tr = BoolExpr(true);
+    CHECK(!tr.has_variable());
 }
 
 TEST_CASE("Test VarExpr has_variable") {

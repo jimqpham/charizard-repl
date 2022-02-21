@@ -4,6 +4,7 @@
 #include "../Expressions/mult_expr.h"
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
+#include "../Expressions/bool_expr.h"
 
 TEST_CASE("Default test: Subst after replacement - should be equal") {
     CHECK ((new MultExpr(new VarExpr("x"), new NumExpr(7)))
@@ -18,6 +19,8 @@ TEST_CASE("Expressions containing no matching variables should stay the same aft
     VarExpr varOne = VarExpr("y");
     AddExpr addTwo = AddExpr(&numOne, &varOne);
     LetExpr letOne = LetExpr(&varOne, &addTwo, &addTwo); // var "y" is in both rhs and body
+    BoolExpr tr = BoolExpr(true);
+    BoolExpr fls = BoolExpr(false);
 
     // Random expression to put in place of variable "x"
     // Just a placeholder: No variable "x" in the expressions, so this random replacement expr should not be used
@@ -28,12 +31,16 @@ TEST_CASE("Expressions containing no matching variables should stay the same aft
     Expr *substAddOne = addOne.subst("x", &randomExpr);
     Expr *substVarOne = varOne.subst("x", &randomExpr);
     Expr *substLetOne = letOne.subst("x", &randomExpr);
+    Expr *substTr = tr.subst("x", &randomExpr);
+    Expr *substFls = fls.subst("x", &randomExpr);
 
     CHECK(numOne.equals(substNumOne));
     CHECK(multOne.equals((substMultOne)));
     CHECK(addOne.equals(substAddOne));
     CHECK(varOne.equals(substVarOne));
     CHECK(letOne.equals(substLetOne));
+    CHECK(tr.equals(substTr));
+    CHECK(fls.equals(substFls));
 }
 
 TEST_CASE("Expressions containing matching variables should change after subst") {

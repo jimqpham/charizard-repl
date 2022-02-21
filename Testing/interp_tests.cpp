@@ -5,6 +5,8 @@
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
 #include "../Vals/num_val.h"
+#include "../Expressions/bool_expr.h"
+#include "../Vals/bool_val.h"
 
 #include <stdexcept>
 
@@ -15,14 +17,21 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
     NumExpr num2 = NumExpr(-2);
     VarExpr var1 = VarExpr("x");
     VarExpr var2 = VarExpr("y");
+    BoolExpr tr = BoolExpr(true);
+    BoolExpr fls = BoolExpr(false);
 
     AddExpr add1 = AddExpr(&num1, &num2); //"3 + -2" = 1
     MultExpr mult1 = MultExpr(&num1, &num2); //"3 * -2" = -6
     LetExpr let1 = LetExpr(&var1, &num1, new AddExpr(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
 
-    SECTION("Should evaluate Number") {
+    SECTION("Should evaluate NumExpr") {
         CHECK(num1.interp()->equals(new NumVal(3)));
         CHECK(num2.interp()->equals(new NumVal(-2)));
+    }
+
+    SECTION("Should evaluate BoolExpr") {
+        CHECK(tr.interp()->equals(new BoolVal(true)));
+        CHECK(fls.interp()->equals(new BoolVal(false)));
     }
 
     SECTION("Should evaluate VarExpr") {
