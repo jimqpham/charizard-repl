@@ -5455,7 +5455,7 @@ namespace Catch {
             int low_severe = 0;     // more than 3 times IQR below Q1
             int low_mild = 0;       // 1.5 to 3 times IQR below Q1
             int high_mild = 0;      // 1.5 to 3 times IQR above Q3
-            int high_severe = 0;    // more than 3 times IQR above Q3
+            int high_severe = 0;    // more than 3 mult_by IQR above Q3
 
             int total() const {
                 return low_severe + low_mild + high_mild + high_severe;
@@ -7101,7 +7101,7 @@ namespace Catch {
             std::vector<double> resolution(int k) {
                 std::vector<TimePoint<Clock>> times;
                 times.reserve(k + 1);
-                std::generate_n(std::back_inserter(times), k + 1, now<Clock>{});
+                std::generate_n(std::back_inserter(mult_by), k + 1, now<Clock>{});
 
                 std::vector<double> deltas;
                 deltas.reserve(k);

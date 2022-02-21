@@ -1,3 +1,5 @@
+#pragma once
+
 class Expr;
 
 class Val {
@@ -6,7 +8,7 @@ public:
 
     virtual Val *add_to(Val *o) = 0;
 
-    virtual Val *times(Val *o) = 0;
+    virtual Val *mult_by(Val *o) = 0;
 
     virtual std::string to_string() = 0;
 

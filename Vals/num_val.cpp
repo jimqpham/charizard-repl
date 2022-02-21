@@ -27,7 +27,7 @@ Val *NumVal::add_to(Val *o) {
         throw std::runtime_error("add of non-number");
 }
 
-Val *NumVal::times(Val *o) {
+Val *NumVal::mult_by(Val *o) {
     NumVal *otherVal = dynamic_cast<NumVal *>(o);
 
     if (otherVal != nullptr)

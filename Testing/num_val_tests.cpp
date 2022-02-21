@@ -25,9 +25,9 @@ TEST_CASE("Test NumVal methods") {
         CHECK_THROWS_WITH(two->add_to(nullVal), "add of non-number");
     }
 
-    SECTION("The times method") {
-        CHECK((two->times(five))->equals(ten));
-        CHECK_THROWS_WITH(five->times(nullVal), "mult of non-number");
+    SECTION("The mult_by method") {
+        CHECK((two->mult_by(five))->equals(ten));
+        CHECK_THROWS_WITH(five->mult_by(nullVal), "mult of non-number");
     }
 
     SECTION("The to_string method") {

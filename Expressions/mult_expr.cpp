@@ -15,7 +15,7 @@ bool MultExpr::equals(Expr *o) {
 }
 
 Val *MultExpr::interp() {
-    return (this->lhs->interp()->times(this->rhs->interp()));
+    return (this->lhs->interp()->mult_by(this->rhs->interp()));
 }
 
 bool MultExpr::has_variable() {

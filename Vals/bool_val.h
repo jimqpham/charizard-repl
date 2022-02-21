@@ -1,12 +1,12 @@
 #include <string>
 #include "val.h"
 
-class NumVal : public Val {
+class BoolVal : public Val {
 private:
-    int rep;
+    bool rep;
 
 public:
-    explicit NumVal(int rep);
+    explicit BoolVal(bool rep);
 
     bool equals(Val *o) override;
 
