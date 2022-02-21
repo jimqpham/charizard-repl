@@ -23,7 +23,7 @@ bool LetExpr::equals(Expr *o) {
 
 Val *LetExpr::interp() {
     Val *evalRhs = this->rhs->interp();
-    Expr *substBody = this->body->subst(this->variable->name, evalRhs->to_expr());
+    Expr *substBody = this->body->subst(this->variable->to_string(), evalRhs->to_expr());
     return substBody->interp();
 }
 
