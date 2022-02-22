@@ -5,6 +5,9 @@
 #include "../Expressions/var_expr.h"
 #include "../CmdLines/parse.h"
 #include "../Expressions/let_expr.h"
+#include "../Expressions/if_expr.h"
+#include "../Expressions/bool_expr.h"
+#include "../Expressions/equal_expr.h"
 
 TEST_CASE("Parse numbers") {
     CHECK(parse_str("(1)")->equals(new NumExpr(1)));
@@ -28,6 +31,18 @@ TEST_CASE("Parse variables") {
                       "Unexpected input after expression!"); // It considers "x" as a complete expression
     CHECK_THROWS_WITH(parse_str("x2z"),
                       "Unexpected input after expression!");
+}
+
+TEST_CASE("Parse _true and _false") {
+    CHECK(parse_str("   _true + 1")
+                  ->equals(new AddExpr(new BoolExpr(true), new NumExpr(1))));
+    CHECK(parse_str("  ( ( ( _false)))")
+                  ->equals(new BoolExpr(false)));
+
+    CHECK_THROWS_WITH(parse_str("_tru"),
+                      "Expecting character(s): 'true'");
+    CHECK_THROWS_WITH(parse_str("_f"),
+                      "Expecting character(s): 'false'");
 }
 
 TEST_CASE("Parse mult and add expressions") {
@@ -72,9 +87,50 @@ TEST_CASE("Parse LetExpr expressions") {
                                                    new MultExpr(new VarExpr("y"), new NumExpr(2))))));
 
     CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Expecting character(s): '='");
-    CHECK_THROWS_WITH(parse_str("x=3 _in y + 1"), "Unexpected input after expression!");
+    CHECK_THROWS_WITH(parse_str("x=3 _in y + 1"), "Expecting character(s): '=='");
     CHECK_THROWS_WITH(parse_str("_let"), "Whitespace error after let");
     CHECK_THROWS_WITH(parse_str("_let x = 3"), "Expecting character(s): '_in'");
     CHECK_THROWS_WITH(parse_str("_letx = 3 _in x+2"), "Whitespace error after let");
     CHECK_THROWS_WITH(parse_str("_let x = 2 _inx + 3"), "Whitespace error after _in");
+    CHECK_THROWS_WITH(parse_str("_et x = 2 _inx + 3"), "Unknown underscore syntax");
+}
+
+TEST_CASE("Parse IfExpr") {
+    CHECK(parse_str("_if x _then x _else 1")
+                  ->equals(new IfExpr(new VarExpr("x"),
+                                      new VarExpr("x"),
+                                      new NumExpr(1))));
+
+    CHECK(parse_str("(_if x== 2 _then x _else 1) + 1")
+                  ->equals(new AddExpr(new IfExpr(new EqualExpr(new VarExpr("x"),
+                                                                new NumExpr(2)),
+                                                  new VarExpr("x"),
+                                                  new NumExpr(1)),
+                                       new NumExpr(1))));
+
+    CHECK(parse_str("2 + _if x _then x _else 1 + 1")
+                  ->equals(new AddExpr(new NumExpr(2),
+                                       new IfExpr(new VarExpr("x"),
+                                                  new VarExpr("x"),
+                                                  new AddExpr(new NumExpr(1),
+                                                              new NumExpr(1))))));
+
+    CHECK(parse_str(" _if _true _then (_let y = 0 _in y * 2) _else x + 1")
+                  ->equals(new IfExpr(new BoolExpr(true),
+                                      new LetExpr(new VarExpr("y"), new NumExpr(0),
+                                                  new MultExpr(new VarExpr("y"), new NumExpr(2))),
+                                      new AddExpr(new VarExpr("x"), new NumExpr(1)))));
+
+    CHECK(parse_str("_if _false _then _let y = 0 _in y * 2 _else 1")
+                  ->equals(new IfExpr(new BoolExpr(false),
+                                      new LetExpr(new VarExpr("y"),
+                                                  new NumExpr(0),
+                                                  new MultExpr(new VarExpr("y"), new NumExpr(2))),
+                                      new NumExpr(1))));
+
+    CHECK_THROWS_WITH(parse_str("_if x _then y + 1"), "Expecting character(s): '_else'");
+    CHECK_THROWS_WITH(parse_str("_if"), "Whitespace error after if");
+    CHECK_THROWS_WITH(parse_str("_if x == 3"), "Expecting character(s): '_then'");
+    CHECK_THROWS_WITH(parse_str("_ifx == 3 _then x+2"), "Whitespace error after if");
+    CHECK_THROWS_WITH(parse_str("_if x == 2 _thenx + 3"), "Whitespace error after _then");
 }

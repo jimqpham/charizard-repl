@@ -372,6 +372,10 @@ TEST_CASE("Should print or pretty print expressions") {
         // IfExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
         MultExpr mult3 = MultExpr(&num1, &if1);
 
+        MultExpr mult4 = MultExpr(&if1, new LetExpr(new VarExpr("x"),
+                                                    new NumExpr(2),
+                                                    new AddExpr(new VarExpr("x"), new NumExpr(2))));
+
         // IfExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
         AddExpr add3 = AddExpr(&mult3, &num1);
 
@@ -416,6 +420,10 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult3.to_string(true).c_str(), "3 * _if _true\n"
                                                     "    _then 3\n"
                                                     "    _else -2") == 0);
+        CHECK(strcmp(mult4.to_string(true).c_str(), "(_if _true\n"
+                                                    " _then 3\n"
+                                                    " _else -2) * _let x = 2\n"
+                                                    "             _in  x + 2") == 0);
         CHECK(strcmp(add3.to_string(true).c_str(), "3 * (_if _true\n"
                                                    "     _then 3\n"
                                                    "     _else -2) + 3") == 0);

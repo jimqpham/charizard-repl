@@ -62,6 +62,11 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
         AddExpr add16 = AddExpr(&mult1, &mult1);
 
         AddExpr add17 = AddExpr(new BoolExpr(true), &num1);
+        AddExpr add18 = AddExpr(&num1, new EqualExpr(new NumExpr(1),
+                                                     new NumExpr(2)));
+        AddExpr add19 = AddExpr(&num1, new IfExpr(new BoolExpr(true),
+                                                  &num1,
+                                                  &num2));
 
         CHECK(add1.interp()->value_equals(new NumVal(1)));
         CHECK_THROWS_WITH(add2.interp(), "No value for variable");
@@ -84,6 +89,8 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
         CHECK(add16.interp()->value_equals(new NumVal(-12)));
 
         CHECK_THROWS_WITH(add17.interp(), "add of non-number");
+        CHECK_THROWS_WITH(add18.interp(), "add of non-number");
+        CHECK(add19.interp()->value_equals(new NumVal(6)));
     }
 
 
@@ -158,6 +165,10 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
 
         // Interp EqualExpr with Var
         CHECK_THROWS_WITH(EqualExpr(&var1, &add1).interp(), "No value for variable");
+        CHECK_THROWS_WITH(EqualExpr(new LetExpr(new VarExpr("x"),
+                                                new NumExpr(2),
+                                                new AddExpr(new VarExpr("y"), new NumExpr(2))), &add1).interp(),
+                          "No value for variable");
 
         // Interp EqualExpr with BoolExpr
         CHECK(EqualExpr(&tr, &fls).interp()->value_equals(new BoolVal(false)));
