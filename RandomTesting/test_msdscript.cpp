@@ -8,12 +8,15 @@
 // and expressions with no vars are used for interp tests
 typedef enum {
     NUM,
+    BOOL,
     ADD_WITH_VAR,
     ADD_NO_VAR,
     MULT_WITH_VAR,
     MULT_NO_VAR,
     VAR,
     LET,
+    IF_WITH_VAR,
+    IF_NO_VAR,
     RANDOM_WITH_VAR,
     RANDOM_NO_VAR
 } expr_type_t;
@@ -25,34 +28,35 @@ static std::string make_var();
 std::string expr_string(expr_type_t expr_type);
 
 // Test when there's only a single msdscript program
-int test_single(const char *msdscript_path, const char *operation);
+int test_single(const char *msdscript_path, const char *operation, int numIterations);
 
 std::string exec_res_to_string(ExecResult exec_res);
 
 // Compare outputs of two msdscripts
-int compare_output(const char *msds1_path, const char *msds2_path, const char *operation);
+int compare_output(const char *msds1_path, const char *msds2_path, const char *operation, int numIterations);
 
 int main(int argc, char **argv) {
 
     int interp_tests = 0, print_tests = 0, pretty_print_tests = 0;
+    int numIterations = 500;
 
     if (argc <= 1) {
         std::cerr << "No msdscript path detected. Exiting...\n";
         exit(1);
     } else if (argc == 2) {
-        interp_tests = test_single(argv[1], "--interp");
-        print_tests = test_single(argv[1], "--print");
-        pretty_print_tests = test_single(argv[1], "--pretty-print");
+        interp_tests = test_single(argv[1], "--interp", numIterations);
+        print_tests = test_single(argv[1], "--print", numIterations);
+        pretty_print_tests = test_single(argv[1], "--pretty-print", numIterations);
     } else {
-        interp_tests = compare_output(argv[1], argv[2], "--interp");
-        print_tests = compare_output(argv[1], argv[2], "--print");
-        pretty_print_tests = compare_output(argv[1], argv[2], "--pretty-print");
+        interp_tests = compare_output(argv[1], argv[2], "--interp", numIterations);
+        print_tests = compare_output(argv[1], argv[2], "--print", numIterations);
+        pretty_print_tests = compare_output(argv[1], argv[2], "--pretty-print", numIterations);
     }
 
     std::cout << "\nTEST SUMMARY\n";
-    std::cout << "Interp: Passed " << interp_tests << "/100 test cases\n";
-    std::cout << "Print: Passed " << print_tests << "/100 test cases\n";
-    std::cout << "Pretty print: Passed " << pretty_print_tests << "/100 test cases\n";
+    std::cout << "Interp: Passed " << interp_tests << "/" << numIterations << " test cases\n";
+    std::cout << "Print: Passed " << print_tests << "/" << numIterations << " test cases\n";
+    std::cout << "Pretty print: Passed " << pretty_print_tests << "/" << numIterations << " test cases\n";
 }
 
 // Make a random var with < 32 chars in name
@@ -71,6 +75,13 @@ std::string expr_string(expr_type_t expr_type) {
     switch (expr_type) {
         case NUM:
             return std::to_string(rand() % 50);
+        case BOOL:
+            if (r < 4)
+                return " _true ";
+            else if (r < 7)
+                return "   _false ";
+            else
+                return expr_string(RANDOM_NO_VAR) + "==" + expr_string(BOOL);
         case ADD_WITH_VAR:
             return "(" + expr_string(RANDOM_WITH_VAR) + "+" + expr_string(RANDOM_WITH_VAR) + ")";
         case ADD_NO_VAR:
@@ -82,35 +93,45 @@ std::string expr_string(expr_type_t expr_type) {
         case LET:
             return "(_let " + make_var() + " = " + expr_string(RANDOM_WITH_VAR)
                    + " _in " + expr_string(RANDOM_WITH_VAR) + ")";
+        case IF_NO_VAR:
+            return " (_if " + expr_string(BOOL) + " _then " + expr_string(RANDOM_NO_VAR)
+                   + " _else " + expr_string(RANDOM_NO_VAR) + ")";
+        case IF_WITH_VAR:
+            return "( _if " + expr_string(BOOL) + " _then " + expr_string(RANDOM_WITH_VAR)
+                   + " _else " + expr_string(RANDOM_WITH_VAR) + " )";
         case VAR:
             return make_var();
         case RANDOM_WITH_VAR:
-            if (r < 4)
+            if (r < 3)
                 return expr_string(NUM);
-            else if (r < 7)
+            else if (r < 6)
                 return expr_string(VAR);
-            else if (r == 7)
+            else if (r == 6)
                 return expr_string(ADD_WITH_VAR);
-            else if (r == 8)
+            else if (r == 7)
                 return expr_string(MULT_WITH_VAR);
-            else
+            else if (r == 8)
                 return expr_string(LET);
-        case RANDOM_NO_VAR:
-            if (r < 6)
-                return expr_string(NUM);
-            else if (r < 8)
-                return expr_string(ADD_NO_VAR);
             else
+                return expr_string(IF_WITH_VAR);
+        case RANDOM_NO_VAR:
+            if (r < 7)
+                return expr_string(NUM);
+            else if (r == 7)
+                return expr_string(ADD_NO_VAR);
+            else if (r == 8)
                 return expr_string(MULT_NO_VAR);
+            else
+                return expr_string(IF_NO_VAR);
     }
 }
 
 // Test when there's only a single msdscript program
-int test_single(const char *msdscript_path, const char *operation) {
+int test_single(const char *msdscript_path, const char *operation, int iteration) {
     const char *const argv[] = {msdscript_path, operation};
     int numTestsPassed = 0;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < iteration; i++) {
         // If interp, use no-var expressions. If print/pretty-print, use expressions with vars
         std::string in = strcmp(operation, "--interp") == 0
                          ? expr_string(RANDOM_NO_VAR)
@@ -161,12 +182,12 @@ std::string exec_res_to_string(ExecResult exec_res) {
 }
 
 // Compare outputs of two msdscripts
-int compare_output(const char *msds1_path, const char *msds2_path, const char *operation) {
+int compare_output(const char *msds1_path, const char *msds2_path, const char *operation, int iteration) {
     const char *const interp1_argv[] = {msds1_path, operation};
     const char *const interp2_argv[] = {msds2_path, operation};
     int numOutputsMatched = 0;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < iteration; i++) {
         // If interp, use no-var expressions. If print/pretty-print, use expressions with vars
         std::string in = strcmp(operation, "--interp") == 0
                          ? expr_string(RANDOM_NO_VAR)
