@@ -52,7 +52,7 @@ VarExpr *parse_var(std::istream &in) {
 }
 
 Expr *parse_let(std::istream &in) {
-    parse_keyword(in, "let");
+    parse_keyword(in, "let", true);
 
     skip_whitespace(in);
 
@@ -70,7 +70,7 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    parse_keyword(in, "_in");
+    parse_keyword(in, "_in", true);
 
     skip_whitespace(in);
 
@@ -80,7 +80,7 @@ Expr *parse_let(std::istream &in) {
 }
 
 Expr *parse_if(std::istream &in) {
-    parse_keyword(in, "if");
+    parse_keyword(in, "if", true);
 
     skip_whitespace(in);
 
@@ -88,7 +88,7 @@ Expr *parse_if(std::istream &in) {
 
     skip_whitespace(in);
 
-    parse_keyword(in, "_then");
+    parse_keyword(in, "_then", true);
 
     skip_whitespace(in);
 
@@ -96,7 +96,7 @@ Expr *parse_if(std::istream &in) {
 
     skip_whitespace(in);
 
-    parse_keyword(in, "_else");
+    parse_keyword(in, "_else", true);
 
     skip_whitespace(in);
 
@@ -108,7 +108,7 @@ Expr *parse_if(std::istream &in) {
 }
 
 Expr *parse_true(std::istream &in) {
-    parse_keyword(in, "true");
+    parse_keyword(in, "true", false);
 
     skip_whitespace(in);
 
@@ -116,7 +116,7 @@ Expr *parse_true(std::istream &in) {
 }
 
 Expr *parse_false(std::istream &in) {
-    parse_keyword(in, "false");
+    parse_keyword(in, "false", false);
 
     skip_whitespace(in);
 
@@ -232,7 +232,7 @@ bool check_and_consume(std::istream &in, char expected) {
     return true;
 }
 
-void parse_keyword(std::istream &in, std::string expected) {
+void parse_keyword(std::istream &in, std::string expected, bool spaceAfter) {
     for (std::string::iterator iterator = expected.begin();
          iterator < expected.end(); iterator++) {
         if (!check_and_consume(in, *iterator)) {
@@ -242,7 +242,7 @@ void parse_keyword(std::istream &in, std::string expected) {
         }
     }
 
-    if (!isspace(in.peek())) {
+    if (spaceAfter && !isspace(in.peek())) {
         std::string errorMessage = "Whitespace error after ";
         errorMessage.append(expected);
         throw std::runtime_error(errorMessage);

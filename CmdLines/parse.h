@@ -22,7 +22,7 @@ Expr *parse_expr(std::istream &in);
 
 Expr *parse(std::istream &in);
 
-void parse_keyword(std::istream &in, std::string expected);
+void parse_keyword(std::istream &in, std::string expected, bool spaceAfter);
 
 bool check_and_consume(std::istream &in, char expected);
 
