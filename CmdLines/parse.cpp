@@ -5,6 +5,8 @@
 #include "../Expressions/mult_expr.h"
 #include "../Expressions/add_expr.h"
 #include "../Expressions/let_expr.h"
+#include "../Expressions/if_expr.h"
+#include "../Expressions/bool_expr.h"
 
 
 Expr *parse_num(std::istream &in) {
@@ -50,10 +52,7 @@ VarExpr *parse_var(std::istream &in) {
 }
 
 Expr *parse_let(std::istream &in) {
-    parse_keyword(in, "_let");
-
-    if (!isspace(in.peek()))
-        throw std::runtime_error("Whitespace error after _let");
+    parse_keyword(in, "let");
 
     skip_whitespace(in);
 
@@ -61,7 +60,9 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    check_and_consume(in, '=');
+    // If the next character is not "=", throw an error
+    if (!check_and_consume(in, '='))
+        throw std::runtime_error("Expecting character(s): '='");
 
     skip_whitespace(in);
 
@@ -71,14 +72,70 @@ Expr *parse_let(std::istream &in) {
 
     parse_keyword(in, "_in");
 
-    if (!isspace(in.peek()))
-        throw std::runtime_error("Whitespace error after _in");
-
     skip_whitespace(in);
 
     Expr *body = parse_expr(in);
 
     return new LetExpr(variable, rhs, body);
+}
+
+Expr *parse_if(std::istream &in) {
+    parse_keyword(in, "if");
+
+    skip_whitespace(in);
+
+    Expr *condition = parse_expr(in);
+
+    skip_whitespace(in);
+
+    parse_keyword(in, "_then");
+
+    skip_whitespace(in);
+
+    Expr *thenBranch = parse_expr(in);
+
+    skip_whitespace(in);
+
+    parse_keyword(in, "_else");
+
+    skip_whitespace(in);
+
+    Expr *elseBranch = parse_expr(in);
+
+    skip_whitespace(in);
+
+    return new IfExpr(condition, thenBranch, elseBranch);
+}
+
+Expr *parse_true(std::istream &in) {
+    parse_keyword(in, "true");
+
+    skip_whitespace(in);
+
+    return new BoolExpr(true);
+}
+
+Expr *parse_false(std::istream &in) {
+    parse_keyword(in, "false");
+
+    skip_whitespace(in);
+
+    return new BoolExpr(false);
+}
+
+Expr *parse_underscore(std::istream &in) {
+    consume(in, '_');
+    int c = in.peek();
+    if (c == 'l')
+        return parse_let(in);
+    else if (c == 't')
+        return parse_true(in);
+    else if (c == 'f')
+        return parse_false(in);
+    else if (c == 'i')
+        return parse_if(in);
+    else
+        throw std::runtime_error("Unknown underscore syntax");
 }
 
 Expr *parse_multicand(std::istream &in) {
@@ -98,7 +155,7 @@ Expr *parse_multicand(std::istream &in) {
     } else if (isalpha(c)) {
         return parse_var(in);
     } else if (c == '_') {
-        return parse_let(in);
+        return parse_underscore(in);
     } else {
         consume(in, c);
         throw std::runtime_error("Invalid input!");
@@ -158,21 +215,37 @@ Expr *parse_str(std::string s) {
     return parse(in);
 }
 
-void check_and_consume(std::istream &in, char expected) {
+/***********************************
+ ************** HELPERS ************
+ ***********************************/
+
+bool check_and_consume(std::istream &in, char expected) {
 
     std::string message = "Missing character: Expect ";
     message += expected;
 
     if (in.peek() != expected)
-        throw std::runtime_error(message);
+        return false;
     else
         consume(in, expected);
+
+    return true;
 }
 
 void parse_keyword(std::istream &in, std::string expected) {
     for (std::string::iterator iterator = expected.begin();
          iterator < expected.end(); iterator++) {
-        check_and_consume(in, *iterator);
+        if (!check_and_consume(in, *iterator)) {
+            std::string errorMessage = "Expecting character(s): '";
+            errorMessage.append(expected).append("'");
+            throw std::runtime_error(errorMessage);
+        }
+    }
+
+    if (!isspace(in.peek())) {
+        std::string errorMessage = "Whitespace error after ";
+        errorMessage.append(expected);
+        throw std::runtime_error(errorMessage);
     }
 }
 

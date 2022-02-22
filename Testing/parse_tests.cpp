@@ -71,10 +71,10 @@ TEST_CASE("Parse LetExpr expressions") {
                                                    new NumExpr(0),
                                                    new MultExpr(new VarExpr("y"), new NumExpr(2))))));
 
-    CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Missing character: Expect =");
+    CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Expecting character(s): '='");
     CHECK_THROWS_WITH(parse_str("x=3 _in y + 1"), "Unexpected input after expression!");
-    CHECK_THROWS_WITH(parse_str("_let"), "Whitespace error after _let");
-    CHECK_THROWS_WITH(parse_str("_let x = 3"), "Missing character: Expect _");
-    CHECK_THROWS_WITH(parse_str("_letx = 3 _in x+2"), "Whitespace error after _let");
+    CHECK_THROWS_WITH(parse_str("_let"), "Whitespace error after let");
+    CHECK_THROWS_WITH(parse_str("_let x = 3"), "Expecting character(s): '_in'");
+    CHECK_THROWS_WITH(parse_str("_letx = 3 _in x+2"), "Whitespace error after let");
     CHECK_THROWS_WITH(parse_str("_let x = 2 _inx + 3"), "Whitespace error after _in");
 }
