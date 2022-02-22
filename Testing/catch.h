@@ -4966,7 +4966,7 @@ namespace Catch {
                 }
 
                 std::string describe() const override {
-                    return "equals string: " + Catch::Detail::stringify( m_substr );
+                    return "value_equals string: " + Catch::Detail::stringify( m_substr );
                 }
             };
 
@@ -11742,7 +11742,7 @@ namespace Matchers {
             return description;
         }
 
-        EqualsMatcher::EqualsMatcher( CasedString const& comparator ) : StringMatcherBase( "equals", comparator ) {}
+        EqualsMatcher::EqualsMatcher( CasedString const& comparator ) : StringMatcherBase( "value_equals", comparator ) {}
 
         bool EqualsMatcher::match( std::string const& source ) const {
             return m_comparator.adjustString( source ) == m_comparator.m_str;

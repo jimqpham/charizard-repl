@@ -2,6 +2,7 @@
 #include "../Vals/num_val.h"
 #include "../Vals/bool_val.h"
 #include "../Expressions/num_expr.h"
+#include "../Expressions/bool_expr.h"
 
 TEST_CASE("Test BoolVal methods") {
 
@@ -10,10 +11,10 @@ TEST_CASE("Test BoolVal methods") {
     BoolVal *fls = new BoolVal(false);
     NumVal *two = new NumVal(2);
 
-    SECTION("The equals method") {
-        CHECK(tr->equals(otherTr));
-        CHECK(!tr->equals(fls));
-        CHECK(!tr->equals(two));
+    SECTION("The value_equals method") {
+        CHECK(tr->value_equals(otherTr));
+        CHECK(!tr->value_equals(fls));
+        CHECK(!tr->value_equals(two));
     }
 
     SECTION("The add_to method") {
@@ -32,6 +33,7 @@ TEST_CASE("Test BoolVal methods") {
     }
 
     SECTION("The to_expr method") {
-        CHECK(tr->to_expr() == nullptr);
+        CHECK(tr->to_expr()->equals(new BoolExpr(true)));
+        CHECK(fls->to_expr()->equals(new BoolExpr(false)));
     }
 }

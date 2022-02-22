@@ -1,11 +1,12 @@
 #include "expr.h"
 
-class BoolExpr : public Expr {
+class EqualExpr : public Expr {
 private:
-    bool val;
+    Expr *lhs;
+    Expr *rhs;
 
 public:
-    explicit BoolExpr(bool val);
+    EqualExpr(Expr *lhs, Expr *rhs);
 
     bool equals(Expr *o) override;
 

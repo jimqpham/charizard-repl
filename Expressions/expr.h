@@ -5,6 +5,7 @@
 
 typedef enum {
     prec_none,
+    prec_equal,
     prec_add,
     prec_mult
 } precedence_t;
@@ -25,7 +26,7 @@ public:
 
     virtual void pretty_print_at(std::ostream &out,
                                  precedence_t precedence,
-                                 bool needsParenthesesForLet,
+                                 bool kwrdNeedsPars,
                                  std::streampos &newLinePos) = 0;
 
     ////// HELPER METHOD

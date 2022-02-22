@@ -36,7 +36,7 @@ void use_arguments(int argc, char **argv) {
                 std::cout << helpText;
             } else if (strcmp(argv[i], "--test") == 0) {
                 if (!printTestsPassed) {
-                    assert(Catch::Session().run(1, argv) == 0);
+                    Catch::Session().run(1, argv);
                     printTestsPassed = true;
                 } else {
                     throw std::runtime_error("Duplicate --test params!");

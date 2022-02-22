@@ -39,17 +39,14 @@ void AddExpr::print(std::ostream &out) {
 
 void AddExpr::pretty_print_at(std::ostream &out,
                               precedence_t precedence,
-                              bool needsParenthesesForLet,
+                              bool kwrdNeedsPars,
                               std::streampos &newLinePos) {
-    if (precedence >= prec_add) {
-        out << std::string("(");
-        this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
-        out << std::string(" + ");
-        this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet, newLinePos);
-        out << std::string(")");
-    } else {
-        this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
-        out << std::string(" + ");
-        this->rhs->pretty_print_at(out, prec_none, needsParenthesesForLet, newLinePos);
-    }
+
+    bool parenthesized = precedence >= prec_add;
+
+    parenthesized && (out << "(");
+    this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
+    out << std::string(" + ");
+    this->rhs->pretty_print_at(out, prec_equal, !parenthesized && kwrdNeedsPars, newLinePos);
+    parenthesized && (out << ")");
 }

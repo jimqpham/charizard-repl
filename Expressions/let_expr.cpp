@@ -56,14 +56,14 @@ void LetExpr::print(std::ostream &out) {
 
 void LetExpr::pretty_print_at(std::ostream &out,
                               precedence_t precedence,
-                              bool needsParenthesesForLet,
+                              bool kwrdNeedsPars,
                               std::streampos &newLinePos) {
 
-    std::streampos letColumn = needsParenthesesForLet
+    std::streampos letColumn = kwrdNeedsPars
                                ? out.tellp() - newLinePos + 1 // add one more column for the opening parenthesis
                                : out.tellp() - newLinePos;
-    std::string openingBracket = needsParenthesesForLet ? "(" : "";
-    std::string closingBracket = needsParenthesesForLet ? ")" : "";
+    std::string openingBracket = kwrdNeedsPars ? "(" : "";
+    std::string closingBracket = kwrdNeedsPars ? ")" : "";
 
     // PRINT LINE 1
     out << openingBracket << "_let ";

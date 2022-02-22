@@ -30,7 +30,7 @@ void BoolExpr::print(std::ostream &out) {
     out << (val ? "_true" : "_false");
 }
 
-void BoolExpr::pretty_print_at(std::ostream &out, precedence_t precedence, bool needsParenthesesForLet,
+void BoolExpr::pretty_print_at(std::ostream &out, precedence_t precedence, bool kwrdNeedsPars,
                                std::streampos &newLinePos) {
     this->print(out);
 }

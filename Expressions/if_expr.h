@@ -1,16 +1,13 @@
 #include "expr.h"
-#include "var_expr.h"
 
-class Val;
-
-class LetExpr : public Expr {
+class IfExpr : public Expr {
 private:
-    VarExpr *variable;
-    Expr *rhs;
-    Expr *body;
+    Expr *condition;
+    Expr *thenBranch;
+    Expr *elseBranch;
 
 public:
-    LetExpr(VarExpr *variable, Expr *rhs, Expr *body);
+    IfExpr(Expr *condition, Expr *thenBranch, Expr *elseBranch);
 
     bool equals(Expr *o) override;
 

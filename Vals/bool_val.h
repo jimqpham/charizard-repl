@@ -8,7 +8,7 @@ private:
 public:
     explicit BoolVal(bool rep);
 
-    bool equals(Val *o) override;
+    bool value_equals(Val *o) override;
 
     Val *add_to(Val *o) override;
 

@@ -5,8 +5,10 @@
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
 #include "../Expressions/bool_expr.h"
+#include "../Expressions/equal_expr.h"
+#include "../Expressions/if_expr.h"
 
-TEST_CASE("Test NumExpr equals") {
+TEST_CASE("Test NumExpr value_equals") {
     SECTION("NumExpr should be equal to NumExpr of same value") {
         NumExpr num = NumExpr(10);
         NumExpr anotherNum = NumExpr(10);
@@ -27,7 +29,7 @@ TEST_CASE("Test NumExpr equals") {
     }
 }
 
-TEST_CASE("Test BoolExpr equals") {
+TEST_CASE("Test BoolExpr value_equals") {
     BoolExpr tr = BoolExpr(true);
     BoolExpr otherTr = BoolExpr(10);
     BoolExpr fls = BoolExpr(false);
@@ -49,7 +51,7 @@ TEST_CASE("Test BoolExpr equals") {
     }
 }
 
-TEST_CASE("Test AddExpr equals") {
+TEST_CASE("Test AddExpr value_equals") {
 
     SECTION("AddExpr should be equal to AddExpr of same components") {
         NumExpr firstNum = NumExpr(10);
@@ -81,7 +83,7 @@ TEST_CASE("Test AddExpr equals") {
     }
 }
 
-TEST_CASE("Test MultExpr equals") {
+TEST_CASE("Test MultExpr value_equals") {
 
     SECTION("MultExpr should be equal to MultExpr of same components") {
         NumExpr firstNum = NumExpr(0);
@@ -117,7 +119,36 @@ TEST_CASE("Test MultExpr equals") {
     }
 }
 
-TEST_CASE("Test VarExpr equals") {
+TEST_CASE("Test EqualExpr value_equals") {
+    NumExpr zero = NumExpr(0);
+    NumExpr twenty = NumExpr(20);
+    NumExpr otherZero = NumExpr(0);
+    NumExpr otherTwenty = NumExpr(20);
+
+    SECTION("EqualExpr should be equal to EqualExpr of same components") {
+        EqualExpr eq1 = EqualExpr(&zero, &twenty);
+        EqualExpr eq2 = EqualExpr(&otherZero, &otherTwenty);
+        CHECK(eq1.equals(&eq2));
+    }
+
+    SECTION("MultExpr should not be equal to MultExpr of different components") {
+        EqualExpr eq1 = EqualExpr(&zero, &twenty);
+        EqualExpr eq2 = EqualExpr(&otherTwenty, &otherZero);
+        EqualExpr eq3 = EqualExpr(&twenty, &twenty);
+        EqualExpr eq4 = EqualExpr(&zero, &zero);
+
+        CHECK(!eq1.equals(&eq2));
+        CHECK(!eq1.equals(&eq3));
+        CHECK(!eq1.equals(&eq4));
+    }
+
+    SECTION("MultExpr should not equal objects of other classes") {
+        EqualExpr eq1 = EqualExpr(&zero, &twenty);
+        CHECK(!eq1.equals(&zero));
+    }
+}
+
+TEST_CASE("Test VarExpr value_equals") {
     SECTION("VarExpr should be equal to VarExpr of same name") {
         VarExpr var = VarExpr("charizard");
         VarExpr anotherVar = VarExpr("charizard");
@@ -138,7 +169,7 @@ TEST_CASE("Test VarExpr equals") {
     }
 }
 
-TEST_CASE("Test LetExpr equals") {
+TEST_CASE("Test LetExpr value_equals") {
     SECTION("LetExpr should equal LetExpr of same components") {
         NumExpr num1 = NumExpr(4);
         NumExpr num2 = NumExpr(5);
@@ -167,6 +198,38 @@ TEST_CASE("Test LetExpr equals") {
         VarExpr var1 = VarExpr("x");
         AddExpr add1 = AddExpr(&var1, &num1);
         CHECK(!(new LetExpr(&var1, &num1, &add1))->equals(&add1));
+    }
+}
+
+TEST_CASE("Test IfExpr value_equals") {
+    SECTION("IfExpr should equal IfExpr of same components") {
+        NumExpr four = NumExpr(4);
+        NumExpr five = NumExpr(5);
+        BoolExpr tr = BoolExpr(true);
+        AddExpr add1 = AddExpr(&four, &five);
+        CHECK((new IfExpr(&tr, &add1, &four))
+                      ->equals(new IfExpr(new BoolExpr(true), &add1, new NumExpr(4))));
+    }
+
+    SECTION("LetExpr should not equal LetExpr of different components") {
+        NumExpr num1 = NumExpr(4);
+        NumExpr num2 = NumExpr(5);
+        BoolExpr tr = BoolExpr(true);
+        BoolExpr fls = BoolExpr(false);
+        AddExpr add1 = AddExpr(&tr, &num1);
+        CHECK(!(new IfExpr(&tr, &num2, &add1))
+                ->equals(new IfExpr(&fls, &num2, &add1))); // difference in var (lhs)
+        CHECK(!(new IfExpr(&tr, &num1, &add1))
+                ->equals(new IfExpr(&tr, &num2, &add1))); //difference in rhs
+        CHECK(!(new IfExpr(&tr, &num1, &add1))
+                ->equals(new IfExpr(&tr, &num1, &num2))); //difference in body
+    }
+
+    SECTION("LetExpr should not equal objects of other classes") {
+        NumExpr num1 = NumExpr(4);
+        VarExpr var1 = VarExpr("x");
+        AddExpr add1 = AddExpr(&var1, &num1);
+        CHECK(!(new IfExpr(&var1, &num1, &add1))->equals(&add1));
     }
 }
 

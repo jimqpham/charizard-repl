@@ -6,6 +6,8 @@
 #include "../Expressions/var_expr.h"
 #include "../Expressions/let_expr.h"
 #include "../Expressions/bool_expr.h"
+#include "../Expressions/equal_expr.h"
+#include "../Expressions/if_expr.h"
 
 TEST_CASE("Should print or pretty print expressions") {
     NumExpr num1 = NumExpr(3);
@@ -18,6 +20,7 @@ TEST_CASE("Should print or pretty print expressions") {
     AddExpr add1 = AddExpr(&num1, &num2); //"3 + -2"
     MultExpr mult1 = MultExpr(&num1, &num2); //"3 * -2"
     LetExpr let1 = LetExpr(&var1, &num1, new AddExpr(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
+    IfExpr if1 = IfExpr(&tr, &num1, &num2);
 
     SECTION("Should print NumExpr") {
         CHECK(strcmp(num1.to_string().c_str(), "3") == 0);
@@ -116,6 +119,20 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult16.to_string().c_str(), "((3*-2)*(3*-2))") == 0);
     }
 
+    SECTION("Should print EqualExpr") {
+        EqualExpr eq1 = EqualExpr(&num1, &num2);
+        EqualExpr eq2 = EqualExpr(&add1, &num1);
+        EqualExpr eq3 = EqualExpr(&num1, &mult1);
+        EqualExpr eq4 = EqualExpr(&num1, &tr);
+        EqualExpr eq5 = EqualExpr(&let1, &num1);
+
+        CHECK(strcmp(eq1.to_string().c_str(), "(3==-2)") == 0);
+        CHECK(strcmp(eq2.to_string().c_str(), "((3+-2)==3)") == 0);
+        CHECK(strcmp(eq3.to_string().c_str(), "(3==(3*-2))") == 0);
+        CHECK(strcmp(eq4.to_string().c_str(), "(3==_true)") == 0);
+        CHECK(strcmp(eq5.to_string().c_str(), "((_let x=3 _in (x+-2))==3)") == 0);
+    }
+
     SECTION("Should print LetExpr") {
         // Nested lets - body is a LetExpr expr
         LetExpr let2 = LetExpr(&var1, &num2, &let1); // "_let x=-2 _in (_let x=3 _in (x+-2))"
@@ -146,6 +163,40 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult2.to_string().c_str(), "(3*(3+(_let x=3 _in (x+-2))))") == 0);
         CHECK(strcmp(mult3.to_string().c_str(), "(3*(_let x=3 _in (x+-2)))") == 0);
         CHECK(strcmp(add3.to_string().c_str(), "((3*(_let x=3 _in (x+-2)))+3)") == 0);
+    }
+
+    SECTION("Should print IfExpr") {
+
+        // Nested ifs - thenBranch is a LetExpr expr
+        IfExpr if2 = IfExpr(&fls, &if1, &num1);
+
+        // Nested ifs - elseBranch is a LetExpr expr
+        IfExpr if3 = IfExpr(&tr, &num1, &if1);
+
+        // Nested lets - both thenBranch and elseBranch are LetExpr expr's
+        IfExpr if4 = IfExpr(new EqualExpr(new NumExpr(1), new NumExpr(1)), &if1, &if1);
+
+        // IfExpr is lhs of a +/* expr
+        AddExpr add2 = AddExpr(&if1, &num1);
+
+        // IfExpr is rhs of a parenthesized +/* expr
+        MultExpr mult2 = MultExpr(&num1, new AddExpr(&num1, &if1));
+
+        // IfExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context when pretty print
+        MultExpr mult3 = MultExpr(&num1, &if1);
+
+        // IfExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context when pretty print
+        AddExpr add3 = AddExpr(&mult3, &num1);
+
+        CHECK(strcmp(if1.to_string().c_str(), "(_if _true _then 3 _else -2)") == 0);
+        CHECK(strcmp(if2.to_string().c_str(), "(_if _false _then (_if _true _then 3 _else -2) _else 3)") == 0);
+        CHECK(strcmp(if3.to_string().c_str(), "(_if _true _then 3 _else (_if _true _then 3 _else -2))") == 0);
+        CHECK(strcmp(if4.to_string().c_str(),
+                     "(_if (1==1) _then (_if _true _then 3 _else -2) _else (_if _true _then 3 _else -2))") == 0);
+        CHECK(strcmp(add2.to_string().c_str(), "((_if _true _then 3 _else -2)+3)") == 0);
+        CHECK(strcmp(mult2.to_string().c_str(), "(3*(3+(_if _true _then 3 _else -2)))") == 0);
+        CHECK(strcmp(mult3.to_string().c_str(), "(3*(_if _true _then 3 _else -2))") == 0);
+        CHECK(strcmp(add3.to_string().c_str(), "((3*(_if _true _then 3 _else -2))+3)") == 0);
     }
 
     SECTION("Should pretty print Number") {
@@ -240,6 +291,23 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(mult16.to_string(true).c_str(), "(3 * -2) * 3 * -2") == 0);
     }
 
+    SECTION("Should pretty print EqualExpr") {
+        EqualExpr eq1 = EqualExpr(&num1, &num2);
+        EqualExpr eq2 = EqualExpr(&add1, &num1);
+        EqualExpr eq3 = EqualExpr(&num1, &mult1);
+        EqualExpr eq4 = EqualExpr(&num1, &tr);
+        EqualExpr eq5 = EqualExpr(&let1, &num1);
+        AddExpr add2 = AddExpr(&eq1, &eq4);
+
+        CHECK(strcmp(eq1.to_string(true).c_str(), "3 == -2") == 0);
+        CHECK(strcmp(eq2.to_string(true).c_str(), "3 + -2 == 3") == 0);
+        CHECK(strcmp(eq3.to_string(true).c_str(), "3 == 3 * -2") == 0);
+        CHECK(strcmp(eq4.to_string(true).c_str(), "3 == _true") == 0);
+        CHECK(strcmp(eq5.to_string(true).c_str(), "(_let x = 3\n"
+                                                  " _in  x + -2) == 3") == 0);
+        CHECK(strcmp(add2.to_string(true).c_str(), "(3 == -2) + (3 == _true)") == 0);
+    }
+
     SECTION("Should pretty print LetExpr") {
         // Nested lets - body is a LetExpr expr
         LetExpr let2 = LetExpr(&var1, &num2, &let1); // "_let x=-2 _in (_let x=3 _in (x+-2))"
@@ -282,6 +350,82 @@ TEST_CASE("Should print or pretty print expressions") {
                                                     "    _in  x + -2") == 0);
         CHECK(strcmp(add3.to_string(true).c_str(), "3 * (_let x = 3\n"
                                                    "     _in  x + -2) + 3") == 0);
+    }
+
+    SECTION("Should pretty print IfExpr") {
+
+        // Nested ifs - thenBranch is a LetExpr expr
+        IfExpr if2 = IfExpr(&fls, &if1, &num1);
+
+        // Nested ifs - elseBranch is a LetExpr expr
+        IfExpr if3 = IfExpr(&tr, &num1, &if1);
+
+        // Nested lets - both thenBranch and elseBranch are LetExpr expr's
+        IfExpr if4 = IfExpr(new EqualExpr(new NumExpr(1), new NumExpr(1)), &if1, &if1);
+
+        // IfExpr is lhs of a +/* expr
+        AddExpr add2 = AddExpr(&if1, &num1);
+
+        // IfExpr is rhs of a parenthesized +/* expr
+        MultExpr mult2 = MultExpr(&num1, new AddExpr(&num1, &if1));
+
+        // IfExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
+        MultExpr mult3 = MultExpr(&num1, &if1);
+
+        // IfExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
+        AddExpr add3 = AddExpr(&mult3, &num1);
+
+        // Class example 1
+        LetExpr if6 = LetExpr(new VarExpr("same"),
+                              new EqualExpr(new NumExpr(1), new NumExpr(2)),
+                              new IfExpr(new EqualExpr(new NumExpr(1), new NumExpr(2)),
+                                         new AddExpr(new BoolExpr(false), new NumExpr(5)),
+                                         new NumExpr(88)));
+        // Class example 2
+        IfExpr if7 = IfExpr(new AddExpr(new NumExpr(4), new NumExpr(1)),
+                            new NumExpr(2),
+                            new NumExpr(3));
+
+        CHECK(strcmp(if1.to_string(true).c_str(), "_if _true\n"
+                                                  "_then 3\n"
+                                                  "_else -2") == 0);
+        CHECK(strcmp(if2.to_string(true).c_str(), "_if _false\n"
+                                                  "_then _if _true\n"
+                                                  "      _then 3\n"
+                                                  "      _else -2\n"
+                                                  "_else 3") == 0);
+        CHECK(strcmp(if3.to_string(true).c_str(), "_if _true\n"
+                                                  "_then 3\n"
+                                                  "_else _if _true\n"
+                                                  "      _then 3\n"
+                                                  "      _else -2") == 0);
+        CHECK(strcmp(if4.to_string(true).c_str(),
+                     "_if 1 == 1\n"
+                     "_then _if _true\n"
+                     "      _then 3\n"
+                     "      _else -2\n"
+                     "_else _if _true\n"
+                     "      _then 3\n"
+                     "      _else -2") == 0);
+        CHECK(strcmp(add2.to_string(true).c_str(), "(_if _true\n"
+                                                   " _then 3\n"
+                                                   " _else -2) + 3") == 0);
+        CHECK(strcmp(mult2.to_string(true).c_str(), "3 * (3 + _if _true\n"
+                                                    "         _then 3\n"
+                                                    "         _else -2)") == 0);
+        CHECK(strcmp(mult3.to_string(true).c_str(), "3 * _if _true\n"
+                                                    "    _then 3\n"
+                                                    "    _else -2") == 0);
+        CHECK(strcmp(add3.to_string(true).c_str(), "3 * (_if _true\n"
+                                                   "     _then 3\n"
+                                                   "     _else -2) + 3") == 0);
+        CHECK(strcmp(if6.to_string(true).c_str(), "_let same = 1 == 2\n"
+                                                  "_in  _if 1 == 2\n"
+                                                  "     _then _false + 5\n"
+                                                  "     _else 88") == 0);
+        CHECK(strcmp(if7.to_string(true).c_str(), "_if 4 + 1\n"
+                                                  "_then 2\n"
+                                                  "_else 3") == 0);
     }
 }
 

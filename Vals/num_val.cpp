@@ -9,7 +9,7 @@ NumVal::NumVal(int rep) {
     this->rep = rep;
 }
 
-bool NumVal::equals(Val *o) {
+bool NumVal::value_equals(Val *o) {
     NumVal *otherVal = dynamic_cast<NumVal *>(o);
 
     if (otherVal != nullptr)

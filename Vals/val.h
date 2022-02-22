@@ -4,7 +4,7 @@ class Expr;
 
 class Val {
 public:
-    virtual bool equals(Val *o) = 0;
+    virtual bool value_equals(Val *o) = 0;
 
     virtual Val *add_to(Val *o) = 0;
 

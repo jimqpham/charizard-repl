@@ -1,10 +1,11 @@
 #include "bool_val.h"
+#include "../Expressions/bool_expr.h"
 
 BoolVal::BoolVal(bool rep) {
     this->rep = rep;
 }
 
-bool BoolVal::equals(Val *o) {
+bool BoolVal::value_equals(Val *o) {
     BoolVal *otherVal = dynamic_cast<BoolVal *>(o);
 
     if (otherVal != nullptr)
@@ -26,5 +27,5 @@ std::string BoolVal::to_string() {
 }
 
 Expr *BoolVal::to_expr() {
-    return nullptr;
+    return new BoolExpr(this->rep);
 }

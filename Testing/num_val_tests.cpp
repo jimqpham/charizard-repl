@@ -13,20 +13,20 @@ TEST_CASE("Test NumVal methods") {
     NumVal *twelve = new NumVal(12);
     NumVal *nullVal = nullptr;
 
-    SECTION("The equals method") {
-        CHECK(ten->equals(otherTen));
-        CHECK(!ten->equals(eight));
-        CHECK(!ten->equals(nullVal));
+    SECTION("The value_equals method") {
+        CHECK(ten->value_equals(otherTen));
+        CHECK(!ten->value_equals(eight));
+        CHECK(!ten->value_equals(nullVal));
     }
 
     SECTION("The add_to method") {
-        CHECK(ten->equals(two->add_to(eight)));
-        CHECK(ten->equals(negTwo->add_to(twelve)));
+        CHECK(ten->value_equals(two->add_to(eight)));
+        CHECK(ten->value_equals(negTwo->add_to(twelve)));
         CHECK_THROWS_WITH(two->add_to(nullVal), "add of non-number");
     }
 
     SECTION("The mult_by method") {
-        CHECK((two->mult_by(five))->equals(ten));
+        CHECK((two->mult_by(five))->value_equals(ten));
         CHECK_THROWS_WITH(five->mult_by(nullVal), "mult of non-number");
     }
 

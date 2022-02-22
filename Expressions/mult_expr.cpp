@@ -39,17 +39,13 @@ void MultExpr::print(std::ostream &out) {
 
 void MultExpr::pretty_print_at(std::ostream &out,
                                precedence_t precedence,
-                               bool needsParenthesesForLet,
+                               bool kwrdNeedsPars,
                                std::streampos &newLinePos) {
-    if (precedence >= prec_mult) {
-        out << std::string("(");
-        this->lhs->pretty_print_at(out, prec_mult, true, newLinePos);
-        out << std::string(" * ");
-        this->rhs->pretty_print_at(out, prec_add, needsParenthesesForLet, newLinePos);
-        out << std::string(")");
-    } else {
-        this->lhs->pretty_print_at(out, prec_mult, true, newLinePos);
-        out << std::string(" * ");
-        this->rhs->pretty_print_at(out, prec_add, needsParenthesesForLet, newLinePos);
-    }
+    bool parenthesized = precedence >= prec_mult;
+
+    parenthesized && (out << "(");
+    this->lhs->pretty_print_at(out, prec_mult, true, newLinePos);
+    out << std::string(" * ");
+    this->rhs->pretty_print_at(out, prec_add, !parenthesized && kwrdNeedsPars, newLinePos);
+    parenthesized && (out << ")");
 }

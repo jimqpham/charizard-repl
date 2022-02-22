@@ -36,7 +36,7 @@ void VarExpr::print(std::ostream &out) {
 
 void VarExpr::pretty_print_at(std::ostream &out,
                               precedence_t precedence,
-                              bool needsParenthesesForLet,
+                              bool kwrdNeedsPars,
                               std::streampos &newLinePos) {
     this->print(out);
 }
