@@ -131,7 +131,7 @@ TEST_CASE("Test EqualExpr value_equals") {
         CHECK(eq1.equals(&eq2));
     }
 
-    SECTION("MultExpr should not be equal to MultExpr of different components") {
+    SECTION("EqualExpr should not be equal to MultExpr of different components") {
         EqualExpr eq1 = EqualExpr(&zero, &twenty);
         EqualExpr eq2 = EqualExpr(&otherTwenty, &otherZero);
         EqualExpr eq3 = EqualExpr(&twenty, &twenty);
@@ -142,7 +142,7 @@ TEST_CASE("Test EqualExpr value_equals") {
         CHECK(!eq1.equals(&eq4));
     }
 
-    SECTION("MultExpr should not equal objects of other classes") {
+    SECTION("EqualExpr should not equal objects of other classes") {
         EqualExpr eq1 = EqualExpr(&zero, &twenty);
         CHECK(!eq1.equals(&zero));
     }

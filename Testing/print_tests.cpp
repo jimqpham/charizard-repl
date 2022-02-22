@@ -297,6 +297,8 @@ TEST_CASE("Should print or pretty print expressions") {
         EqualExpr eq3 = EqualExpr(&num1, &mult1);
         EqualExpr eq4 = EqualExpr(&num1, &tr);
         EqualExpr eq5 = EqualExpr(&let1, &num1);
+        EqualExpr eq6 = EqualExpr(new EqualExpr(&num1, &num2), &num1);
+        EqualExpr eq7 = EqualExpr(&num1, new EqualExpr(&num1, &num2));
         AddExpr add2 = AddExpr(&eq1, &eq4);
 
         CHECK(strcmp(eq1.to_string(true).c_str(), "3 == -2") == 0);
@@ -305,6 +307,8 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(strcmp(eq4.to_string(true).c_str(), "3 == _true") == 0);
         CHECK(strcmp(eq5.to_string(true).c_str(), "(_let x = 3\n"
                                                   " _in  x + -2) == 3") == 0);
+        CHECK(strcmp(eq6.to_string(true).c_str(), "(3 == -2) == 3") == 0);
+        CHECK(strcmp(eq7.to_string(true).c_str(), "3 == 3 == -2") == 0);
         CHECK(strcmp(add2.to_string(true).c_str(), "(3 == -2) + (3 == _true)") == 0);
     }
 

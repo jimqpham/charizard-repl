@@ -44,9 +44,9 @@ void AddExpr::pretty_print_at(std::ostream &out,
 
     bool parenthesized = precedence >= prec_add;
 
-    parenthesized && (out << "(");
+    out << (parenthesized ? "(" : "");
     this->lhs->pretty_print_at(out, prec_add, true, newLinePos);
     out << std::string(" + ");
     this->rhs->pretty_print_at(out, prec_equal, !parenthesized && kwrdNeedsPars, newLinePos);
-    parenthesized && (out << ")");
+    out << (parenthesized ? ")" : "");
 }

@@ -43,9 +43,9 @@ void EqualExpr::pretty_print_at(std::ostream &out, precedence_t precedence, bool
 
     bool parenthesized = precedence >= prec_equal;
 
-    parenthesized && (out << "(");
+    out << (parenthesized ? "(" : "");
     this->lhs->pretty_print_at(out, prec_equal, true, newLinePos);
     out << std::string(" == ");
     this->rhs->pretty_print_at(out, prec_none, !parenthesized && kwrdNeedsPars, newLinePos);
-    parenthesized && (out << ")");
+    out << (parenthesized ? ")" : "");
 }

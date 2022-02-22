@@ -174,6 +174,12 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
         CHECK(EqualExpr(&tr, &fls).interp()->value_equals(new BoolVal(false)));
         CHECK(EqualExpr(&tr, &tr).interp()->value_equals(new BoolVal(true)));
         CHECK(EqualExpr(&tr, &num1).interp()->value_equals(new BoolVal(false)));
+
+        // Interp EqualExpr with IfExpr
+        CHECK(EqualExpr(new NumExpr(2),
+                        new IfExpr(new BoolExpr(true),
+                                   new NumExpr(2),
+                                   new VarExpr("x"))).interp()->value_equals(new BoolVal(true)));
     }
 
     SECTION("Should evaluate LetExpr") {

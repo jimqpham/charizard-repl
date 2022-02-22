@@ -43,9 +43,9 @@ void MultExpr::pretty_print_at(std::ostream &out,
                                std::streampos &newLinePos) {
     bool parenthesized = precedence >= prec_mult;
 
-    parenthesized && (out << "(");
+    out << (parenthesized ? "(" : "");
     this->lhs->pretty_print_at(out, prec_mult, true, newLinePos);
     out << std::string(" * ");
     this->rhs->pretty_print_at(out, prec_add, !parenthesized && kwrdNeedsPars, newLinePos);
-    parenthesized && (out << ")");
+    out << (parenthesized ? ")" : "");
 }
