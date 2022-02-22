@@ -7,6 +7,7 @@
 #include "../Expressions/let_expr.h"
 #include "../Expressions/if_expr.h"
 #include "../Expressions/bool_expr.h"
+#include "../Expressions/equal_expr.h"
 
 
 Expr *parse_num(std::istream &in) {
@@ -52,7 +53,7 @@ VarExpr *parse_var(std::istream &in) {
 }
 
 Expr *parse_let(std::istream &in) {
-    parse_keyword(in, "let", true);
+    parse_char_group(in, "let", true);
 
     skip_whitespace(in);
 
@@ -70,7 +71,7 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    parse_keyword(in, "_in", true);
+    parse_char_group(in, "_in", true);
 
     skip_whitespace(in);
 
@@ -80,7 +81,7 @@ Expr *parse_let(std::istream &in) {
 }
 
 Expr *parse_if(std::istream &in) {
-    parse_keyword(in, "if", true);
+    parse_char_group(in, "if", true);
 
     skip_whitespace(in);
 
@@ -88,7 +89,7 @@ Expr *parse_if(std::istream &in) {
 
     skip_whitespace(in);
 
-    parse_keyword(in, "_then", true);
+    parse_char_group(in, "_then", true);
 
     skip_whitespace(in);
 
@@ -96,7 +97,7 @@ Expr *parse_if(std::istream &in) {
 
     skip_whitespace(in);
 
-    parse_keyword(in, "_else", true);
+    parse_char_group(in, "_else", true);
 
     skip_whitespace(in);
 
@@ -108,7 +109,7 @@ Expr *parse_if(std::istream &in) {
 }
 
 Expr *parse_true(std::istream &in) {
-    parse_keyword(in, "true", false);
+    parse_char_group(in, "true", false);
 
     skip_whitespace(in);
 
@@ -116,7 +117,7 @@ Expr *parse_true(std::istream &in) {
 }
 
 Expr *parse_false(std::istream &in) {
-    parse_keyword(in, "false", false);
+    parse_char_group(in, "false", false);
 
     skip_whitespace(in);
 
@@ -180,7 +181,7 @@ Expr *parse_addend(std::istream &in) {
         return e;
 }
 
-Expr *parse_expr(std::istream &in) {
+Expr *parse_comparg(std::istream &in) {
     skip_whitespace(in);
 
     Expr *e = parse_addend(in);
@@ -192,6 +193,22 @@ Expr *parse_expr(std::istream &in) {
         consume(in, '+');
         Expr *rhs = parse_expr(in);
         return new AddExpr(e, rhs);
+    } else
+        return e;
+}
+
+Expr *parse_expr(std::istream &in) {
+    skip_whitespace(in);
+
+    Expr *e = parse_comparg(in);
+
+    skip_whitespace(in);
+
+    int c = in.peek();
+    if (c == '=') {
+        parse_char_group(in, "==", false);
+        Expr *rhs = parse_expr(in);
+        return new EqualExpr(e, rhs);
     } else
         return e;
 }
@@ -232,7 +249,7 @@ bool check_and_consume(std::istream &in, char expected) {
     return true;
 }
 
-void parse_keyword(std::istream &in, std::string expected, bool spaceAfter) {
+void parse_char_group(std::istream &in, std::string expected, bool spaceAfter) {
     for (std::string::iterator iterator = expected.begin();
          iterator < expected.end(); iterator++) {
         if (!check_and_consume(in, *iterator)) {
