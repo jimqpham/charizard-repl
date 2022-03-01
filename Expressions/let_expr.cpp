@@ -27,10 +27,6 @@ Val *LetExpr::interp() {
     return substBody->interp();
 }
 
-bool LetExpr::has_variable() {
-    return (this->rhs->has_variable() || this->body->has_variable());
-}
-
 Expr *LetExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);
 

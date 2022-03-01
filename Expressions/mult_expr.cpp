@@ -18,10 +18,6 @@ Val *MultExpr::interp() {
     return (this->lhs->interp()->mult_by(this->rhs->interp()));
 }
 
-bool MultExpr::has_variable() {
-    return (this->lhs->has_variable() || this->rhs->has_variable());
-}
-
 Expr *MultExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     Expr *substLhs = this->lhs->subst(stringToMatch, replcExpr);
     Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);

@@ -18,8 +18,6 @@ public:
 
     virtual Val *interp() = 0;
 
-    virtual bool has_variable() = 0;
-
     virtual Expr *subst(std::string stringToMatch, Expr *replcExpr) = 0;
 
     virtual void print(std::ostream &out) = 0;

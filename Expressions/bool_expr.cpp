@@ -18,10 +18,6 @@ Val *BoolExpr::interp() {
     return new BoolVal(val);
 }
 
-bool BoolExpr::has_variable() {
-    return false;
-}
-
 Expr *BoolExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     return new BoolExpr(this->val);
 }

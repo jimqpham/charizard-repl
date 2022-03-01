@@ -19,10 +19,6 @@ Val *VarExpr::interp() {
     throw std::runtime_error("No value for variable");
 }
 
-bool VarExpr::has_variable() {
-    return true;
-}
-
 Expr *VarExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     if (std::strcmp(this->name.c_str(), stringToMatch.c_str()) == 0)
         return replcExpr;

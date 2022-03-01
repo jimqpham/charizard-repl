@@ -19,10 +19,6 @@ Val *EqualExpr::interp() {
     return new BoolVal(this->lhs->interp()->value_equals(this->rhs->interp()));
 }
 
-bool EqualExpr::has_variable() {
-    return (this->lhs->has_variable() || this->rhs->has_variable());
-}
-
 Expr *EqualExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     Expr *substLhs = this->lhs->subst(stringToMatch, replcExpr);
     Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);

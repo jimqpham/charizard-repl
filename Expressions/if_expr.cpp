@@ -27,12 +27,6 @@ Val *IfExpr::interp() {
         throw std::runtime_error("non-boolean condition in if expr");
 }
 
-bool IfExpr::has_variable() {
-    return condition->has_variable() ||
-           thenBranch->has_variable() ||
-           elseBranch->has_variable();
-}
-
 Expr *IfExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     return new IfExpr(condition->subst(stringToMatch, replcExpr),
                       thenBranch->subst(stringToMatch, replcExpr),

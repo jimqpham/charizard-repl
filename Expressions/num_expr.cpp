@@ -17,10 +17,6 @@ Val *NumExpr::interp() {
     return new NumVal(val);
 }
 
-bool NumExpr::has_variable() {
-    return false;
-}
-
 Expr *NumExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     return new NumExpr(this->val);
 }

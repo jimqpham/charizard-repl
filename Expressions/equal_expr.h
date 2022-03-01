@@ -12,8 +12,6 @@ public:
 
     Val *interp() override;
 
-    bool has_variable() override;
-
     Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
 
     void print(std::ostream &out) override;

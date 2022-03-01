@@ -18,10 +18,6 @@ Val *AddExpr::interp() {
     return (this->lhs->interp()->add_to(this->rhs->interp()));
 }
 
-bool AddExpr::has_variable() {
-    return (this->lhs->has_variable() || this->rhs->has_variable());
-}
-
 Expr *AddExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     Expr *substLhs = this->lhs->subst(stringToMatch, replcExpr);
     Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);
