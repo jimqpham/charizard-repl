@@ -30,7 +30,7 @@ Val *LetExpr::interp() {
 Expr *LetExpr::subst(std::string stringToMatch, Expr *replcExpr) {
     Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);
 
-    // If the variable bound by let does not match the variable to replace (stringToMatch)
+    // If the arg bound by let does not match the arg to replace (stringToMatch)
     // go into the body
     if (!variable->equals(new VarExpr(stringToMatch))) {
         Expr *substBody = this->body->subst(stringToMatch, replcExpr);

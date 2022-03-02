@@ -24,7 +24,7 @@ Val *IfExpr::interp() {
     else if (conditionVal->value_equals(new BoolVal(false)))
         return this->elseBranch->interp();
     else
-        throw std::runtime_error("non-boolean condition in if expr");
+        throw std::runtime_error("non-boolean condition in if body");
 }
 
 Expr *IfExpr::subst(std::string stringToMatch, Expr *replcExpr) {

@@ -43,3 +43,7 @@ std::string NumVal::to_string() {
 Expr *NumVal::to_expr() {
     return new NumExpr(this->rep);
 }
+
+Val *NumVal::call(Val *actual_arg) {
+    return nullptr;
+}

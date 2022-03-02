@@ -1,12 +1,13 @@
 #include <string>
 #include "val.h"
 
-class BoolVal : public Val {
+class FunVal : public Val {
 private:
-    bool rep;
+    std::string formal_arg;
+    Expr *body;
 
 public:
-    explicit BoolVal(bool rep);
+    FunVal(std::string, Expr *);
 
     bool value_equals(Val *o) override;
 

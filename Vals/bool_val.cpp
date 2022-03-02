@@ -29,3 +29,7 @@ std::string BoolVal::to_string() {
 Expr *BoolVal::to_expr() {
     return new BoolExpr(this->rep);
 }
+
+Val *BoolVal::call(Val *actual_arg) {
+    return nullptr;
+}

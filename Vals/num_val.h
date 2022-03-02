@@ -17,4 +17,6 @@ public:
     std::string to_string() override;
 
     Expr *to_expr() override;
+
+    Val *call(Val *actual_arg) override;
 };

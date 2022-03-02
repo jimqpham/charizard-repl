@@ -13,4 +13,6 @@ public:
     virtual std::string to_string() = 0;
 
     virtual Expr *to_expr() = 0;
+
+    virtual Val *call(Val *actual_arg) = 0;
 };
