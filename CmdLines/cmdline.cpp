@@ -57,10 +57,7 @@ void use_arguments(int argc, char **argv) {
 
 void interactiveCommand(command_t command) {
     while (true) {
-        // Expr *e = parse(std::cin); – not working, needs to press Enter repeatedly
-        std::string input;
-        getline(std::cin, input);
-        Expr *e = parse_str(input);
+        Expr *e = parse(std::cin);
 
         std::string output;
         switch (command) {
