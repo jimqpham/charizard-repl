@@ -8,6 +8,8 @@
 #include "../Expressions/if_expr.h"
 #include "../Expressions/bool_expr.h"
 #include "../Expressions/equal_expr.h"
+#include "../Expressions/fun_expr.h"
+#include "../Expressions/call_expr.h"
 
 TEST_CASE("Parse numbers") {
     CHECK(parse_str("(1)")->equals(new NumExpr(1)));
@@ -39,10 +41,8 @@ TEST_CASE("Parse _true and _false") {
     CHECK(parse_str("  ( ( ( _false)))")
                   ->equals(new BoolExpr(false)));
 
-    CHECK_THROWS_WITH(parse_str("_tru"),
-                      "Expecting character(s): 'true'");
-    CHECK_THROWS_WITH(parse_str("_f"),
-                      "Expecting character(s): 'false'");
+    CHECK_THROWS_WITH(parse_str("_tru"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("_f"), "Unexpected token");
 }
 
 TEST_CASE("Parse mult and add expressions") {
@@ -86,12 +86,10 @@ TEST_CASE("Parse LetExpr expressions") {
                                                    new NumExpr(0),
                                                    new MultExpr(new VarExpr("y"), new NumExpr(2))))));
 
-    CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Expecting character(s): '='");
-    CHECK_THROWS_WITH(parse_str("x=3 _in y + 1"), "Expecting character(s): '=='");
-    CHECK_THROWS_WITH(parse_str("_let"), "Whitespace error after let");
-    CHECK_THROWS_WITH(parse_str("_let x = 3"), "Expecting character(s): '_in'");
-    CHECK_THROWS_WITH(parse_str("_letx = 3 _in x+2"), "Whitespace error after let");
-    CHECK_THROWS_WITH(parse_str("_let x = 2 _inx + 3"), "Whitespace error after _in");
+    CHECK_THROWS_WITH(parse_str("_let x _in y + 1"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("x=3 _in y + 1"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("_let"), "Empty variable name");
+    CHECK_THROWS_WITH(parse_str("_let x = 3"), "Unexpected token");
     CHECK_THROWS_WITH(parse_str("_et x = 2 _inx + 3"), "Unknown underscore syntax");
 }
 
@@ -128,9 +126,42 @@ TEST_CASE("Parse IfExpr") {
                                                   new MultExpr(new VarExpr("y"), new NumExpr(2))),
                                       new NumExpr(1))));
 
-    CHECK_THROWS_WITH(parse_str("_if x _then y + 1"), "Expecting character(s): '_else'");
-    CHECK_THROWS_WITH(parse_str("_if"), "Whitespace error after if");
-    CHECK_THROWS_WITH(parse_str("_if x == 3"), "Expecting character(s): '_then'");
-    CHECK_THROWS_WITH(parse_str("_ifx == 3 _then x+2"), "Whitespace error after if");
-    CHECK_THROWS_WITH(parse_str("_if x == 2 _thenx + 3"), "Whitespace error after _then");
+    CHECK_THROWS_WITH(parse_str("_if x _then y + 1"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("_if"), "Invalid input!");
+    CHECK_THROWS_WITH(parse_str("_if x == 3"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("_ifx == 3 _then x+2"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("_if x == 2 _thenx + 3"), "Unexpected token");
+}
+
+TEST_CASE("Parse FunExpr") {
+    CHECK(parse_str("   _fun (x) y + 3")
+                  ->equals(new FunExpr("x",
+                                       new AddExpr(new VarExpr("y"), new NumExpr(3)))));
+    CHECK(parse_str("   _fun (var) _let y = 3 _in var + y")
+                  ->equals(new FunExpr("var",
+                                       new LetExpr(new VarExpr("y"),
+                                                   new NumExpr(3),
+                                                   new AddExpr(new VarExpr("var"), new VarExpr("y"))))));
+
+    CHECK_THROWS_WITH(parse_str("   _fun (x + 3) x * 2 + 3"), "Unexpected token");
+    CHECK_THROWS_WITH(parse_str("   _fun () x * 2 + 3"), "Empty variable name");
+    CHECK_THROWS_WITH(parse_str("   _fin (x) x * 2 + 3"), "Unexpected token");
+}
+
+TEST_CASE("Parse CallExpr") {
+    CHECK(parse_str("f ( y + 3 )")
+                  ->equals(new CallExpr(new VarExpr("f"),
+                                        new AddExpr(new VarExpr("y"), new NumExpr(3)))));
+    CHECK(parse_str("x(_let y = 3 _in var + y)")
+                  ->equals(new CallExpr(new VarExpr("x"),
+                                        new LetExpr(new VarExpr("y"),
+                                                    new NumExpr(3),
+                                                    new AddExpr(new VarExpr("var"), new VarExpr("y"))))));
+
+    CHECK(parse_str("(f)(x)")->equals(new CallExpr(new VarExpr("f"), new VarExpr("x"))));
+    CHECK(parse_str("f(3)(2)")->equals(new CallExpr(new CallExpr(new VarExpr("f"),
+                                                                 new NumExpr(3)),
+                                                    new NumExpr(2))));
+
+    CHECK_THROWS_WITH(parse_str("f x + 2"), "Unexpected input after expression!");
 }

@@ -8081,7 +8081,7 @@ namespace Catch {
         // Assertion handlers
         void handleExpr
                 (   AssertionInfo const& info,
-                    ITransientExpression const& expr,
+                    ITransientExpression const& body,
                     AssertionReaction& reaction ) override;
         void handleMessage
                 (   AssertionInfo const& info,
@@ -8149,7 +8149,7 @@ namespace Catch {
         void reportExpr
                 (   AssertionInfo const &info,
                     ResultWas::OfType resultType,
-                    ITransientExpression const *expr,
+                    ITransientExpression const *body,
                     bool negated );
 
         void populateReaction( AssertionReaction& reaction );
@@ -8187,8 +8187,8 @@ namespace Catch {
 namespace Catch {
 
     namespace {
-        auto operator <<( std::ostream& os, ITransientExpression const& expr ) -> std::ostream& {
-            expr.streamReconstructedExpression( os );
+        auto operator <<( std::ostream& os, ITransientExpression const& body ) -> std::ostream& {
+            body.streamReconstructedExpression( os );
             return os;
         }
     }
@@ -8228,8 +8228,8 @@ namespace Catch {
         m_resultCapture( getResultCapture() )
     {}
 
-    void AssertionHandler::handleExpr( ITransientExpression const& expr ) {
-        m_resultCapture.handleExpr( m_assertionInfo, expr, m_reaction );
+    void AssertionHandler::handleExpr( ITransientExpression const& body ) {
+        m_resultCapture.handleExpr( m_assertionInfo, body, m_reaction );
     }
     void AssertionHandler::handleMessage(ResultWas::OfType resultType, StringRef const& message) {
         m_resultCapture.handleMessage( m_assertionInfo, resultType, message, m_reaction );
@@ -8336,29 +8336,29 @@ namespace Catch {
 
     std::string AssertionResult::getExpression() const {
         // Possibly overallocating by 3 characters should be basically free
-        std::string expr; expr.reserve(m_info.capturedExpression.size() + 3);
+        std::string body; body.reserve(m_info.capturedExpression.size() + 3);
         if (isFalseTest(m_info.resultDisposition)) {
-            expr += "!(";
+            body += "!(";
         }
-        expr += m_info.capturedExpression;
+        body += m_info.capturedExpression;
         if (isFalseTest(m_info.resultDisposition)) {
-            expr += ')';
+            body += ')';
         }
-        return expr;
+        return body;
     }
 
     std::string AssertionResult::getExpressionInMacro() const {
-        std::string expr;
+        std::string body;
         if( m_info.macroName.empty() )
-            expr = static_cast<std::string>(m_info.capturedExpression);
+            body = static_cast<std::string>(m_info.capturedExpression);
         else {
-            expr.reserve( m_info.macroName.size() + m_info.capturedExpression.size() + 4 );
-            expr += m_info.macroName;
-            expr += "( ";
-            expr += m_info.capturedExpression;
-            expr += " )";
+            body.reserve( m_info.macroName.size() + m_info.capturedExpression.size() + 4 );
+            body += m_info.macroName;
+            body += "( ";
+            body += m_info.capturedExpression;
+            body += " )";
         }
-        return expr;
+        return body;
     }
 
     bool AssertionResult::hasExpandedExpression() const {
@@ -8366,10 +8366,10 @@ namespace Catch {
     }
 
     std::string AssertionResult::getExpandedExpression() const {
-        std::string expr = m_resultData.reconstructExpression();
-        return expr.empty()
+        std::string body = m_resultData.reconstructExpression();
+        return body.empty()
                 ? getExpression()
-                : expr;
+                : body;
     }
 
     std::string AssertionResult::getMessage() const {
@@ -8396,8 +8396,8 @@ namespace Catch {
     // the Equals matcher (so the header does not mention matchers)
     void handleExceptionMatchExpr( AssertionHandler& handler, StringMatcher const& matcher, StringRef const& matcherString  ) {
         std::string exceptionMessage = Catch::translateActiveException();
-        MatchExpr<std::string, StringMatcher const&> expr( exceptionMessage, matcher, matcherString );
-        handler.handleExpr( expr );
+        MatchExpr<std::string, StringMatcher const&> body( exceptionMessage, matcher, matcherString );
+        handler.handleExpr( body );
     }
 
 } // namespace Catch
@@ -13040,38 +13040,38 @@ namespace Catch {
 
     void RunContext::handleExpr(
         AssertionInfo const& info,
-        ITransientExpression const& expr,
+        ITransientExpression const& body,
         AssertionReaction& reaction
     ) {
         m_reporter->assertionStarting( info );
 
         bool negated = isFalseTest( info.resultDisposition );
-        bool result = expr.getResult() != negated;
+        bool result = body.getResult() != negated;
 
         if( result ) {
             if (!m_includeSuccessfulResults) {
                 assertionPassed();
             }
             else {
-                reportExpr(info, ResultWas::Ok, &expr, negated);
+                reportExpr(info, ResultWas::Ok, &body, negated);
             }
         }
         else {
-            reportExpr(info, ResultWas::ExpressionFailed, &expr, negated );
+            reportExpr(info, ResultWas::ExpressionFailed, &body, negated );
             populateReaction( reaction );
         }
     }
     void RunContext::reportExpr(
             AssertionInfo const &info,
             ResultWas::OfType resultType,
-            ITransientExpression const *expr,
+            ITransientExpression const *body,
             bool negated ) {
 
         m_lastAssertionInfo = info;
         AssertionResultData data( resultType, LazyExpression( negated ) );
 
         AssertionResult assertionResult{ info, data };
-        assertionResult.m_resultData.lazyExpression.m_transientExpression = expr;
+        assertionResult.m_resultData.lazyExpression.m_transientExpression = body;
 
         assertionEnded( assertionResult );
     }
@@ -17571,10 +17571,10 @@ int main (int argc, char * const argv[]) {
 #define CATCH_REQUIRE_FALSE( ... ) INTERNAL_CATCH_TEST( "CATCH_REQUIRE_FALSE", Catch::ResultDisposition::Normal | Catch::ResultDisposition::FalseTest, __VA_ARGS__ )
 
 #define CATCH_REQUIRE_THROWS( ... ) INTERNAL_CATCH_THROWS( "CATCH_REQUIRE_THROWS", Catch::ResultDisposition::Normal, __VA_ARGS__ )
-#define CATCH_REQUIRE_THROWS_AS( expr, exceptionType ) INTERNAL_CATCH_THROWS_AS( "CATCH_REQUIRE_THROWS_AS", exceptionType, Catch::ResultDisposition::Normal, expr )
-#define CATCH_REQUIRE_THROWS_WITH( expr, matcher ) INTERNAL_CATCH_THROWS_STR_MATCHES( "CATCH_REQUIRE_THROWS_WITH", Catch::ResultDisposition::Normal, matcher, expr )
+#define CATCH_REQUIRE_THROWS_AS( body, exceptionType ) INTERNAL_CATCH_THROWS_AS( "CATCH_REQUIRE_THROWS_AS", exceptionType, Catch::ResultDisposition::Normal, body )
+#define CATCH_REQUIRE_THROWS_WITH( body, matcher ) INTERNAL_CATCH_THROWS_STR_MATCHES( "CATCH_REQUIRE_THROWS_WITH", Catch::ResultDisposition::Normal, matcher, body )
 #if !defined(CATCH_CONFIG_DISABLE_MATCHERS)
-#define CATCH_REQUIRE_THROWS_MATCHES( expr, exceptionType, matcher ) INTERNAL_CATCH_THROWS_MATCHES( "CATCH_REQUIRE_THROWS_MATCHES", exceptionType, Catch::ResultDisposition::Normal, matcher, expr )
+#define CATCH_REQUIRE_THROWS_MATCHES( body, exceptionType, matcher ) INTERNAL_CATCH_THROWS_MATCHES( "CATCH_REQUIRE_THROWS_MATCHES", exceptionType, Catch::ResultDisposition::Normal, matcher, body )
 #endif// CATCH_CONFIG_DISABLE_MATCHERS
 #define CATCH_REQUIRE_NOTHROW( ... ) INTERNAL_CATCH_NO_THROW( "CATCH_REQUIRE_NOTHROW", Catch::ResultDisposition::Normal, __VA_ARGS__ )
 
@@ -17585,10 +17585,10 @@ int main (int argc, char * const argv[]) {
 #define CATCH_CHECK_NOFAIL( ... ) INTERNAL_CATCH_TEST( "CATCH_CHECK_NOFAIL", Catch::ResultDisposition::ContinueOnFailure | Catch::ResultDisposition::SuppressFail, __VA_ARGS__ )
 
 #define CATCH_CHECK_THROWS( ... )  INTERNAL_CATCH_THROWS( "CATCH_CHECK_THROWS", Catch::ResultDisposition::ContinueOnFailure, __VA_ARGS__ )
-#define CATCH_CHECK_THROWS_AS( expr, exceptionType ) INTERNAL_CATCH_THROWS_AS( "CATCH_CHECK_THROWS_AS", exceptionType, Catch::ResultDisposition::ContinueOnFailure, expr )
-#define CATCH_CHECK_THROWS_WITH( expr, matcher ) INTERNAL_CATCH_THROWS_STR_MATCHES( "CATCH_CHECK_THROWS_WITH", Catch::ResultDisposition::ContinueOnFailure, matcher, expr )
+#define CATCH_CHECK_THROWS_AS( body, exceptionType ) INTERNAL_CATCH_THROWS_AS( "CATCH_CHECK_THROWS_AS", exceptionType, Catch::ResultDisposition::ContinueOnFailure, body )
+#define CATCH_CHECK_THROWS_WITH( body, matcher ) INTERNAL_CATCH_THROWS_STR_MATCHES( "CATCH_CHECK_THROWS_WITH", Catch::ResultDisposition::ContinueOnFailure, matcher, body )
 #if !defined(CATCH_CONFIG_DISABLE_MATCHERS)
-#define CATCH_CHECK_THROWS_MATCHES( expr, exceptionType, matcher ) INTERNAL_CATCH_THROWS_MATCHES( "CATCH_CHECK_THROWS_MATCHES", exceptionType, Catch::ResultDisposition::ContinueOnFailure, matcher, expr )
+#define CATCH_CHECK_THROWS_MATCHES( body, exceptionType, matcher ) INTERNAL_CATCH_THROWS_MATCHES( "CATCH_CHECK_THROWS_MATCHES", exceptionType, Catch::ResultDisposition::ContinueOnFailure, matcher, body )
 #endif // CATCH_CONFIG_DISABLE_MATCHERS
 #define CATCH_CHECK_NOTHROW( ... ) INTERNAL_CATCH_NO_THROW( "CATCH_CHECK_NOTHROW", Catch::ResultDisposition::ContinueOnFailure, __VA_ARGS__ )
 
@@ -17776,10 +17776,10 @@ using Catch::Detail::Approx;
 #define CATCH_REQUIRE_FALSE( ... )  (void)(0)
 
 #define CATCH_REQUIRE_THROWS( ... ) (void)(0)
-#define CATCH_REQUIRE_THROWS_AS( expr, exceptionType ) (void)(0)
-#define CATCH_REQUIRE_THROWS_WITH( expr, matcher )     (void)(0)
+#define CATCH_REQUIRE_THROWS_AS( body, exceptionType ) (void)(0)
+#define CATCH_REQUIRE_THROWS_WITH( body, matcher )     (void)(0)
 #if !defined(CATCH_CONFIG_DISABLE_MATCHERS)
-#define CATCH_REQUIRE_THROWS_MATCHES( expr, exceptionType, matcher ) (void)(0)
+#define CATCH_REQUIRE_THROWS_MATCHES( body, exceptionType, matcher ) (void)(0)
 #endif// CATCH_CONFIG_DISABLE_MATCHERS
 #define CATCH_REQUIRE_NOTHROW( ... ) (void)(0)
 
@@ -17790,10 +17790,10 @@ using Catch::Detail::Approx;
 #define CATCH_CHECK_NOFAIL( ... )  (void)(0)
 
 #define CATCH_CHECK_THROWS( ... )  (void)(0)
-#define CATCH_CHECK_THROWS_AS( expr, exceptionType ) (void)(0)
-#define CATCH_CHECK_THROWS_WITH( expr, matcher )     (void)(0)
+#define CATCH_CHECK_THROWS_AS( body, exceptionType ) (void)(0)
+#define CATCH_CHECK_THROWS_WITH( body, matcher )     (void)(0)
 #if !defined(CATCH_CONFIG_DISABLE_MATCHERS)
-#define CATCH_CHECK_THROWS_MATCHES( expr, exceptionType, matcher ) (void)(0)
+#define CATCH_CHECK_THROWS_MATCHES( body, exceptionType, matcher ) (void)(0)
 #endif // CATCH_CONFIG_DISABLE_MATCHERS
 #define CATCH_CHECK_NOTHROW( ... ) (void)(0)
 
@@ -17860,10 +17860,10 @@ using Catch::Detail::Approx;
 #define REQUIRE_FALSE( ... ) (void)(0)
 
 #define REQUIRE_THROWS( ... ) (void)(0)
-#define REQUIRE_THROWS_AS( expr, exceptionType ) (void)(0)
-#define REQUIRE_THROWS_WITH( expr, matcher ) (void)(0)
+#define REQUIRE_THROWS_AS( body, exceptionType ) (void)(0)
+#define REQUIRE_THROWS_WITH( body, matcher ) (void)(0)
 #if !defined(CATCH_CONFIG_DISABLE_MATCHERS)
-#define REQUIRE_THROWS_MATCHES( expr, exceptionType, matcher ) (void)(0)
+#define REQUIRE_THROWS_MATCHES( body, exceptionType, matcher ) (void)(0)
 #endif // CATCH_CONFIG_DISABLE_MATCHERS
 #define REQUIRE_NOTHROW( ... ) (void)(0)
 
@@ -17874,10 +17874,10 @@ using Catch::Detail::Approx;
 #define CHECK_NOFAIL( ... ) (void)(0)
 
 #define CHECK_THROWS( ... )  (void)(0)
-#define CHECK_THROWS_AS( expr, exceptionType ) (void)(0)
-#define CHECK_THROWS_WITH( expr, matcher ) (void)(0)
+#define CHECK_THROWS_AS( body, exceptionType ) (void)(0)
+#define CHECK_THROWS_WITH( body, matcher ) (void)(0)
 #if !defined(CATCH_CONFIG_DISABLE_MATCHERS)
-#define CHECK_THROWS_MATCHES( expr, exceptionType, matcher ) (void)(0)
+#define CHECK_THROWS_MATCHES( body, exceptionType, matcher ) (void)(0)
 #endif // CATCH_CONFIG_DISABLE_MATCHERS
 #define CHECK_NOTHROW( ... ) (void)(0)
 
