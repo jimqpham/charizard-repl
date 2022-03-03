@@ -43,8 +43,8 @@ void FunExpr::pretty_print_at(std::ostream &out, precedence_t precedence,
     newLinePos = out.tellp();
 
     // PRINT LINE 2
-    // Pad with whitespaces till letColumn
-    for (int i = 0; i < funCol; i++) {
+    // Pad with whitespaces till 2 whitespaces past fun column
+    for (int i = 0; i < (funCol + std::streampos(2)); i++) {
         out << " ";
     }
     body->pretty_print_at(out, prec_none, false, newLinePos);

@@ -32,7 +32,8 @@ void CallExpr::print(std::ostream &out) {
 
 void CallExpr::pretty_print_at(std::ostream &out, precedence_t precedence, bool kwrdNeedsPars,
                                std::streampos &newLinePos) {
-    this->to_be_called->pretty_print_at(out, precedence, kwrdNeedsPars, newLinePos);
+    // Add parentheses if to_be_called is a keyword expr/binary-op expr
+    this->to_be_called->pretty_print_at(out, prec_mult, true, newLinePos);
     out << "(";
     this->actual_arg->pretty_print_at(out, prec_none, false, newLinePos);
     out << ")";

@@ -32,7 +32,7 @@ Expr *parse(std::istream &in);
 
 Expr *parse_str(std::string s);
 
-void parse_char_group(std::istream &in, std::string expected, bool spaceAfter);
+void parse_char_group(std::istream &in, std::string expected);
 
 bool check_and_consume(std::istream &in, char expected);
 

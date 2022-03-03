@@ -1,7 +1,3 @@
-//
-// Created by Quang Pham on 2/16/22.
-//
-
 #include "num_val.h"
 #include "../Expressions/num_expr.h"
 
@@ -45,5 +41,5 @@ Expr *NumVal::to_expr() {
 }
 
 Val *NumVal::call(Val *actual_arg) {
-    return nullptr;
+    return new NumVal(this->rep);
 }
