@@ -133,6 +133,12 @@ TEST_CASE("Parse IfExpr") {
     CHECK_THROWS_WITH(parse_str("_if x == 2 _thenx + 3"), "Unexpected token");
 }
 
+TEST_CASE("Parse EqualExpr") {
+    CHECK(parse_str("1 + 1 == 2")->equals(new EqualExpr(new AddExpr(new NumExpr(1), new NumExpr(1)), new NumExpr(2))));
+    CHECK(parse_str("1 == 1 == 2")->equals(
+            new EqualExpr(new NumExpr(1), new EqualExpr(new NumExpr(1), new NumExpr(2)))));
+}
+
 TEST_CASE("Parse FunExpr") {
     CHECK(parse_str("   _fun (x) y + 3")
                   ->equals(new FunExpr("x",

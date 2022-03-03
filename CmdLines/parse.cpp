@@ -234,7 +234,7 @@ Expr *parse_comparg(std::istream &in) {
     int c = in.peek();
     if (c == '+') {
         consume(in, '+');
-        Expr *rhs = parse_expr(in);
+        Expr *rhs = parse_comparg(in);
         return new AddExpr(e, rhs);
     } else
         return e;

@@ -150,7 +150,7 @@ int test_single(const char *msdscript_path, const char *operation, int iteration
         // Taking the print output and pass it again through msdscript
         // and make sure there's no mismatch between two prints
         // Skip this test for pretty_print because msdscript does not handle line breaks well
-        if (strcmp(operation, "--print") == 0) {
+        if (strcmp(operation, "--print") == 0 || strcmp(operation, "--pretty-print") == 0) {
             ExecResult reprint_result = exec_program(2, argv, result.out);
             if (reprint_result.exit_code != 0) {
                 std::cerr << "bad reprint output\n" << "initial print output: " << in << "\n" << reprint_result.err;
