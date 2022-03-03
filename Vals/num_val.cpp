@@ -41,5 +41,5 @@ Expr *NumVal::to_expr() {
 }
 
 Val *NumVal::call(Val *actual_arg) {
-    return new NumVal(this->rep);
+    throw std::runtime_error("call of non-function val");
 }

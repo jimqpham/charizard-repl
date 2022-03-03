@@ -184,7 +184,7 @@ TEST_CASE("Parse FunExpr") {
     CHECK(parse_str("_let f = _fun (x)\n"
                     "7\n"
                     "_in f(5 + _true)")->equals((new LetExpr(new VarExpr("f"),
-                                                             new FunExpr("x", new BoolExpr(7)),
+                                                             new FunExpr("x", new NumExpr(7)),
                                                              new CallExpr(new VarExpr("f"), new AddExpr(new NumExpr(5),
                                                                                                         new BoolExpr(
                                                                                                                 true)))))));
@@ -224,6 +224,205 @@ TEST_CASE("Parse FunExpr") {
                                                                                  new CallExpr(new VarExpr("g"),
                                                                                               new NumExpr(5)))))));
 
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "              x + 1\n"
+                    "_in _let g = _fun (y)\n"
+                    "               y + 2\n"
+                    "    _in f(g(5))")->equals(new LetExpr(new VarExpr("f"),
+                                                           new FunExpr("x",
+                                                                       new AddExpr(new VarExpr("x"), new NumExpr(1))),
+                                                           new LetExpr(new VarExpr("g"),
+                                                                       new FunExpr("y", new AddExpr(new VarExpr("y"),
+                                                                                                    new NumExpr(2))),
+                                                                       new CallExpr(new VarExpr("f"),
+                                                                                    new CallExpr(new VarExpr("g"),
+                                                                                                 new NumExpr(5)))))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "              x + 1\n"
+                    "_in _let g = _fun (y)\n"
+                    "               f(y + 2)\n"
+                    "    _in g(5)")->equals(new LetExpr(new VarExpr("f"),
+                                                        new FunExpr("x",
+                                                                    new AddExpr(new VarExpr("x"), new NumExpr(1))),
+                                                        new LetExpr(new VarExpr("g"),
+                                                                    new FunExpr("y", new CallExpr(new VarExpr("f"),
+                                                                                                  new AddExpr(
+                                                                                                          new VarExpr(
+                                                                                                                  "y"),
+                                                                                                          new NumExpr(
+                                                                                                                  2)))),
+                                                                    new CallExpr(new VarExpr("g"), new NumExpr(5))))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "              x + 1\n"
+                    "_in _let g = _fun (x)\n"
+                    "               f(2) + x\n"
+                    "    _in g(5)")->equals(new LetExpr(new VarExpr("f"),
+                                                        new FunExpr("x",
+                                                                    new AddExpr(new VarExpr("x"), new NumExpr(1))),
+                                                        new LetExpr(new VarExpr("g"),
+                                                                    new FunExpr("x", new AddExpr(
+                                                                            new CallExpr(new VarExpr("f"),
+                                                                                         new NumExpr(2)),
+                                                                            new VarExpr("x"))),
+                                                                    new CallExpr(new VarExpr("g"), new NumExpr(5))))));
+
+    CHECK(parse_str("_let f = _if _false\n"
+                    "_then _fun (x)\n"
+                    "x + 1\n"
+                    "_else _fun (x)\n"
+                    "x + 2\n"
+                    "_in f(5)")->equals(new LetExpr(new VarExpr("f"),
+                                                    new IfExpr(new BoolExpr(false),
+                                                               new FunExpr("x", new AddExpr(new VarExpr("x"),
+                                                                                            new NumExpr(1))),
+                                                               new FunExpr("x", new AddExpr(new VarExpr("x"),
+                                                                                            new NumExpr(2)))),
+                                                    new CallExpr(new VarExpr("f"), new NumExpr(5)))));
+
+    CHECK(parse_str("(_if _false\n"
+                    "_then _fun (x)\n"
+                    "x + 1\n"
+                    "_else _fun (x)\n"
+                    "x + 2)(5)")->equals(new CallExpr(new IfExpr(new BoolExpr(false),
+                                                                 new FunExpr("x", new AddExpr(new VarExpr("x"),
+                                                                                              new NumExpr(1))),
+                                                                 new FunExpr("x", new AddExpr(new VarExpr("x"),
+                                                                                              new NumExpr(2)))),
+                                                      new NumExpr(5))));
+
+    CHECK(parse_str("_let f = _fun (g)\n"
+                    "g(5)\n"
+                    "_in _let g = _fun (y)\n"
+                    "y + 2\n"
+                    "_in f(g)")->equals(new LetExpr(new VarExpr("f"),
+                                                    new FunExpr("g", new CallExpr(new VarExpr("g"), new NumExpr(5))),
+                                                    new LetExpr(new VarExpr("g"),
+                                                                new FunExpr("y", new AddExpr(new VarExpr("y"),
+                                                                                             new NumExpr(2))),
+                                                                new CallExpr(new VarExpr("f"), new VarExpr("g"))))));
+
+    CHECK(parse_str("_let f = _fun (g)\n"
+                    "g(5)\n"
+                    "_in f(_fun (y)\n"
+                    "y + 2)")->equals(new LetExpr(new VarExpr("f"),
+                                                  new FunExpr("g", new CallExpr(new VarExpr("g"), new NumExpr(5))),
+                                                  new CallExpr(new VarExpr("f"), new FunExpr("y", new AddExpr(
+                                                          new VarExpr("y"), new NumExpr(2)))))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "_fun (y)\n"
+                    "x + y\n"
+                    "_in (f(5))(1)")->equals(new LetExpr(new VarExpr("f"),
+                                                         new FunExpr("x", new FunExpr("y", new AddExpr(new VarExpr("x"),
+                                                                                                       new VarExpr(
+                                                                                                               "y")))),
+                                                         new CallExpr(new CallExpr(new VarExpr("f"), new NumExpr(5)),
+                                                                      new NumExpr(1)))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "_fun (y)\n"
+                    "x + y\n"
+                    "_in (f(5))(1)")->equals(new LetExpr(new VarExpr("f"),
+                                                         new FunExpr("x", new FunExpr("y", new AddExpr(new VarExpr("x"),
+                                                                                                       new VarExpr(
+                                                                                                               "y")))),
+                                                         new CallExpr(new CallExpr(new VarExpr("f"), new NumExpr(5)),
+                                                                      new NumExpr(1)))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "_fun (y)\n"
+                    "x + y\n"
+                    "_in f(5)(1)")->equals(new LetExpr(new VarExpr("f"),
+                                                       new FunExpr("x", new FunExpr("y", new AddExpr(new VarExpr("x"),
+                                                                                                     new VarExpr(
+                                                                                                             "y")))),
+                                                       new CallExpr(new CallExpr(new VarExpr("f"), new NumExpr(5)),
+                                                                    new NumExpr(1)))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "_fun (g)\n"
+                    "g(x + 1)\n"
+                    "_in _let g = _fun (y)\n"
+                    "y + 2\n"
+                    "_in (f(5))(g)")->equals(new LetExpr(new VarExpr("f"), new FunExpr("x", new FunExpr("g",
+                                                                                                        new CallExpr(
+                                                                                                                new VarExpr(
+                                                                                                                        "g"),
+                                                                                                                new AddExpr(
+                                                                                                                        new VarExpr(
+                                                                                                                                "x"),
+                                                                                                                        new NumExpr(
+                                                                                                                                1))))),
+                                                         new LetExpr(new VarExpr("g"),
+                                                                     new FunExpr("y", new AddExpr(new VarExpr("y"),
+                                                                                                  new NumExpr(2))),
+                                                                     new CallExpr(new CallExpr(new VarExpr("f"),
+                                                                                               new NumExpr(5)),
+                                                                                  new VarExpr("g"))))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "_fun (g)\n"
+                    "g(x + 1)\n"
+                    "_in _let g = _fun (y)\n"
+                    "y + 2\n"
+                    "_in f(5(g))")->equals(new LetExpr(new VarExpr("f"), new FunExpr("x", new FunExpr("g",
+                                                                                                      new CallExpr(
+                                                                                                              new VarExpr(
+                                                                                                                      "g"),
+                                                                                                              new AddExpr(
+                                                                                                                      new VarExpr(
+                                                                                                                              "x"),
+                                                                                                                      new NumExpr(
+                                                                                                                              1))))),
+                                                       new LetExpr(new VarExpr("g"),
+                                                                   new FunExpr("y", new AddExpr(new VarExpr("y"),
+                                                                                                new NumExpr(2))),
+                                                                   new CallExpr(new VarExpr("f"),
+                                                                                new CallExpr(new NumExpr(5),
+                                                                                             new VarExpr("g")))))));
+
+    CHECK(parse_str("_let f = _fun (x)\n"
+                    "_fun (g)\n"
+                    "g(x + 1)\n"
+                    "_in _let g = _fun (y)\n"
+                    "y + 2\n"
+                    "_in f(5)(g)")->equals(new LetExpr(new VarExpr("f"), new FunExpr("x", new FunExpr("g",
+                                                                                                      new CallExpr(
+                                                                                                              new VarExpr(
+                                                                                                                      "g"),
+                                                                                                              new AddExpr(
+                                                                                                                      new VarExpr(
+                                                                                                                              "x"),
+                                                                                                                      new NumExpr(
+                                                                                                                              1))))),
+                                                       new LetExpr(new VarExpr("g"),
+                                                                   new FunExpr("y", new AddExpr(new VarExpr("y"),
+                                                                                                new NumExpr(2))),
+                                                                   new CallExpr(new CallExpr(new VarExpr("f"),
+                                                                                             new NumExpr(5)),
+                                                                                new VarExpr("g"))))));
+
+    CHECK(parse_str("_let f = _fun (f)\n"
+                    "_fun (x)\n"
+                    "_if x == 0\n"
+                    "_then 0\n"
+                    "_else x + f(f)(x + -1)\n"
+                    "_in f(f)(3)")->equals(new LetExpr(new VarExpr("f"),
+                                                       new FunExpr("f", new FunExpr("x", new IfExpr(
+                                                               new EqualExpr(new VarExpr("x"), new NumExpr(0)),
+                                                               new NumExpr(0),
+                                                               new AddExpr(new VarExpr("x"),
+                                                                           new CallExpr(new CallExpr(new VarExpr("f"),
+                                                                                                     new VarExpr("f")),
+                                                                                        new AddExpr(new VarExpr("x"),
+                                                                                                    new NumExpr(
+                                                                                                            -1))))))),
+                                                       new CallExpr(new CallExpr(new VarExpr("f"), new VarExpr("f")),
+                                                                    new NumExpr(3)))));
+
+
     CHECK_THROWS_WITH(parse_str("   _fun (x + 3) x * 2 + 3"), "Unexpected token");
     CHECK_THROWS_WITH(parse_str("   _fun () x * 2 + 3"), "Empty variable name");
     CHECK_THROWS_WITH(parse_str("   _fin (x) x * 2 + 3"), "Unexpected token");
@@ -243,6 +442,9 @@ TEST_CASE("Parse CallExpr") {
     CHECK(parse_str("f(3)(2)")->equals(new CallExpr(new CallExpr(new VarExpr("f"),
                                                                  new NumExpr(3)),
                                                     new NumExpr(2))));
+    CHECK(parse_str("(_fun (x) x + 1)(5)")->equals(
+            new CallExpr(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(1))),
+                         new NumExpr(5))));
 
-    CHECK_THROWS_WITH(parse_str("f x + 2"), "Unexpected input after expression!");
+    CHECK_THROWS_WITH(parse_str("f 5"), "Unexpected input after expression!");
 }

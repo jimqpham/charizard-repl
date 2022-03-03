@@ -31,5 +31,5 @@ Expr *BoolVal::to_expr() {
 }
 
 Val *BoolVal::call(Val *actual_arg) {
-    return new BoolVal(this->rep);
+    throw std::runtime_error("call of non-function val");
 }

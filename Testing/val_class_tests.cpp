@@ -48,7 +48,7 @@ TEST_CASE("Test NumVal methods") {
     }
 
     SECTION("The call method") {
-        CHECK(ten->call(new NumVal(-2))->value_equals(new NumVal(10)));
+        CHECK_THROWS_WITH(ten->call(new NumVal(-2)), "call of non-function val");
     }
 }
 
@@ -86,7 +86,7 @@ TEST_CASE("Test BoolVal methods") {
     }
 
     SECTION("The call method") {
-        CHECK(tr->call(new BoolVal(false))->value_equals(new BoolVal(true)));
+        CHECK_THROWS_WITH(tr->call(new BoolVal(false)), "call of non-function val");
     }
 }
 

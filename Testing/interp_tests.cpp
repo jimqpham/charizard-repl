@@ -188,10 +188,133 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
         CHECK(fun1.interp()->value_equals(new FunVal("x", &body)));
         CHECK(!fun1.interp()->value_equals(new FunVal("x1", &body)));
         CHECK(!fun1.interp()->value_equals(new FunVal("x1", &add1)));
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "x + 1\n"
+                        "_in f(5)")->interp()->to_string() == "6");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "7\n"
+                        "_in f(5)")->interp()->to_string() == "7");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "_true\n"
+                        "_in f(5)")->interp()->to_string() == "_true");
+
+        CHECK_THROWS_WITH(parse_str("_let f = _fun (x)\n"
+                                    "x + _true\n"
+                                    "_in f(5)")->interp(), "add of non-number");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "x + _true\n"
+                        "_in 5 + 1")->interp()->to_string() == "6");
+
+        CHECK_THROWS_WITH(parse_str("_let f = _fun (x)\n"
+                                    "7\n"
+                                    "_in f(5 + _true)")->interp(), "add of non-number");
+
+        CHECK_THROWS_WITH(parse_str("_let f = _fun (x)\n"
+                                    "x + 1\n"
+                                    "_in f + 5")->interp(), "add of non-number");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "x + 1\n"
+                        "_in _if _false\n"
+                        "    _then f(5)\n"
+                        "    _else f(6)")->interp()->to_string() == "7");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "              x + 1\n"
+                        "_in _let g = _fun (y)\n"
+                        "               y + 2\n"
+                        "_in _if _true\n"
+                        "    _then f(5)\n"
+                        "    _else g(5)")->interp()->to_string() == "6");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "              x + 1\n"
+                        "_in _let g = _fun (y)\n"
+                        "               y + 2\n"
+                        "    _in f(g(5))")->interp()->to_string() == "8");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "              x + 1\n"
+                        "_in _let g = _fun (y)\n"
+                        "               f(y + 2)\n"
+                        "    _in g(5)")->interp()->to_string() == "8");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "              x + 1\n"
+                        "_in _let g = _fun (x)\n"
+                        "               f(2) + x\n"
+                        "    _in g(5)")->interp()->to_string() == "8");;
+
+        CHECK(parse_str("_let f = _if _false\n"
+                        "_then _fun (x)\n"
+                        "x + 1\n"
+                        "_else _fun (x)\n"
+                        "x + 2\n"
+                        "_in f(5)")->interp()->to_string() == "7");;
+
+        CHECK(parse_str("(_if _false\n"
+                        "_then _fun (x)\n"
+                        "x + 1\n"
+                        "_else _fun (x)\n"
+                        "x + 2)(5)")->interp()->to_string() == "7");
+
+        CHECK(parse_str("_let f = _fun (g)\n"
+                        "g(5)\n"
+                        "_in _let g = _fun (y)\n"
+                        "y + 2\n"
+                        "_in f(g)")->interp()->to_string() == "7");
+
+        CHECK(parse_str("_let f = _fun (g)\n"
+                        "g(5)\n"
+                        "_in f(_fun (y)\n"
+                        "y + 2)")->interp()->to_string() == "7");;
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "_fun (y)\n"
+                        "x + y\n"
+                        "_in (f(5))(1)")->interp()->to_string() == "6");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "_fun (y)\n"
+                        "x + y\n"
+                        "_in f(5)(1)")->interp()->to_string() == "6");;
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "_fun (g)\n"
+                        "g(x + 1)\n"
+                        "_in _let g = _fun (y)\n"
+                        "y + 2\n"
+                        "_in (f(5))(g)")->interp()->to_string() == "8");
+
+        CHECK_THROWS_WITH(parse_str("_let f = _fun (x)\n"
+                                    "_fun (g)\n"
+                                    "g(x + 1)\n"
+                                    "_in _let g = _fun (y)\n"
+                                    "y + 2\n"
+                                    "_in f(5(g))")->interp(), "call of non-function val");
+
+        CHECK(parse_str("_let f = _fun (x)\n"
+                        "_fun (g)\n"
+                        "g(x + 1)\n"
+                        "_in _let g = _fun (y)\n"
+                        "y + 2\n"
+                        "_in f(5)(g)")->interp()->to_string() == "8");
+
+        CHECK(parse_str("_let f = _fun (f)\n"
+                        "_fun (x)\n"
+                        "_if x == 0\n"
+                        "_then 0\n"
+                        "_else x + f(f)(x + -1)\n"
+                        "_in f(f)(3)")->interp()->to_string() == "6");
     }
 
     SECTION("Should evaluate CallExpr") {
-        Val *result = call1.interp();
         CHECK(call1.interp()->value_equals(new NumVal(2)));
+        CHECK(parse_str("_fun (x) x + 1")->interp()->to_string() == "(_fun (x) (x+1))");
+        CHECK(parse_str("_let f = _fun (x) x + 1 _in f")->interp()->to_string() == "(_fun (x) (x+1))");
     }
 }
