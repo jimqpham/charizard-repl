@@ -6,7 +6,7 @@ NumVal::NumVal(int rep) {
 }
 
 bool NumVal::value_equals(PTR(Val)o) {
-    PTR(NumVal)otherVal = dynamic_cast<NumVal *>(o);
+    PTR(NumVal)otherVal = CAST(NumVal)(o);
 
     if (otherVal != nullptr)
         return this->rep == otherVal->rep;
@@ -15,7 +15,7 @@ bool NumVal::value_equals(PTR(Val)o) {
 }
 
 PTR(Val)NumVal::add_to(PTR(Val)o) {
-    PTR(NumVal)otherVal = dynamic_cast<NumVal *>(o);
+    PTR(NumVal)otherVal = CAST(NumVal)(o);
 
     if (otherVal != nullptr)
         return NEW(NumVal)(this->rep + otherVal->rep);
@@ -24,7 +24,7 @@ PTR(Val)NumVal::add_to(PTR(Val)o) {
 }
 
 PTR(Val)NumVal::mult_by(PTR(Val)o) {
-    PTR(NumVal)otherVal = dynamic_cast<NumVal *>(o);
+    PTR(NumVal)otherVal = CAST(NumVal)(o);
 
     if (otherVal != nullptr)
         return NEW(NumVal)(this->rep * otherVal->rep);

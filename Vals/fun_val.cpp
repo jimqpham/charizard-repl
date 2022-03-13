@@ -7,7 +7,7 @@ FunVal::FunVal(std::string formal_arg, PTR(Expr)body) {
 }
 
 bool FunVal::value_equals(PTR(Val)o) {
-    PTR(FunVal)otherVal = dynamic_cast<FunVal *>(o);
+    PTR(FunVal)otherVal = CAST(FunVal)(o);
 
     return otherVal != nullptr &&
            otherVal->formal_arg == this->formal_arg &&

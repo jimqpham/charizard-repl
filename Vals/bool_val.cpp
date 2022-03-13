@@ -6,7 +6,7 @@ BoolVal::BoolVal(bool rep) {
 }
 
 bool BoolVal::value_equals(PTR(Val)o) {
-    PTR(BoolVal)otherVal = dynamic_cast<BoolVal *>(o);
+    PTR(BoolVal)otherVal = CAST(BoolVal)(o);
 
     if (otherVal != nullptr)
         return this->rep == otherVal->rep;
