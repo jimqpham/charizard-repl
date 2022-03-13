@@ -9,6 +9,7 @@
 #include "../Expressions/equal_expr.h"
 #include "../Expressions/if_expr.h"
 #include "../Expressions/call_expr.h"
+#include "../shared_ptr.h"
 
 TEST_CASE("Default test: Subst after replacement - should be equal") {
     CHECK ((new MultExpr(new VarExpr("x"), new NumExpr(7)))

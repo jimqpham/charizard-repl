@@ -13,6 +13,7 @@
 #include "../Vals/fun_val.h"
 #include "../Expressions/call_expr.h"
 #include "../CmdLines/parse.h"
+#include "../shared_ptr.h"
 
 #include <stdexcept>
 

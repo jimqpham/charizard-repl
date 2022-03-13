@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../shared_ptr.h"
+
 class Expr;
 
 class Val {

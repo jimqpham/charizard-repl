@@ -1,10 +1,11 @@
 #include "expr.h"
+#include "../shared_ptr.h"
 
 class FunExpr : public Expr {
 private:
     std::string formal_arg;
     Expr *body;
-    
+
 public:
     FunExpr(std::string formal_arg, Expr *body);
 

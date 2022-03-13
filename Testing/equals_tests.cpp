@@ -10,6 +10,7 @@
 #include "../Expressions/if_expr.h"
 #include "../Expressions/call_expr.h"
 #include "../Expressions/fun_expr.h"
+#include "../shared_ptr.h"
 
 bool compareParsedExpressions(const std::string &s1, const std::string &s2) {
     Expr *e1 = parse_str(s1);

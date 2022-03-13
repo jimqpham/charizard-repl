@@ -1,4 +1,5 @@
 #include "expr.h"
+#include "../shared_ptr.h"
 
 class EqualExpr : public Expr {
 private:

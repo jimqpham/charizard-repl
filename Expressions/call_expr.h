@@ -1,4 +1,5 @@
 #include "expr.h"
+#include "../shared_ptr.h"
 
 class CallExpr : public Expr {
 private:

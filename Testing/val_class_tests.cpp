@@ -8,6 +8,7 @@
 #include "../Expressions/fun_expr.h"
 #include "../Expressions/add_expr.h"
 #include "../Expressions/var_expr.h"
+#include "../shared_ptr.h"
 
 TEST_CASE("Test NumVal methods") {
 

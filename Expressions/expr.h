@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include "../shared_ptr.h"
 
 typedef enum {
     prec_none,

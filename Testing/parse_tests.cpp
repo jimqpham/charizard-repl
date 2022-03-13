@@ -10,6 +10,7 @@
 #include "../Expressions/equal_expr.h"
 #include "../Expressions/fun_expr.h"
 #include "../Expressions/call_expr.h"
+#include "../shared_ptr.h"
 
 TEST_CASE("Parse numbers") {
     CHECK(parse_str("(1)")->equals(new NumExpr(1)));

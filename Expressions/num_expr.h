@@ -2,6 +2,7 @@
 
 #include "expr.h"
 #include <iostream>
+#include "../shared_ptr.h"
 
 class NumExpr : public Expr {
 private:

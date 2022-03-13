@@ -10,6 +10,7 @@
 #include "../Expressions/if_expr.h"
 #include "../Expressions/fun_expr.h"
 #include "../Expressions/call_expr.h"
+#include "../shared_ptr.h"
 
 TEST_CASE("Should print or pretty print expressions") {
     NumExpr num1 = NumExpr(3);

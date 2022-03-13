@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include "./expr.h"
+#include "../shared_ptr.h"
 #include <iostream>
 
 class VarExpr : public Expr {

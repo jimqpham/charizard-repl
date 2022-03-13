@@ -1,5 +1,6 @@
 #include <string>
 #include "val.h"
+#include "../shared_ptr.h"
 
 class FunVal : public Val {
 private:

@@ -1,4 +1,5 @@
 #include "expr.h"
+#include "../shared_ptr.h"
 
 class BoolExpr : public Expr {
 private:

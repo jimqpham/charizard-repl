@@ -1,5 +1,6 @@
 #include "expr.h"
 #include "var_expr.h"
+#include "../shared_ptr.h"
 
 class Val;
 

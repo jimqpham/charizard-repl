@@ -1,6 +1,7 @@
 #pragma once
 
 #include "expr.h"
+#include "../shared_ptr.h"
 #include <iostream>
 
 class MultExpr : public Expr {

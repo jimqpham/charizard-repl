@@ -1,4 +1,5 @@
 #include <istream>
+#include "../shared_ptr.h"
 
 class Expr;
 
