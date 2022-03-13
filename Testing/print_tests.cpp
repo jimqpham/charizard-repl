@@ -22,7 +22,7 @@ TEST_CASE("Should print or pretty print expressions") {
 
     AddExpr add1 = AddExpr(&num1, &num2); //"3 + -2"
     MultExpr mult1 = MultExpr(&num1, &num2); //"3 * -2"
-    LetExpr let1 = LetExpr(&var1, &num1, new AddExpr(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
+    LetExpr let1 = LetExpr(&var1, &num1, NEW(AddExpr)(&var1, &num2)); //"_let x=3 _in (x+-2)" = 1
     IfExpr if1 = IfExpr(&tr, &num1, &num2);
 
     SECTION("Should print NumExpr") {
@@ -99,7 +99,7 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(LetExpr(&var1, &num2, &let1).to_string() == "(_let x=-2 _in (_let x=3 _in (x+-2)))");
 
         // Nested lets - rhs is a LetExpr body
-        CHECK(LetExpr(&var1, &let1, new AddExpr(&var1, &num2)).to_string() ==
+        CHECK(LetExpr(&var1, &let1, NEW(AddExpr)(&var1, &num2)).to_string() ==
               "(_let x=(_let x=3 _in (x+-2)) _in (x+-2))");
 
         // Nested lets - both body and rhs are LetExpr body's
@@ -109,13 +109,13 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(AddExpr(&let1, &num1).to_string() == "((_let x=3 _in (x+-2))+3)");
 
         // LetExpr is rhs of a parenthesized +/* body
-        CHECK(MultExpr(&num1, new AddExpr(&num1, &let1)).to_string() == "(3*(3+(_let x=3 _in (x+-2))))");
+        CHECK(MultExpr(&num1, NEW(AddExpr)(&num1, &let1)).to_string() == "(3*(3+(_let x=3 _in (x+-2))))");
 
         // LetExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
         CHECK(MultExpr(&num1, &let1).to_string() == "(3*(_let x=3 _in (x+-2)))");
 
         // LetExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
-        CHECK(AddExpr(new MultExpr(&num1, &let1), &num1).to_string() == "((3*(_let x=3 _in (x+-2)))+3)");
+        CHECK(AddExpr(NEW(MultExpr)(&num1, &let1), &num1).to_string() == "((3*(_let x=3 _in (x+-2)))+3)");
     }
 
     SECTION("Should print IfExpr") {
@@ -128,20 +128,20 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(IfExpr(&tr, &num1, &if1).to_string() == "(_if _true _then 3 _else (_if _true _then 3 _else -2))");
 
         // Nested lets - both thenBranch and elseBranch are LetExpr body's
-        CHECK(IfExpr(new EqualExpr(new NumExpr(1), new NumExpr(1)), &if1, &if1).to_string() ==
+        CHECK(IfExpr(NEW(EqualExpr)(NEW(NumExpr)(1), NEW(NumExpr)(1)), &if1, &if1).to_string() ==
               "(_if (1==1) _then (_if _true _then 3 _else -2) _else (_if _true _then 3 _else -2))");
 
         // IfExpr is lhs of a +/* body
         CHECK(AddExpr(&if1, &num1).to_string() == "((_if _true _then 3 _else -2)+3)");
 
         // IfExpr is rhs of a parenthesized +/* body
-        CHECK(MultExpr(&num1, new AddExpr(&num1, &if1)).to_string() == "(3*(3+(_if _true _then 3 _else -2)))");
+        CHECK(MultExpr(&num1, NEW(AddExpr)(&num1, &if1)).to_string() == "(3*(3+(_if _true _then 3 _else -2)))");
 
         // IfExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context when pretty print
         CHECK(MultExpr(&num1, &if1).to_string() == "(3*(_if _true _then 3 _else -2))");
 
         // IfExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context when pretty print
-        CHECK(AddExpr(new MultExpr(&num1, &if1), &num1).to_string() == "((3*(_if _true _then 3 _else -2))+3)");
+        CHECK(AddExpr(NEW(MultExpr)(&num1, &if1), &num1).to_string() == "((3*(_if _true _then 3 _else -2))+3)");
     }
 
     SECTION("Should print FunExpr") {
@@ -150,7 +150,7 @@ TEST_CASE("Should print or pretty print expressions") {
     }
 
     SECTION("Should print CallExpr") {
-        CHECK(CallExpr(new VarExpr("f"), new VarExpr("x")).to_string() == "f(x)");
+        CHECK(CallExpr(NEW(VarExpr)("f"), NEW(VarExpr)("x")).to_string() == "f(x)");
     }
 
     SECTION("Should pretty print Number") {
@@ -214,10 +214,10 @@ TEST_CASE("Should print or pretty print expressions") {
         CHECK(EqualExpr(&num1, &tr).to_string(true) == "3 == _true");
         CHECK(EqualExpr(&let1, &num1).to_string(true) == "(_let x = 3\n"
                                                          " _in  x + -2) == 3");
-        CHECK(EqualExpr(new EqualExpr(&num1, &num2), &num1).to_string(true) == "(3 == -2) == 3");
-        CHECK(EqualExpr(&num1, new EqualExpr(&num1, &num2)).to_string(true) == "3 == 3 == -2");
-        CHECK(AddExpr(new EqualExpr(&num1, &num2),
-                      new EqualExpr(&num1, &tr)).to_string(true) == "(3 == -2) + (3 == _true)");
+        CHECK(EqualExpr(NEW(EqualExpr)(&num1, &num2), &num1).to_string(true) == "(3 == -2) == 3");
+        CHECK(EqualExpr(&num1, NEW(EqualExpr)(&num1, &num2)).to_string(true) == "3 == 3 == -2");
+        CHECK(AddExpr(NEW(EqualExpr)(&num1, &num2),
+                      NEW(EqualExpr)(&num1, &tr)).to_string(true) == "(3 == -2) + (3 == _true)");
     }
 
     SECTION("Should pretty print LetExpr") {
@@ -232,7 +232,7 @@ TEST_CASE("Should print or pretty print expressions") {
                                           "     _in  x + -2");
 
         // Nested lets - rhs is a LetExpr body
-        CHECK(LetExpr(&var1, &let1, new AddExpr(&var1, &num2))
+        CHECK(LetExpr(&var1, &let1, NEW(AddExpr)(&var1, &num2))
                       .to_string(true) == "_let x = _let x = 3\n"
                                           "         _in  x + -2\n"
                                           "_in  x + -2");
@@ -250,16 +250,16 @@ TEST_CASE("Should print or pretty print expressions") {
                                           " _in  x + -2) + 3");
 
         // LetExpr is rhs of a parenthesized +/* body
-        CHECK(MultExpr(&num1, new AddExpr(&num1, &let1)).to_string(true) == "3 * (3 + _let x = 3\n"
-                                                                            "         _in  x + -2)");
+        CHECK(MultExpr(&num1, NEW(AddExpr)(&num1, &let1)).to_string(true) == "3 * (3 + _let x = 3\n"
+                                                                             "         _in  x + -2)");
 
         // LetExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
         CHECK(MultExpr(&num1, &let1).to_string(true) == "3 * _let x = 3\n"
                                                         "    _in  x + -2");
 
         // LetExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
-        CHECK(AddExpr(new MultExpr(&num1, &let1), &num1).to_string(true) == "3 * (_let x = 3\n"
-                                                                            "     _in  x + -2) + 3");
+        CHECK(AddExpr(NEW(MultExpr)(&num1, &let1), &num1).to_string(true) == "3 * (_let x = 3\n"
+                                                                             "     _in  x + -2) + 3");
 
     }
 
@@ -283,7 +283,7 @@ TEST_CASE("Should print or pretty print expressions") {
                                                           "      _else -2");
 
         // Nested lets - both thenBranch and elseBranch are LetExpr body's
-        CHECK(IfExpr(new EqualExpr(new NumExpr(1), new NumExpr(1)),
+        CHECK(IfExpr(NEW(EqualExpr)(NEW(NumExpr)(1), NEW(NumExpr)(1)),
                      &if1,
                      &if1).to_string(true) == "_if 1 == 1\n"
                                               "_then _if _true\n"
@@ -298,46 +298,46 @@ TEST_CASE("Should print or pretty print expressions") {
                                                       " _else -2) + 3");
 
         // IfExpr is rhs of a parenthesized +/* body
-        CHECK(MultExpr(&num1, new AddExpr(&num1, &if1)).to_string(true) == "3 * (3 + _if _true\n"
-                                                                           "         _then 3\n"
-                                                                           "         _else -2)");
+        CHECK(MultExpr(&num1, NEW(AddExpr)(&num1, &if1)).to_string(true) == "3 * (3 + _if _true\n"
+                                                                            "         _then 3\n"
+                                                                            "         _else -2)");
         // IfExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
         CHECK(MultExpr(&num1, &if1).to_string(true) == "3 * _if _true\n"
                                                        "    _then 3\n"
                                                        "    _else -2");
 
 
-        CHECK(MultExpr(&if1, new LetExpr(new VarExpr("x"),
-                                         new NumExpr(2),
-                                         new AddExpr(new VarExpr("x"), new NumExpr(2))))
+        CHECK(MultExpr(&if1, NEW(LetExpr)(NEW(VarExpr)("x"),
+                                          NEW(NumExpr)(2),
+                                          NEW(AddExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(2))))
                       .to_string(true) == "(_if _true\n"
                                           " _then 3\n"
                                           " _else -2) * _let x = 2\n"
                                           "             _in  x + 2");
 
         // IfExpr is rhs of an unparenthesized +/* and would have needed parentheses in the surrounding context
-        CHECK(AddExpr(new MultExpr(new NumExpr(3),
-                                   new IfExpr(new BoolExpr(true),
-                                              new NumExpr(3),
-                                              new NumExpr(-2))), &num1)
+        CHECK(AddExpr(NEW(MultExpr)(NEW(NumExpr)(3),
+                                    NEW(IfExpr)(NEW(BoolExpr)(true),
+                                                NEW(NumExpr)(3),
+                                                NEW(NumExpr)(-2))), &num1)
                       .to_string(true) == "3 * (_if _true\n"
                                           "     _then 3\n"
                                           "     _else -2) + 3");
 
         // Class example 1
-        CHECK(LetExpr(new VarExpr("same"),
-                      new EqualExpr(new NumExpr(1), new NumExpr(2)),
-                      new IfExpr(new EqualExpr(new NumExpr(1), new NumExpr(2)),
-                                 new AddExpr(new BoolExpr(false), new NumExpr(5)),
-                                 new NumExpr(88)))
+        CHECK(LetExpr(NEW(VarExpr)("same"),
+                      NEW(EqualExpr)(NEW(NumExpr)(1), NEW(NumExpr)(2)),
+                      NEW(IfExpr)(NEW(EqualExpr)(NEW(NumExpr)(1), NEW(NumExpr)(2)),
+                                  NEW(AddExpr)(NEW(BoolExpr)(false), NEW(NumExpr)(5)),
+                                  NEW(NumExpr)(88)))
                       .to_string(true) == "_let same = 1 == 2\n"
                                           "_in  _if 1 == 2\n"
                                           "     _then _false + 5\n"
                                           "     _else 88");
         // Class example 2
-        CHECK(IfExpr(new AddExpr(new NumExpr(4), new NumExpr(1)),
-                     new NumExpr(2),
-                     new NumExpr(3))
+        CHECK(IfExpr(NEW(AddExpr)(NEW(NumExpr)(4), NEW(NumExpr)(1)),
+                     NEW(NumExpr)(2),
+                     NEW(NumExpr)(3))
                       .to_string(true) == "_if 4 + 1\n"
                                           "_then 2\n"
                                           "_else 3");
@@ -345,51 +345,51 @@ TEST_CASE("Should print or pretty print expressions") {
 
     SECTION("Should pretty print FunExpr") {
         // Nested funs - body is a FunExpr body
-        CHECK(FunExpr("x", new FunExpr("x",
-                                       new EqualExpr(new VarExpr("x"), new NumExpr(1))))
+        CHECK(FunExpr("x", NEW(FunExpr)("x",
+                                        NEW(EqualExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1))))
                       .to_string(true) == "_fun (x)\n"
                                           "  _fun (x)\n"
                                           "    x == 1");
 
         // Nested funs - fun is rhs of a let
         CHECK(LetExpr(&var1,
-                      new FunExpr("x", new EqualExpr(new VarExpr("x"), new NumExpr(1))),
-                      new AddExpr(&var1, &num2))
+                      NEW(FunExpr)("x", NEW(EqualExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1))),
+                      NEW(AddExpr)(&var1, &num2))
                       .to_string(true) == "_let x = _fun (x)\n"
                                           "           x == 1\n"
                                           "_in  x + -2");
 
         // LetExpr is lhs of a +/* body
-        CHECK(AddExpr(new FunExpr("x", new EqualExpr(new VarExpr("x"), new NumExpr(1))), &num1)
+        CHECK(AddExpr(NEW(FunExpr)("x", NEW(EqualExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1))), &num1)
                       .to_string(true) == "(_fun (x)\n"
                                           "   x == 1) + 3");
 
         CHECK(MultExpr(&num1,
-                       new FunExpr("x", new EqualExpr(new VarExpr("x"), new NumExpr(1))))
+                       NEW(FunExpr)("x", NEW(EqualExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1))))
                       .to_string(true) == "3 * _fun (x)\n"
                                           "      x == 1");
 
         // LetExpr is rhs of an unparenthesized +/* and would NOT have needed parentheses in the surrounding context
-        CHECK(MultExpr(&num1, new FunExpr("x", new EqualExpr(new VarExpr("x"),
-                                                             new AddExpr(new VarExpr("x"),
-                                                                         new NumExpr(1)))))
+        CHECK(MultExpr(&num1, NEW(FunExpr)("x", NEW(EqualExpr)(NEW(VarExpr)("x"),
+                                                               NEW(AddExpr)(NEW(VarExpr)("x"),
+                                                                            NEW(NumExpr)(1)))))
                       .to_string(true) == "3 * _fun (x)\n"
                                           "      x == x + 1");
     }
 
     SECTION("Should pretty print CallExpr") {
 
-        CHECK(CallExpr(new VarExpr("f"), new VarExpr("x"))
+        CHECK(CallExpr(NEW(VarExpr)("f"), NEW(VarExpr)("x"))
                       .to_string(true) == "f(x)");
 
         // Nested funs - body is a FunExpr body
-        CHECK(CallExpr(new FunExpr("x", new EqualExpr(new VarExpr("x"), new NumExpr(1))),
-                       new AddExpr(new VarExpr("x"), new NumExpr(1)))
+        CHECK(CallExpr(NEW(FunExpr)("x", NEW(EqualExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1))),
+                       NEW(AddExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1)))
                       .to_string(true) == "(_fun (x)\n"
                                           "   x == 1)(x + 1)");
 
         // Recursive
-        CHECK(CallExpr(new CallExpr(new VarExpr("f"), new VarExpr("f")), new NumExpr(10))
+        CHECK(CallExpr(NEW(CallExpr)(NEW(VarExpr)("f"), NEW(VarExpr)("f")), NEW(NumExpr)(10))
                       .to_string(true) == "f(f)(10)");
     }
 }

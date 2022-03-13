@@ -12,14 +12,14 @@
 
 TEST_CASE("Test NumVal methods") {
 
-    PTR(NumVal) ten = new NumVal(10);
-    PTR(NumVal) otherTen = new NumVal(10);
-    PTR(NumVal) two = new NumVal(2);
-    PTR(NumVal) negTwo = new NumVal(-2);
-    PTR(NumVal) five = new NumVal(5);
-    PTR(NumVal) eight = new NumVal(8);
-    PTR(NumVal) twelve = new NumVal(12);
-    PTR(NumVal) nullVal = nullptr;
+    PTR(NumVal)ten = NEW(NumVal)(10);
+    PTR(NumVal)otherTen = NEW(NumVal)(10);
+    PTR(NumVal)two = NEW(NumVal)(2);
+    PTR(NumVal)negTwo = NEW(NumVal)(-2);
+    PTR(NumVal)five = NEW(NumVal)(5);
+    PTR(NumVal)eight = NEW(NumVal)(8);
+    PTR(NumVal)twelve = NEW(NumVal)(12);
+    PTR(NumVal)nullVal = nullptr;
 
     SECTION("The value_equals method") {
         CHECK(ten->value_equals(otherTen));
@@ -44,21 +44,21 @@ TEST_CASE("Test NumVal methods") {
     }
 
     SECTION("The to_expr method") {
-        CHECK(ten->to_expr()->equals(new NumExpr(10)));
-        CHECK(negTwo->to_expr()->equals(new NumExpr(-2)));
+        CHECK(ten->to_expr()->equals(NEW(NumExpr)(10)));
+        CHECK(negTwo->to_expr()->equals(NEW(NumExpr)(-2)));
     }
 
     SECTION("The call method") {
-        CHECK_THROWS_WITH(ten->call(new NumVal(-2)), "call of non-function val");
+        CHECK_THROWS_WITH(ten->call(NEW(NumVal)(-2)), "call of non-function val");
     }
 }
 
 TEST_CASE("Test BoolVal methods") {
 
-    PTR(BoolVal) tr = new BoolVal(true);
-    PTR(BoolVal) otherTr = new BoolVal(true);
-    PTR(BoolVal) fls = new BoolVal(false);
-    PTR(NumVal) two = new NumVal(2);
+    PTR(BoolVal)tr = NEW(BoolVal)(true);
+    PTR(BoolVal)otherTr = NEW(BoolVal)(true);
+    PTR(BoolVal)fls = NEW(BoolVal)(false);
+    PTR(NumVal)two = NEW(NumVal)(2);
 
     SECTION("The value_equals method") {
         CHECK(tr->value_equals(otherTr));
@@ -82,33 +82,33 @@ TEST_CASE("Test BoolVal methods") {
     }
 
     SECTION("The to_expr method") {
-        CHECK(tr->to_expr()->equals(new BoolExpr(true)));
-        CHECK(fls->to_expr()->equals(new BoolExpr(false)));
+        CHECK(tr->to_expr()->equals(NEW(BoolExpr)(true)));
+        CHECK(fls->to_expr()->equals(NEW(BoolExpr)(false)));
     }
 
     SECTION("The call method") {
-        CHECK_THROWS_WITH(tr->call(new BoolVal(false)), "call of non-function val");
+        CHECK_THROWS_WITH(tr->call(NEW(BoolVal)(false)), "call of non-function val");
     }
 }
 
 TEST_CASE("Test FunVal methods") {
 
-    PTR(FunVal) f1 = new FunVal("x", parse_str("x + 1"));
+    PTR(FunVal)f1 = NEW(FunVal)("x", parse_str("x + 1"));
 
     SECTION("The value_equals method") {
-        PTR(Val) otherF1 = parse_str("_fun (x) x + 1")->interp();
+        PTR(Val)otherF1 = parse_str("_fun (x) x + 1")->interp();
         CHECK(f1->value_equals(otherF1));
-        CHECK(!f1->value_equals(new FunVal("y", parse_str("x + 1"))));
-        CHECK(!f1->value_equals(new FunVal("x", parse_str("x + 2"))));
-        CHECK(!f1->value_equals(new NumVal(10)));
+        CHECK(!f1->value_equals(NEW(FunVal)("y", parse_str("x + 1"))));
+        CHECK(!f1->value_equals(NEW(FunVal)("x", parse_str("x + 2"))));
+        CHECK(!f1->value_equals(NEW(NumVal)(10)));
     }
 
     SECTION("The add_to method") {
-        CHECK_THROWS_WITH(f1->add_to(new NumVal(2)), "add of non-number");
+        CHECK_THROWS_WITH(f1->add_to(NEW(NumVal)(2)), "add of non-number");
     }
 
     SECTION("The mult_by method") {
-        CHECK_THROWS_WITH(f1->mult_by(new NumVal(2)), "mult of non-number");
+        CHECK_THROWS_WITH(f1->mult_by(NEW(NumVal)(2)), "mult of non-number");
     }
 
     SECTION("The to_string method") {
@@ -116,10 +116,10 @@ TEST_CASE("Test FunVal methods") {
     }
 
     SECTION("The to_expr method") {
-        CHECK(f1->to_expr()->equals(new FunExpr("x", new AddExpr(new VarExpr("x"), new NumExpr(1)))));
+        CHECK(f1->to_expr()->equals(NEW(FunExpr)("x", NEW(AddExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1)))));
     }
 
     SECTION("The call method") {
-        CHECK(f1->call(new NumVal(10))->value_equals(new NumVal(11)));
+        CHECK(f1->call(NEW(NumVal)(10))->value_equals(NEW(NumVal)(11)));
     }
 }
