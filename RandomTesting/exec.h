@@ -16,7 +16,7 @@ public:
     }
 };
 
-extern ExecResult exec_program(int argc, const char *const *argv, std::string
+extern ExecResult exec_program(int argc, const PTR(char)PTR(const)argv, std::string
 input);
 
 #endif /* exec_hpp */

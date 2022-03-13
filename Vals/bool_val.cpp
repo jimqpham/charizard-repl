@@ -5,8 +5,8 @@ BoolVal::BoolVal(bool rep) {
     this->rep = rep;
 }
 
-bool BoolVal::value_equals(Val *o) {
-    BoolVal *otherVal = dynamic_cast<BoolVal *>(o);
+bool BoolVal::value_equals(PTR(Val) o) {
+    PTR(BoolVal) otherVal = dynamic_cast<BoolVal *>(o);
 
     if (otherVal != nullptr)
         return this->rep == otherVal->rep;
@@ -14,11 +14,11 @@ bool BoolVal::value_equals(Val *o) {
         return false;
 }
 
-Val *BoolVal::add_to(Val *o) {
+PTR(Val)BoolVal::add_to(PTR(Val) o) {
     throw std::runtime_error("add of non-number");
 }
 
-Val *BoolVal::mult_by(Val *o) {
+PTR(Val)BoolVal::mult_by(PTR(Val) o) {
     throw std::runtime_error("mult of non-number");
 }
 
@@ -26,10 +26,10 @@ std::string BoolVal::to_string() {
     return this->rep ? "_true" : "_false";
 }
 
-Expr *BoolVal::to_expr() {
+PTR(Expr)BoolVal::to_expr() {
     return new BoolExpr(this->rep);
 }
 
-Val *BoolVal::call(Val *actual_arg) {
+PTR(Val)BoolVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("call of non-function val");
 }

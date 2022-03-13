@@ -28,12 +28,12 @@ static std::string make_var();
 std::string expr_string(expr_type_t expr_type);
 
 // Test when there's only a single msdscript program
-int test_single(const char *msdscript_path, const char *operation, int numIterations);
+int test_single(const PTR(char)msdscript_path, const PTR(char)operation, int numIterations);
 
 std::string exec_res_to_string(ExecResult exec_res);
 
 // Compare outputs of two msdscripts
-int compare_output(const char *msds1_path, const char *msds2_path, const char *operation, int numIterations);
+int compare_output(const PTR(char)msds1_path, const PTR(char)msds2_path, const PTR(char)operation, int numIterations);
 
 int main(int argc, char **argv) {
 
@@ -127,8 +127,9 @@ std::string expr_string(expr_type_t expr_type) {
 }
 
 // Test when there's only a single msdscript program
-int test_single(const char *msdscript_path, const char *operation, int iteration) {
-    const char *const argv[] = {msdscript_path, operation};
+int test_single(const PTR(char)msdscript_path, const PTR(char)operation, int iteration) {
+    const PTR(char) const
+    argv[] = {msdscript_path, operation};
     int numTestsPassed = 0;
 
     for (int i = 0; i < iteration; i++) {
@@ -182,9 +183,11 @@ std::string exec_res_to_string(ExecResult exec_res) {
 }
 
 // Compare outputs of two msdscripts
-int compare_output(const char *msds1_path, const char *msds2_path, const char *operation, int iteration) {
-    const char *const interp1_argv[] = {msds1_path, operation};
-    const char *const interp2_argv[] = {msds2_path, operation};
+int compare_output(const PTR(char)msds1_path, const PTR(char)msds2_path, const PTR(char)operation, int iteration) {
+    const PTR(char) const
+    interp1_argv[] = {msds1_path, operation};
+    const PTR(char) const
+    interp2_argv[] = {msds2_path, operation};
     int numOutputsMatched = 0;
 
     for (int i = 0; i < iteration; i++) {

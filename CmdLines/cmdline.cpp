@@ -57,7 +57,7 @@ void use_arguments(int argc, char **argv) {
 
 void interactiveCommand(command_t command) {
     while (true) {
-        Expr *e = parse(std::cin);
+        PTR(Expr) e = parse(std::cin);
 
         std::string output;
         switch (command) {

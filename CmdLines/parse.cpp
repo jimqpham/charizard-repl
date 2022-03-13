@@ -12,7 +12,7 @@
 #include "../Expressions/fun_expr.h"
 
 
-Expr *parse_num(std::istream &in) {
+PTR(Expr) parse_num(std::istream &in) {
     int n = 0;
     bool negative = false;
 
@@ -39,7 +39,7 @@ Expr *parse_num(std::istream &in) {
     return new NumExpr(n);
 }
 
-VarExpr *parse_var(std::istream &in) {
+PTR(VarExpr) parse_var(std::istream &in) {
     std::string name;
 
     while (true) {
@@ -57,12 +57,12 @@ VarExpr *parse_var(std::istream &in) {
     return new VarExpr(name);
 }
 
-Expr *parse_let(std::istream &in) {
+PTR(Expr) parse_let(std::istream &in) {
     parse_char_group(in, "let");
 
     skip_whitespace(in);
 
-    VarExpr *variable = parse_var(in);
+    PTR(VarExpr) variable = parse_var(in);
 
     skip_whitespace(in);
 
@@ -70,7 +70,7 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    Expr *rhs = parse_expr(in);
+    PTR(Expr) rhs = parse_expr(in);
 
     skip_whitespace(in);
 
@@ -78,17 +78,17 @@ Expr *parse_let(std::istream &in) {
 
     skip_whitespace(in);
 
-    Expr *body = parse_expr(in);
+    PTR(Expr) body = parse_expr(in);
 
     return new LetExpr(variable, rhs, body);
 }
 
-Expr *parse_if(std::istream &in) {
+PTR(Expr) parse_if(std::istream &in) {
     parse_char_group(in, "if");
 
     skip_whitespace(in);
 
-    Expr *condition = parse_expr(in);
+    PTR(Expr) condition = parse_expr(in);
 
     skip_whitespace(in);
 
@@ -96,7 +96,7 @@ Expr *parse_if(std::istream &in) {
 
     skip_whitespace(in);
 
-    Expr *thenBranch = parse_expr(in);
+    PTR(Expr) thenBranch = parse_expr(in);
 
     skip_whitespace(in);
 
@@ -104,14 +104,14 @@ Expr *parse_if(std::istream &in) {
 
     skip_whitespace(in);
 
-    Expr *elseBranch = parse_expr(in);
+    PTR(Expr) elseBranch = parse_expr(in);
 
     skip_whitespace(in);
 
     return new IfExpr(condition, thenBranch, elseBranch);
 }
 
-Expr *parse_true(std::istream &in) {
+PTR(Expr) parse_true(std::istream &in) {
     parse_char_group(in, "true");
 
     skip_whitespace(in);
@@ -119,7 +119,7 @@ Expr *parse_true(std::istream &in) {
     return new BoolExpr(true);
 }
 
-Expr *parse_false(std::istream &in) {
+PTR(Expr) parse_false(std::istream &in) {
     parse_char_group(in, "alse");
 
     skip_whitespace(in);
@@ -127,7 +127,7 @@ Expr *parse_false(std::istream &in) {
     return new BoolExpr(false);
 }
 
-Expr *parse_fun(std::istream &in) {
+PTR(Expr) parse_fun(std::istream &in) {
     parse_char_group(in, "un");
 
     skip_whitespace(in);
@@ -135,18 +135,18 @@ Expr *parse_fun(std::istream &in) {
     parse_char_group(in, "(");
     skip_whitespace(in);
 
-    VarExpr *var = parse_var(in);
+    PTR(VarExpr) var = parse_var(in);
 
     parse_char_group(in, ")");
     skip_whitespace(in);
 
-    Expr *expr = parse_expr(in);
+    PTR(Expr) expr = parse_expr(in);
     skip_whitespace(in);
 
     return new FunExpr(var->to_string(), expr);
 }
 
-Expr *parse_underscore(std::istream &in) {
+PTR(Expr) parse_underscore(std::istream &in) {
     consume(in, '_');
     int c = in.peek();
     if (c == 'l')
@@ -166,7 +166,7 @@ Expr *parse_underscore(std::istream &in) {
         throw std::runtime_error("Unknown underscore syntax");
 }
 
-Expr *parse_inner(std::istream &in) {
+PTR(Expr) parse_inner(std::istream &in) {
     skip_whitespace(in);
 
     int c = in.peek();
@@ -174,7 +174,7 @@ Expr *parse_inner(std::istream &in) {
         return parse_num(in);
     else if (c == '(') {
         consume(in, '(');
-        Expr *e = parse_expr(in);
+        PTR(Expr) e = parse_expr(in);
         skip_whitespace(in);
         c = in.get();
         if (c != ')')
@@ -190,14 +190,14 @@ Expr *parse_inner(std::istream &in) {
     }
 }
 
-Expr *parse_multicand(std::istream &in) {
+PTR(Expr) parse_multicand(std::istream &in) {
     skip_whitespace(in);
 
-    Expr *expr = parse_inner(in);
+    PTR(Expr) expr = parse_inner(in);
     skip_whitespace(in);
     while (in.peek() == '(') {
         consume(in, '(');
-        Expr *actual_arg = parse_expr(in);
+        PTR(Expr) actual_arg = parse_expr(in);
         skip_whitespace(in);
         consume(in, ')');
         expr = new CallExpr(expr, actual_arg);
@@ -206,10 +206,10 @@ Expr *parse_multicand(std::istream &in) {
     return expr;
 }
 
-Expr *parse_addend(std::istream &in) {
+PTR(Expr) parse_addend(std::istream &in) {
     skip_whitespace(in);
 
-    Expr *e;
+    PTR(Expr) e;
 
     e = parse_multicand(in);
 
@@ -218,48 +218,48 @@ Expr *parse_addend(std::istream &in) {
     int c = in.peek();
     if (c == '*') {
         consume(in, '*');
-        Expr *rhs = parse_addend(in);
+        PTR(Expr) rhs = parse_addend(in);
         return new MultExpr(e, rhs);
     } else
         return e;
 }
 
-Expr *parse_comparg(std::istream &in) {
+PTR(Expr) parse_comparg(std::istream &in) {
     skip_whitespace(in);
 
-    Expr *e = parse_addend(in);
+    PTR(Expr) e = parse_addend(in);
 
     skip_whitespace(in);
 
     int c = in.peek();
     if (c == '+') {
         consume(in, '+');
-        Expr *rhs = parse_comparg(in);
+        PTR(Expr) rhs = parse_comparg(in);
         return new AddExpr(e, rhs);
     } else
         return e;
 }
 
-Expr *parse_expr(std::istream &in) {
+PTR(Expr) parse_expr(std::istream &in) {
     skip_whitespace(in);
 
-    Expr *e = parse_comparg(in);
+    PTR(Expr) e = parse_comparg(in);
 
     skip_whitespace(in);
 
     int c = in.peek();
     if (c == '=') {
         parse_char_group(in, "==");
-        Expr *rhs = parse_expr(in);
+        PTR(Expr) rhs = parse_expr(in);
         return new EqualExpr(e, rhs);
     } else
         return e;
 }
 
-Expr *parse(std::istream &in) {
+PTR(Expr) parse(std::istream &in) {
     skip_whitespace(in);
 
-    Expr *e = parse_expr(in);
+    PTR(Expr) e = parse_expr(in);
 
     skip_whitespace(in);
 
@@ -269,7 +269,7 @@ Expr *parse(std::istream &in) {
     return e;
 }
 
-Expr *parse_str(std::string s) {
+PTR(Expr) parse_str(std::string s) {
     std::istringstream in(s);
 
     return parse(in);

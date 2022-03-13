@@ -14,12 +14,13 @@ static std::string make_big_string(std::string word, int size);
 
 static std::string random_bytes();
 
-int main(int argc, const char *argv[]) {
+int main(int argc, const PTR(char)argv[]) {
     std::string big_string = make_big_string("hello", N);
 
     // Example: running `wc`
     std::cout << "Trying wc\n";
-    const char *const wc_argv[] = {"/usr/bin/wc", "-w"};
+    const PTR(char) const
+    wc_argv[] = {"/usr/bin/wc", "-w"};
     ExecResult wc_result = exec_program(2, wc_argv, big_string);
     check_success(wc_result);
     if (std::stoi(wc_result.out) != N)
@@ -27,7 +28,8 @@ int main(int argc, const char *argv[]) {
 
     // Example: checking that `cat` echoes its input
     std::cout << "Trying cat\n";
-    const char *const cat_argv[] = {"/bin/cat"};
+    const PTR(char) const
+    cat_argv[] = {"/bin/cat"};
     ExecResult cat_result = exec_program(1, cat_argv, big_string);
     check_success(cat_result);
     if (big_string != cat_result.out)

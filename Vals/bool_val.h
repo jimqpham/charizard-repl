@@ -9,15 +9,15 @@ private:
 public:
     explicit BoolVal(bool rep);
 
-    bool value_equals(Val *o) override;
+    bool value_equals(PTR(Val) o) override;
 
-    Val *add_to(Val *o) override;
+    PTR(Val) add_to(PTR(Val) o) override;
 
-    Val *mult_by(Val *o) override;
+    PTR(Val) mult_by(PTR(Val) o) override;
 
     std::string to_string() override;
 
-    Expr *to_expr() override;
+    PTR(Expr) to_expr() override;
 
-    Val *call(Val *actual_arg) override;
+    PTR(Val) call(PTR(Val) actual_arg) override;
 };

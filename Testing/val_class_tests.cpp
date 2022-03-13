@@ -12,14 +12,14 @@
 
 TEST_CASE("Test NumVal methods") {
 
-    NumVal *ten = new NumVal(10);
-    NumVal *otherTen = new NumVal(10);
-    NumVal *two = new NumVal(2);
-    NumVal *negTwo = new NumVal(-2);
-    NumVal *five = new NumVal(5);
-    NumVal *eight = new NumVal(8);
-    NumVal *twelve = new NumVal(12);
-    NumVal *nullVal = nullptr;
+    PTR(NumVal) ten = new NumVal(10);
+    PTR(NumVal) otherTen = new NumVal(10);
+    PTR(NumVal) two = new NumVal(2);
+    PTR(NumVal) negTwo = new NumVal(-2);
+    PTR(NumVal) five = new NumVal(5);
+    PTR(NumVal) eight = new NumVal(8);
+    PTR(NumVal) twelve = new NumVal(12);
+    PTR(NumVal) nullVal = nullptr;
 
     SECTION("The value_equals method") {
         CHECK(ten->value_equals(otherTen));
@@ -55,10 +55,10 @@ TEST_CASE("Test NumVal methods") {
 
 TEST_CASE("Test BoolVal methods") {
 
-    BoolVal *tr = new BoolVal(true);
-    BoolVal *otherTr = new BoolVal(true);
-    BoolVal *fls = new BoolVal(false);
-    NumVal *two = new NumVal(2);
+    PTR(BoolVal) tr = new BoolVal(true);
+    PTR(BoolVal) otherTr = new BoolVal(true);
+    PTR(BoolVal) fls = new BoolVal(false);
+    PTR(NumVal) two = new NumVal(2);
 
     SECTION("The value_equals method") {
         CHECK(tr->value_equals(otherTr));
@@ -93,10 +93,10 @@ TEST_CASE("Test BoolVal methods") {
 
 TEST_CASE("Test FunVal methods") {
 
-    FunVal *f1 = new FunVal("x", parse_str("x + 1"));
+    PTR(FunVal) f1 = new FunVal("x", parse_str("x + 1"));
 
     SECTION("The value_equals method") {
-        Val *otherF1 = parse_str("_fun (x) x + 1")->interp();
+        PTR(Val) otherF1 = parse_str("_fun (x) x + 1")->interp();
         CHECK(f1->value_equals(otherF1));
         CHECK(!f1->value_equals(new FunVal("y", parse_str("x + 1"))));
         CHECK(!f1->value_equals(new FunVal("x", parse_str("x + 2"))));

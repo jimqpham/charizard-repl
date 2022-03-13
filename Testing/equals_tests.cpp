@@ -13,13 +13,13 @@
 #include "../shared_ptr.h"
 
 bool compareParsedExpressions(const std::string &s1, const std::string &s2) {
-    Expr *e1 = parse_str(s1);
-    Expr *e2 = parse_str(s2);
+    PTR(Expr) e1 = parse_str(s1);
+    PTR(Expr) e2 = parse_str(s2);
     return e1->equals(e2);
 }
 
-bool compareParsedExpressions(const std::string &s, Expr *e) {
-    Expr *e1 = parse_str(s);
+bool compareParsedExpressions(const std::string &s, PTR(Expr) e) {
+    PTR(Expr) e1 = parse_str(s);
     return e1->equals(e);
 }
 

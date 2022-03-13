@@ -13,7 +13,7 @@ typedef enum {
 
 class Val;
 
-class Expr {
+CLASS(Expr) {
 public:
     virtual bool equals(PTR(Expr) o) = 0;
 

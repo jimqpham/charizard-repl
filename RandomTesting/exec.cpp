@@ -35,9 +35,10 @@ static void wait_child(pid_t pid, int &exit_code);
 // program, wait until it complete, and report its exit status, stdout
 // as a string, and stderr s a string. The exit status is set to a signal
 // number if the program exits with a signal.
-ExecResult exec_program(int argc, const char *const *argv, std::string input) {
+ExecResult exec_program(int argc, const PTR(char)PTR(const)argv, std::string input) {
     // Need a NULL-teriminated array for `execv`:
-    const char *command[argc + 1];
+    const PTR(char)
+    command[argc + 1];
     for (int i = 0; i < argc; i++) {
         if (argv[i] == NULL) // a little defensive
             throw std::runtime_error("bad argc length or argv string given to exec_program");
@@ -75,11 +76,12 @@ ExecResult exec_program(int argc, const char *const *argv, std::string input) {
         close(err[READ_END]);
         close(err[WRITE_END]);
 
-        execv(command[0], (char *const *) command);
+        execv(command[0], (PTR(char)const *) command);
 
         // Getting here means that the execve failed
         {
-            const char *msg = "exec failed\n";
+            const PTR(char)
+            msg = "exec failed\n";
             write(STDERR_FD, msg, strlen(msg));
             exit(1);
         }
