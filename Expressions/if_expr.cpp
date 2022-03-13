@@ -8,7 +8,7 @@ IfExpr::IfExpr(PTR(Expr)condition, PTR(Expr)thenBranch, PTR(Expr)elseBranch) {
 }
 
 bool IfExpr::equals(PTR(Expr)o) {
-    PTR(IfExpr)otherIf = dynamic_cast<PTR(IfExpr) >(o);
+    PTR(IfExpr)otherIf = CAST(IfExpr)(o);
     if (otherIf != nullptr)
         return otherIf->condition->equals(this->condition) &&
                otherIf->thenBranch->equals(this->thenBranch) &&

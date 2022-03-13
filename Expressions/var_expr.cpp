@@ -8,7 +8,7 @@ VarExpr::VarExpr(std::string name) {
 }
 
 bool VarExpr::equals(PTR(Expr)o) {
-    PTR(VarExpr)varExpr = dynamic_cast<PTR(VarExpr) >(o);
+    PTR(VarExpr)varExpr = CAST(VarExpr)(o);
     if (varExpr == nullptr)
         return false;
     else

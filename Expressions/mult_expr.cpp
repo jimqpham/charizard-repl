@@ -7,7 +7,7 @@ MultExpr::MultExpr(PTR(Expr)lhs, PTR(Expr)rhs) {
 }
 
 bool MultExpr::equals(PTR(Expr)o) {
-    PTR(MultExpr)multExpr = dynamic_cast<PTR(MultExpr) >(o);
+    PTR(MultExpr)multExpr = CAST(MultExpr)(o);
     if (multExpr == nullptr)
         return false;
     else

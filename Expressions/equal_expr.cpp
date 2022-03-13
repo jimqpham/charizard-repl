@@ -7,7 +7,7 @@ EqualExpr::EqualExpr(PTR(Expr)lhs, PTR(Expr)rhs) {
 }
 
 bool EqualExpr::equals(PTR(Expr)o) {
-    PTR(EqualExpr)equalExpr = dynamic_cast<PTR(EqualExpr) >(o);
+    PTR(EqualExpr)equalExpr = CAST(EqualExpr)(o);
     if (equalExpr == nullptr)
         return false;
     else

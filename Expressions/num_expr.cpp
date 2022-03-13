@@ -6,7 +6,7 @@ NumExpr::NumExpr(int val) {
 }
 
 bool NumExpr::equals(PTR(Expr)o) {
-    PTR(NumExpr)numExpr = dynamic_cast<PTR(NumExpr) >(o);
+    PTR(NumExpr)numExpr = CAST(NumExpr)(o);
     if (numExpr == nullptr)
         return false;
     else

@@ -7,7 +7,7 @@ AddExpr::AddExpr(PTR(Expr)lhs, PTR(Expr)rhs) {
 }
 
 bool AddExpr::equals(PTR(Expr)o) {
-    PTR(AddExpr)addExpr = dynamic_cast<PTR(AddExpr) >(o);
+    PTR(AddExpr)addExpr = CAST(AddExpr)(o);
     if (addExpr == nullptr)
         return false;
     else

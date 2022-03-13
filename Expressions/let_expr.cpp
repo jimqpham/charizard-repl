@@ -13,7 +13,7 @@ LetExpr::LetExpr(PTR(VarExpr)variable, PTR(Expr)rhs, PTR(Expr)body) {
 }
 
 bool LetExpr::equals(PTR(Expr)o) {
-    PTR(LetExpr)letExpr = dynamic_cast<PTR(LetExpr) >(o);
+    PTR(LetExpr)letExpr = CAST(LetExpr)(o);
     if (letExpr == nullptr)
         return false;
     return (this->variable->equals(letExpr->variable) &&

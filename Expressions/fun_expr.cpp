@@ -7,7 +7,7 @@ FunExpr::FunExpr(std::string formal_arg, PTR(Expr)body) {
 }
 
 bool FunExpr::equals(PTR(Expr)o) {
-    PTR(FunExpr)otherFun = dynamic_cast<PTR(FunExpr) >(o);
+    PTR(FunExpr)otherFun = CAST(FunExpr)(o);
 
     return otherFun != nullptr &&
            otherFun->formal_arg == this->formal_arg &&

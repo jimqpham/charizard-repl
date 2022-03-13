@@ -7,7 +7,8 @@ BoolExpr::BoolExpr(bool val) {
 }
 
 bool BoolExpr::equals(PTR(Expr)o) {
-    PTR(BoolExpr)boolExpr = dynamic_cast<PTR(BoolExpr) >(o);
+    PTR(BoolExpr)
+    boolExpr = CAST(BoolExpr)(o);
     if (boolExpr == nullptr)
         return false;
     else

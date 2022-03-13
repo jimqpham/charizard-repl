@@ -7,7 +7,7 @@ CallExpr::CallExpr(PTR(Expr)to_be_called, PTR(Expr)actual_arg) {
 }
 
 bool CallExpr::equals(PTR(Expr)o) {
-    PTR(CallExpr)otherCallExpr = dynamic_cast<PTR(CallExpr) >(o);
+    PTR(CallExpr)otherCallExpr = CAST(CallExpr)(o);
 
     return otherCallExpr != nullptr &&
            otherCallExpr->to_be_called->equals(this->to_be_called) &&
