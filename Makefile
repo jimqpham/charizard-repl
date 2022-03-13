@@ -20,10 +20,10 @@ msdscript: main.o $(OBJS) $(TEST_OBJS)
 main.o: main.cpp
 	$(COMPILE) -c $< -o $@
 
-$(OBJS): %.o: %.cpp %.h $(TESTING_LIB)
+$(OBJS): %.o: %.cpp %.h $(TESTING_LIB) shared_ptr.h
 	$(COMPILE) -c $< -o $@
 
-$(TEST_OBJS): %.o: %.cpp $(TESTING_LIB) $(OBJS)
+$(TEST_OBJS): %.o: %.cpp $(TESTING_LIB) $(OBJS) shared_ptr.h
 	$(COMPILE) -c $< -o $@
 
 clean:
