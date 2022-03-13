@@ -1,27 +1,27 @@
 #include "mult_expr.h"
 #include "../Vals/val.h"
 
-MultExpr::MultExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
+MultExpr::MultExpr(PTR(Expr)lhs, PTR(Expr)rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
 }
 
-bool MultExpr::equals(PTR(Expr) o) {
-    PTR(MultExpr) multExpr = dynamic_cast<PTR(MultExpr) >(o);
+bool MultExpr::equals(PTR(Expr)o) {
+    PTR(MultExpr)multExpr = dynamic_cast<PTR(MultExpr) >(o);
     if (multExpr == nullptr)
         return false;
     else
         return (multExpr->lhs->equals(this->lhs)) && (multExpr->rhs->equals(this->rhs));
 }
 
-PTR(Val) MultExpr::interp() {
+PTR(Val)MultExpr::interp() {
     return (this->lhs->interp()->mult_by(this->rhs->interp()));
 }
 
-PTR(Expr) MultExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    PTR(Expr) substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    PTR(MultExpr) result = new MultExpr(substLhs, substRhs);
+PTR(Expr)MultExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
+    PTR(Expr)substLhs = this->lhs->subst(stringToMatch, replcExpr);
+    PTR(Expr)substRhs = this->rhs->subst(stringToMatch, replcExpr);
+    PTR(MultExpr)result = NEW(MultExpr)(substLhs, substRhs);
     return result;
 }
 

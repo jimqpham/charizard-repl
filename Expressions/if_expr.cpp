@@ -1,14 +1,14 @@
 #include "if_expr.h"
 #include "../Vals/bool_val.h"
 
-IfExpr::IfExpr(PTR(Expr) condition, PTR(Expr) thenBranch, PTR(Expr) elseBranch) {
+IfExpr::IfExpr(PTR(Expr)condition, PTR(Expr)thenBranch, PTR(Expr)elseBranch) {
     this->condition = condition;
     this->thenBranch = thenBranch;
     this->elseBranch = elseBranch;
 }
 
-bool IfExpr::equals(PTR(Expr) o) {
-    PTR(IfExpr) otherIf = dynamic_cast<PTR(IfExpr) >(o);
+bool IfExpr::equals(PTR(Expr)o) {
+    PTR(IfExpr)otherIf = dynamic_cast<PTR(IfExpr) >(o);
     if (otherIf != nullptr)
         return otherIf->condition->equals(this->condition) &&
                otherIf->thenBranch->equals(this->thenBranch) &&
@@ -17,20 +17,20 @@ bool IfExpr::equals(PTR(Expr) o) {
         return false;
 }
 
-PTR(Val) IfExpr::interp() {
-    PTR(Val) conditionVal = this->condition->interp();
-    if (conditionVal->value_equals(new BoolVal(true)))
+PTR(Val)IfExpr::interp() {
+    PTR(Val)conditionVal = this->condition->interp();
+    if (conditionVal->value_equals(NEW(BoolVal)(true)))
         return this->thenBranch->interp();
-    else if (conditionVal->value_equals(new BoolVal(false)))
+    else if (conditionVal->value_equals(NEW(BoolVal)(false)))
         return this->elseBranch->interp();
     else
         throw std::runtime_error("non-boolean condition in if body");
 }
 
-PTR(Expr) IfExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    return new IfExpr(condition->subst(stringToMatch, replcExpr),
-                      thenBranch->subst(stringToMatch, replcExpr),
-                      elseBranch->subst(stringToMatch, replcExpr));
+PTR(Expr)IfExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
+    return NEW(IfExpr)(condition->subst(stringToMatch, replcExpr),
+                       thenBranch->subst(stringToMatch, replcExpr),
+                       elseBranch->subst(stringToMatch, replcExpr));
 }
 
 void IfExpr::print(std::ostream &out) {
