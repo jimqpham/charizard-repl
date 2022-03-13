@@ -12,14 +12,14 @@
 #include "../Expressions/fun_expr.h"
 #include "../shared_ptr.h"
 
-bool compareParsedExpressions(const std::string &s1, const std::string &s2) {
-    PTR(Expr)e1 = parse_str(s1);
-    PTR(Expr)e2 = parse_str(s2);
+bool compareParsedExpressions(const std::string s1, const std::string s2) {
+    PTR(Expr) e1 = parse_str(s1);
+    PTR(Expr) e2 = parse_str(s2);
     return e1->equals(e2);
 }
 
-bool compareParsedExpressions(const std::string &s, PTR(Expr)e) {
-    PTR(Expr)e1 = parse_str(s);
+bool compareParsedExpressions(const std::string s, PTR(Expr) e) {
+    PTR(Expr) e1 = parse_str(s);
     return e1->equals(e);
 }
 
@@ -155,51 +155,51 @@ TEST_CASE("Test IfExpr value_equals") {
 
 TEST_CASE("Test CallExpr value_equals") {
     SECTION("CallExpr should equal CallExpr of same components") {
-        NumExpr four = NumExpr(4);
-        BoolExpr tr = BoolExpr(true);
-        CHECK((NEW(CallExpr)(&tr, &four))
+        PTR(NumExpr) four = NEW(NumExpr)(4);
+        PTR(BoolExpr) tr = NEW(BoolExpr)(true);
+        CHECK((NEW(CallExpr)(tr, four))
                       ->equals(NEW(CallExpr)(NEW(BoolExpr)(true), NEW(NumExpr)(4))));
     }
 
     SECTION("CallExpr should not equal CallExpr of different components") {
-        NumExpr num1 = NumExpr(4);
-        NumExpr num2 = NumExpr(5);
-        BoolExpr tr = BoolExpr(true);
-        BoolExpr fls = BoolExpr(false);
-        CHECK(!(NEW(CallExpr)(&tr, &num2))
-                ->equals(NEW(CallExpr)(&fls, &num2)));
-        CHECK(!(NEW(CallExpr)(&tr, &num1))
-                ->equals(NEW(CallExpr)(&tr, &num2)));
+        PTR(NumExpr) num1 = NEW(NumExpr)(4);
+        PTR(NumExpr) num2 = NEW(NumExpr)(5);
+        PTR(BoolExpr) tr = NEW(BoolExpr)(true);
+        PTR(BoolExpr) fls = NEW(BoolExpr)(false);
+        CHECK(!(NEW(CallExpr)(tr, num2))
+                ->equals(NEW(CallExpr)(fls, num2)));
+        CHECK(!(NEW(CallExpr)(tr, num1))
+                ->equals(NEW(CallExpr)(tr, num2)));
     }
 
     SECTION("LetExpr should not equal objects of other classes") {
-        NumExpr num1 = NumExpr(4);
-        VarExpr var1 = VarExpr("x");
-        AddExpr add1 = AddExpr(&var1, &num1);
-        CHECK(!(NEW(CallExpr)(&var1, &num1))->equals(&add1));
+        PTR(NumExpr) num1 = NEW(NumExpr)(4);
+        PTR(VarExpr) var1 = NEW(VarExpr)("x");
+        PTR(AddExpr) add1 = NEW(AddExpr)(var1, num1);
+        CHECK(!(NEW(CallExpr)(var1, num1))->equals(add1));
     }
 }
 
 TEST_CASE("Test FunExpr value_equals") {
     SECTION("FunExpr should equal FunExpr of same components") {
-        NumExpr four = NumExpr(4);
-        CHECK((NEW(FunExpr)("arg", &four))
+        PTR(NumExpr) four = NEW(NumExpr)(4);
+        CHECK((NEW(FunExpr)("arg", four))
                       ->equals(NEW(FunExpr)("arg", NEW(NumExpr)(4))));
     }
 
     SECTION("FunExpr should not equal FunExpr of different components") {
-        NumExpr num1 = NumExpr(4);
-        NumExpr num2 = NumExpr(5);
-        CHECK(!(NEW(FunExpr)("arg", &num2))
-                ->equals(NEW(FunExpr)("not arg", &num2)));
-        CHECK(!(NEW(FunExpr)("arg", &num1))
-                ->equals(NEW(FunExpr)("arg", &num2)));
+        PTR(NumExpr) num1 = NEW(NumExpr)(4);
+        PTR(NumExpr) num2 = NEW(NumExpr)(5);
+        CHECK(!(NEW(FunExpr)("arg", num2))
+                ->equals(NEW(FunExpr)("not arg", num2)));
+        CHECK(!(NEW(FunExpr)("arg", num1))
+                ->equals(NEW(FunExpr)("arg", num2)));
     }
 
     SECTION("LetExpr should not equal objects of other classes") {
-        NumExpr num1 = NumExpr(4);
-        AddExpr add1 = AddExpr(&num1, &num1);
-        CHECK(!(NEW(FunExpr)("x", &num1))->equals(&add1));
+        PTR(NumExpr) num1 = NEW(NumExpr)(4);
+        PTR(AddExpr) add1 = NEW(AddExpr)(num1, num1);
+        CHECK(!(NEW(FunExpr)("x", num1))->equals(add1));
     }
 }
 
