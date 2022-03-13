@@ -8,7 +8,7 @@ private:
     PTR(Expr) body;
 
 public:
-    FunVal(std::string, Expr *);
+    FunVal(std::string, PTR(Expr));
 
     bool value_equals(PTR(Val) o) override;
 
@@ -20,5 +20,5 @@ public:
 
     PTR(Expr) to_expr() override;
 
-    PTR(Val) call(PTR(Val)actual_arg) override;
+    PTR(Val) call(PTR(Val) actual_arg) override;
 };
