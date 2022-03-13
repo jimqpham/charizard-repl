@@ -6,19 +6,19 @@ BoolExpr::BoolExpr(bool val) {
     this->val = val;
 }
 
-bool BoolExpr::equals(Expr *o) {
-    BoolExpr *boolExpr = dynamic_cast<BoolExpr *>(o);
+bool BoolExpr::equals(PTR(Expr) o) {
+    PTR(BoolExpr) boolExpr = dynamic_cast<PTR(BoolExpr) >(o);
     if (boolExpr == nullptr)
         return false;
     else
         return boolExpr->val == this->val;
 }
 
-Val *BoolExpr::interp() {
+PTR(Val) BoolExpr::interp() {
     return new BoolVal(val);
 }
 
-Expr *BoolExpr::subst(std::string stringToMatch, Expr *replcExpr) {
+PTR(Expr) BoolExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
     return new BoolExpr(this->val);
 }
 

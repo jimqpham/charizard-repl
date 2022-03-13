@@ -3,18 +3,18 @@
 
 class IfExpr : public Expr {
 private:
-    Expr *condition;
-    Expr *thenBranch;
-    Expr *elseBranch;
+    PTR(Expr) condition;
+    PTR(Expr) thenBranch;
+    PTR(Expr) elseBranch;
 
 public:
-    IfExpr(Expr *condition, Expr *thenBranch, Expr *elseBranch);
+    IfExpr(PTR(Expr) condition, PTR(Expr) thenBranch, PTR(Expr) elseBranch);
 
-    bool equals(Expr *o) override;
+    bool equals(PTR(Expr) o) override;
 
-    Val *interp() override;
+    PTR(Val) interp() override;
 
-    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+    PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 
     void print(std::ostream &out) override;
 

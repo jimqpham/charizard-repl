@@ -6,18 +6,18 @@ class Val;
 
 class LetExpr : public Expr {
 private:
-    VarExpr *variable;
-    Expr *rhs;
-    Expr *body;
+    PTR(VarExpr) variable;
+    PTR(Expr) rhs;
+    PTR(Expr) body;
 
 public:
-    LetExpr(VarExpr *variable, Expr *rhs, Expr *body);
+    LetExpr(PTR(VarExpr) variable, PTR(Expr) rhs, PTR(Expr) body);
 
-    bool equals(Expr *o) override;
+    bool equals(PTR(Expr) o) override;
 
-    Val *interp() override;
+    PTR(Val) interp() override;
 
-    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+    PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 
     void print(std::ostream &out) override;
 

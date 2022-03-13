@@ -1,14 +1,14 @@
 #include "if_expr.h"
 #include "../Vals/bool_val.h"
 
-IfExpr::IfExpr(Expr *condition, Expr *thenBranch, Expr *elseBranch) {
+IfExpr::IfExpr(PTR(Expr) condition, PTR(Expr) thenBranch, PTR(Expr) elseBranch) {
     this->condition = condition;
     this->thenBranch = thenBranch;
     this->elseBranch = elseBranch;
 }
 
-bool IfExpr::equals(Expr *o) {
-    IfExpr *otherIf = dynamic_cast<IfExpr *>(o);
+bool IfExpr::equals(PTR(Expr) o) {
+    PTR(IfExpr) otherIf = dynamic_cast<PTR(IfExpr) >(o);
     if (otherIf != nullptr)
         return otherIf->condition->equals(this->condition) &&
                otherIf->thenBranch->equals(this->thenBranch) &&
@@ -17,8 +17,8 @@ bool IfExpr::equals(Expr *o) {
         return false;
 }
 
-Val *IfExpr::interp() {
-    Val *conditionVal = this->condition->interp();
+PTR(Val) IfExpr::interp() {
+    PTR(Val) conditionVal = this->condition->interp();
     if (conditionVal->value_equals(new BoolVal(true)))
         return this->thenBranch->interp();
     else if (conditionVal->value_equals(new BoolVal(false)))
@@ -27,7 +27,7 @@ Val *IfExpr::interp() {
         throw std::runtime_error("non-boolean condition in if body");
 }
 
-Expr *IfExpr::subst(std::string stringToMatch, Expr *replcExpr) {
+PTR(Expr) IfExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
     return new IfExpr(condition->subst(stringToMatch, replcExpr),
                       thenBranch->subst(stringToMatch, replcExpr),
                       elseBranch->subst(stringToMatch, replcExpr));

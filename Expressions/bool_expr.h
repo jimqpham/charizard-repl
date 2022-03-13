@@ -8,11 +8,11 @@ private:
 public:
     explicit BoolExpr(bool val);
 
-    bool equals(Expr *o) override;
+    bool equals(PTR(Expr) o) override;
 
-    Val *interp() override;
+    PTR(Val) interp() override;
 
-    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+    PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 
     void print(std::ostream &out) override;
 

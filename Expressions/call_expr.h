@@ -3,17 +3,17 @@
 
 class CallExpr : public Expr {
 private:
-    Expr *to_be_called;
-    Expr *actual_arg;
+    PTR(Expr) to_be_called;
+    PTR(Expr) actual_arg;
 
 public:
-    CallExpr(Expr *to_be_called, Expr *actual_arg);
+    CallExpr(PTR(Expr) to_be_called, PTR(Expr) actual_arg);
 
-    bool equals(Expr *o) override;
+    bool equals(PTR(Expr) o) override;
 
-    Val *interp() override;
+    PTR(Val) interp() override;
 
-    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+    PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 
     void print(std::ostream &out) override;
 

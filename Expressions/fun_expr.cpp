@@ -1,24 +1,24 @@
 #include "fun_expr.h"
 #include "../Vals/fun_val.h"
 
-FunExpr::FunExpr(std::string formal_arg, Expr *body) {
+FunExpr::FunExpr(std::string formal_arg, PTR(Expr) body) {
     this->formal_arg = formal_arg;
     this->body = body;
 }
 
-bool FunExpr::equals(Expr *o) {
-    FunExpr *otherFun = dynamic_cast<FunExpr *>(o);
+bool FunExpr::equals(PTR(Expr) o) {
+    PTR(FunExpr) otherFun = dynamic_cast<PTR(FunExpr) >(o);
 
     return otherFun != nullptr &&
            otherFun->formal_arg == this->formal_arg &&
            otherFun->body->equals(this->body);
 }
 
-Val *FunExpr::interp() {
+PTR(Val) FunExpr::interp() {
     return new FunVal(this->formal_arg, this->body);
 }
 
-Expr *FunExpr::subst(std::string stringToMatch, Expr *replcExpr) {
+PTR(Expr) FunExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
     if (stringToMatch != formal_arg)
         return new FunExpr(this->formal_arg,
                            this->body->subst(stringToMatch, replcExpr));

@@ -3,17 +3,17 @@
 
 class EqualExpr : public Expr {
 private:
-    Expr *lhs;
-    Expr *rhs;
+    PTR(Expr) lhs;
+    PTR(Expr) rhs;
 
 public:
-    EqualExpr(Expr *lhs, Expr *rhs);
+    EqualExpr(PTR(Expr) lhs, PTR(Expr) rhs);
 
-    bool equals(Expr *o) override;
+    bool equals(PTR(Expr) o) override;
 
-    Val *interp() override;
+    PTR(Val) interp() override;
 
-    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+    PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 
     void print(std::ostream &out) override;
 

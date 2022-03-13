@@ -4,16 +4,16 @@
 class FunExpr : public Expr {
 private:
     std::string formal_arg;
-    Expr *body;
+    PTR(Expr) body;
 
 public:
-    FunExpr(std::string formal_arg, Expr *body);
+    FunExpr(std::string formal_arg, PTR(Expr) body);
 
-    bool equals(Expr *o) override;
+    bool equals(PTR(Expr) o) override;
 
-    Val *interp() override;
+    PTR(Val) interp() override;
 
-    Expr *subst(std::string stringToMatch, Expr *replcExpr) override;
+    PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 
     void print(std::ostream &out) override;
 

@@ -6,14 +6,14 @@
 #include "num_expr.h"
 #include "../Vals/val.h"
 
-LetExpr::LetExpr(VarExpr *variable, Expr *rhs, Expr *body) {
+LetExpr::LetExpr(PTR(VarExpr) variable, PTR(Expr) rhs, PTR(Expr) body) {
     this->variable = variable;
     this->rhs = rhs;
     this->body = body;
 }
 
-bool LetExpr::equals(Expr *o) {
-    LetExpr *letExpr = dynamic_cast<LetExpr *>(o);
+bool LetExpr::equals(PTR(Expr) o) {
+    PTR(LetExpr) letExpr = dynamic_cast<PTR(LetExpr) >(o);
     if (letExpr == nullptr)
         return false;
     return (this->variable->equals(letExpr->variable) &&
@@ -21,19 +21,19 @@ bool LetExpr::equals(Expr *o) {
             this->body->equals(letExpr->body));
 }
 
-Val *LetExpr::interp() {
-    Val *evalRhs = this->rhs->interp();
-    Expr *substBody = this->body->subst(this->variable->to_string(), evalRhs->to_expr());
+PTR(Val) LetExpr::interp() {
+    PTR(Val) evalRhs = this->rhs->interp();
+    PTR(Expr) substBody = this->body->subst(this->variable->to_string(), evalRhs->to_expr());
     return substBody->interp();
 }
 
-Expr *LetExpr::subst(std::string stringToMatch, Expr *replcExpr) {
-    Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);
+PTR(Expr) LetExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
+    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
 
     // If the arg bound by let does not match the arg to replace (stringToMatch)
     // go into the body
     if (!variable->equals(new VarExpr(stringToMatch))) {
-        Expr *substBody = this->body->subst(stringToMatch, replcExpr);
+        PTR(Expr) substBody = this->body->subst(stringToMatch, replcExpr);
         return new LetExpr(this->variable, substRhs, substBody);
     }
 

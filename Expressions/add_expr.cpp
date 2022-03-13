@@ -1,27 +1,27 @@
 #include "add_expr.h"
 #include "../Vals/val.h"
 
-AddExpr::AddExpr(Expr *lhs, Expr *rhs) {
+AddExpr::AddExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
 }
 
-bool AddExpr::equals(Expr *o) {
-    AddExpr *addExpr = dynamic_cast<AddExpr *>(o);
+bool AddExpr::equals(PTR(Expr) o) {
+    PTR(AddExpr) addExpr = dynamic_cast<PTR(AddExpr) >(o);
     if (addExpr == nullptr)
         return false;
     else
         return (addExpr->lhs->equals(this->lhs)) && (addExpr->rhs->equals(this->rhs));
 }
 
-Val *AddExpr::interp() {
+PTR(Val) AddExpr::interp() {
     return (this->lhs->interp()->add_to(this->rhs->interp()));
 }
 
-Expr *AddExpr::subst(std::string stringToMatch, Expr *replcExpr) {
-    Expr *substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    Expr *substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    AddExpr *result = new AddExpr(substLhs, substRhs);
+PTR(Expr) AddExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
+    PTR(Expr) substLhs = this->lhs->subst(stringToMatch, replcExpr);
+    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
+    PTR(AddExpr) result = new AddExpr(substLhs, substRhs);
     return result;
 }
 

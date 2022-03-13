@@ -15,11 +15,11 @@ class Val;
 
 class Expr {
 public:
-    virtual bool equals(Expr *o) = 0;
+    virtual bool equals(PTR(Expr) o) = 0;
 
-    virtual Val *interp() = 0;
+    virtual PTR(Val) interp() = 0;
 
-    virtual Expr *subst(std::string stringToMatch, Expr *replcExpr) = 0;
+    virtual PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) = 0;
 
     virtual void print(std::ostream &out) = 0;
 
