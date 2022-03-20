@@ -63,7 +63,7 @@ void interactiveCommand(command_t command) {
         std::string output;
         switch (command) {
             case INTERP:
-                output = e->interp(Env::empty)->to_string();
+                output = e->interp()->to_string();
                 break;
             case PRINT:
                 output = e->to_string();
