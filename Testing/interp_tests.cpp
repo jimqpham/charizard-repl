@@ -44,28 +44,27 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
     }
 
     SECTION("Should evaluate VarExpr") {
-        CHECK_THROWS_WITH(var1->interp(), "No value for variable");
-        CHECK_THROWS_WITH(var2->interp(), "No value for variable");
+        CHECK_THROWS_WITH(var1->interp(), "free variable: x");
     }
 
     SECTION("Should evaluate AddExpr") {
         CHECK(add1->interp()->value_equals(NEW(NumVal)(1)));
-        CHECK_THROWS_WITH(NEW(AddExpr)(num1, var1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(AddExpr)(num1, var1)->interp(), "free variable: x");
         CHECK(NEW(AddExpr)(num1, add1)->interp()->value_equals(NEW(NumVal)(4)));
         CHECK(NEW(AddExpr)(num1, mult1)->interp()->value_equals(NEW(NumVal)(-3)));
 
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, num1)->interp(), "No value for variable");
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, var2)->interp(), "No value for variable");
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, add1)->interp(), "No value for variable");
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, mult1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(AddExpr)(var1, num1)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(NEW(AddExpr)(var1, var2)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(NEW(AddExpr)(var1, add1)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(NEW(AddExpr)(var1, mult1)->interp(), "free variable: x");
 
         CHECK(NEW(AddExpr)(add1, num1)->interp()->value_equals(NEW(NumVal)(4)));
-        CHECK_THROWS_WITH(NEW(AddExpr)(add1, var1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(AddExpr)(add1, var1)->interp(), "free variable: x");
         CHECK(NEW(AddExpr)(add1, add1)->interp()->value_equals(NEW(NumVal)(2)));
         CHECK(NEW(AddExpr)(add1, mult1)->interp()->value_equals(NEW(NumVal)(-5)));
 
         CHECK(NEW(AddExpr)(mult1, num1)->interp()->value_equals(NEW(NumVal)(-3)));
-        CHECK_THROWS_WITH(NEW(AddExpr)(mult1, var1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(AddExpr)(mult1, var1)->interp(), "free variable: x");
         CHECK(NEW(AddExpr)(mult1, add1)->interp()->value_equals(NEW(NumVal)(-5)));
         CHECK(NEW(AddExpr)(mult1, mult1)->interp()->value_equals(NEW(NumVal)(-12)));
 
@@ -80,22 +79,22 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
 
     SECTION("Should evaluate MultExpr") {
         CHECK(mult1->interp()->value_equals(NEW(NumVal)(-6)));
-        CHECK_THROWS_WITH(NEW(MultExpr)(num1, var1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(MultExpr)(num1, var1)->interp(), "free variable: x");
         CHECK(NEW(MultExpr)(num1, add1)->interp()->value_equals(NEW(NumVal)(3)));
         CHECK(NEW(MultExpr)(num1, mult1)->interp()->value_equals(NEW(NumVal)(-18)));
 
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, num1)->interp(), "No value for variable");
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, var2)->interp(), "No value for variable");
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, add1)->interp(), "No value for variable");
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, mult1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(MultExpr)(var1, num1)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(NEW(MultExpr)(var1, var2)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(NEW(MultExpr)(var1, add1)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(NEW(MultExpr)(var1, mult1)->interp(), "free variable: x");
 
         CHECK(NEW(MultExpr)(add1, num1)->interp()->value_equals(NEW(NumVal)(3)));
-        CHECK_THROWS_WITH(NEW(MultExpr)(add1, var1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(MultExpr)(add1, var1)->interp(), "free variable: x");
         CHECK(NEW(MultExpr)(add1, add1)->interp()->value_equals(NEW(NumVal)(1)));
         CHECK(NEW(MultExpr)(add1, mult1)->interp()->value_equals(NEW(NumVal)(-6)));
 
         CHECK(NEW(MultExpr)(mult1, num1)->interp()->value_equals(NEW(NumVal)(-18)));
-        CHECK_THROWS_WITH(NEW(MultExpr)(mult1, var1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(MultExpr)(mult1, var1)->interp(), "free variable: x");
         CHECK(NEW(MultExpr)(mult1, add1)->interp()->value_equals(NEW(NumVal)(-6)));
         CHECK(NEW(MultExpr)(mult1, mult1)->interp()->value_equals(NEW(NumVal)(36)));
 
@@ -127,12 +126,12 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
                       ->value_equals(NEW(BoolVal)(false)));
 
         // Interp EqualExpr with Var
-        CHECK_THROWS_WITH(NEW(EqualExpr)(var1, add1)->interp(), "No value for variable");
+        CHECK_THROWS_WITH(NEW(EqualExpr)(var1, add1)->interp(), "free variable: x");
         CHECK_THROWS_WITH(NEW(EqualExpr)(NEW(LetExpr)(NEW(VarExpr)("x"),
                                                       NEW(NumExpr)(2),
                                                       NEW(AddExpr)(NEW(VarExpr)("y"), NEW(NumExpr)(2))),
                                          add1)->interp(),
-                          "No value for variable");
+                          "free variable: y");
 
         // Interp EqualExpr with BoolExpr
         CHECK(NEW(EqualExpr)(tr, fls)->interp()->value_equals(NEW(BoolVal)(false)));
@@ -150,7 +149,7 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
         CHECK(let1->interp()->value_equals(NEW(NumVal)(1))); // All vars are bound with a concrete value
 
         CHECK_THROWS_WITH(parse_str("_let y=3 _in (x+-2)")->interp(),
-                          "No value for variable"); // Some vars are not bound with a concrete value
+                          "free variable: x"); // Some vars are not bound with a concrete value
 
         CHECK(parse_str("_let x=-2 _in (_let x=3 _in (x+-2))")->interp()->value_equals(
                 NEW(NumVal)(1))); // Nested lets - binding of x is both in inner  outer lets - should go with inner
@@ -162,7 +161,7 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
                 NEW(NumVal)(-1))); // Nested lets - rhs is a LetExpr body
 
         CHECK_THROWS_WITH(parse_str("_let y=-2 _in (_let y=3 _in (x+-2))")->interp(),
-                          "No value for variable"); // Nested lets - no bindings of x in any lets
+                          "free variable: x"); // Nested lets - no bindings of x in any lets
     }
 
     SECTION("Should evaluate IfExpr") {

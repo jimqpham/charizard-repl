@@ -12,12 +12,13 @@ typedef enum {
 } precedence_t;
 
 class Val;
+class Env;
 
 CLASS(Expr) {
 public:
     virtual bool equals(PTR(Expr) o) = 0;
 
-    virtual PTR(Val) interp() = 0;
+    virtual PTR(Val) interp_env(PTR(Env) env) = 0;
 
     virtual PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) = 0;
 
@@ -38,4 +39,9 @@ public:
     * This is a wrapper method that automatically set the accumulator so the user don't have to
     */
     void pretty_print(std::ostream &out);
+
+    /*
+    * This is a wrapper method that automatically set the environment to empty
+    */
+    PTR(Val) interp();
 };

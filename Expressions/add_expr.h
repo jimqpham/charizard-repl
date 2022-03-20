@@ -6,6 +6,8 @@
 
 class Val;
 
+class Env;
+
 class AddExpr : public Expr {
 private:
     PTR(Expr) lhs;
@@ -16,7 +18,7 @@ public:
 
     bool equals(PTR(Expr) o) override;
 
-    PTR(Val) interp() override;
+    PTR(Val) interp_env(PTR(Env) env) override;
 
     PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 

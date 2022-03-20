@@ -1,27 +1,28 @@
 #include "add_expr.h"
 #include "../Vals/val.h"
+#include "env.h"
 
-AddExpr::AddExpr(PTR(Expr)lhs, PTR(Expr)rhs) {
+AddExpr::AddExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
 }
 
-bool AddExpr::equals(PTR(Expr)o) {
-    PTR(AddExpr)addExpr = CAST(AddExpr)(o);
+bool AddExpr::equals(PTR(Expr) o) {
+    PTR(AddExpr) addExpr = CAST(AddExpr)(o);
     if (addExpr == nullptr)
         return false;
     else
         return (addExpr->lhs->equals(this->lhs)) && (addExpr->rhs->equals(this->rhs));
 }
 
-PTR(Val)AddExpr::interp() {
-    return (this->lhs->interp()->add_to(this->rhs->interp()));
+PTR(Val)AddExpr::interp_env(PTR(Env) env) {
+    return (this->lhs->interp_env(env)->add_to(this->rhs->interp_env(env)));
 }
 
-PTR(Expr)AddExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
-    PTR(Expr)substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    PTR(Expr)substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    PTR(AddExpr)result = NEW(AddExpr)(substLhs, substRhs);
+PTR(Expr)AddExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
+    PTR(Expr) substLhs = this->lhs->subst(stringToMatch, replcExpr);
+    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
+    PTR(AddExpr) result = NEW(AddExpr)(substLhs, substRhs);
     return result;
 }
 

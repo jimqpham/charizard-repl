@@ -1,5 +1,6 @@
 #include <sstream>
 #include "expr.h"
+#include "env.h"
 
 /*
  * Convert to string. Using print by default with an option to use pretty_print
@@ -9,8 +10,7 @@ std::string Expr::to_string(bool prettyPrint) {
     if (!prettyPrint) {
         this->print(out);
         return out.str();
-    }
-    else {
+    } else {
         this->pretty_print(out);
         return out.str();
     }
@@ -22,4 +22,8 @@ std::string Expr::to_string(bool prettyPrint) {
 void Expr::pretty_print(std::ostream &out) {
     std::streampos newLinePos = 0;
     this->pretty_print_at(out, prec_none, false, newLinePos);
+}
+
+PTR(Val) Expr::interp() {
+    return this->interp_env(Env::empty);
 }

@@ -14,8 +14,8 @@ bool FunExpr::equals(PTR(Expr) o) {
            otherFun->body->equals(this->body);
 }
 
-PTR(Val) FunExpr::interp() {
-    return NEW(FunVal)(this->formal_arg, this->body);
+PTR(Val) FunExpr::interp_env(PTR(Env) env) {
+    return NEW(FunVal)(this->formal_arg, this->body, env);
 }
 
 PTR(Expr)FunExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {

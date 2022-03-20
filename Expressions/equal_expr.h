@@ -1,5 +1,6 @@
 #include "expr.h"
 #include "../shared_ptr.h"
+#include "env.h"
 
 class EqualExpr : public Expr {
 private:
@@ -11,7 +12,7 @@ public:
 
     bool equals(PTR(Expr) o) override;
 
-    PTR(Val) interp() override;
+    PTR(Val) interp_env(PTR(Env) env) override;
 
     PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) override;
 

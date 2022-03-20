@@ -5,19 +5,19 @@ NumExpr::NumExpr(int val) {
     this->val = val;
 }
 
-bool NumExpr::equals(PTR(Expr)o) {
-    PTR(NumExpr)numExpr = CAST(NumExpr)(o);
+bool NumExpr::equals(PTR(Expr) o) {
+    PTR(NumExpr) numExpr = CAST(NumExpr)(o);
     if (numExpr == nullptr)
         return false;
     else
         return numExpr->val == this->val;
 }
 
-PTR(Val)NumExpr::interp() {
+PTR(Val)NumExpr::interp_env(PTR(Env) env) {
     return NEW(NumVal)(val);
 }
 
-PTR(Expr)NumExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
+PTR(Expr)NumExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
     return NEW(NumExpr)(this->val);
 }
 

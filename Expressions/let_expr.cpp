@@ -1,19 +1,16 @@
-//
-// Created by Quang Pham on 1/28/22.
-//
-
 #include "let_expr.h"
 #include "num_expr.h"
 #include "../Vals/val.h"
+#include "extended_env.h"
 
-LetExpr::LetExpr(PTR(VarExpr)variable, PTR(Expr)rhs, PTR(Expr)body) {
+LetExpr::LetExpr(PTR(VarExpr) variable, PTR(Expr) rhs, PTR(Expr) body) {
     this->variable = variable;
     this->rhs = rhs;
     this->body = body;
 }
 
-bool LetExpr::equals(PTR(Expr)o) {
-    PTR(LetExpr)letExpr = CAST(LetExpr)(o);
+bool LetExpr::equals(PTR(Expr) o) {
+    PTR(LetExpr) letExpr = CAST(LetExpr)(o);
     if (letExpr == nullptr)
         return false;
     return (this->variable->equals(letExpr->variable) &&
@@ -21,19 +18,19 @@ bool LetExpr::equals(PTR(Expr)o) {
             this->body->equals(letExpr->body));
 }
 
-PTR(Val)LetExpr::interp() {
-    PTR(Val)evalRhs = this->rhs->interp();
-    PTR(Expr)substBody = this->body->subst(this->variable->to_string(), evalRhs->to_expr());
-    return substBody->interp();
+PTR(Val)LetExpr::interp_env(PTR(Env) env) {
+    PTR(Val) evalRhs = this->rhs->interp_env(env);
+    PTR(Env) new_env = NEW(ExtendedEnv)(variable->to_string(), evalRhs, env);
+    return body->interp_env(new_env);
 }
 
-PTR(Expr)LetExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
-    PTR(Expr)substRhs = this->rhs->subst(stringToMatch, replcExpr);
+PTR(Expr)LetExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
+    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
 
     // If the arg bound by let does not match the arg to replace (stringToMatch)
     // go into the body
     if (!variable->equals(NEW(VarExpr)(stringToMatch))) {
-        PTR(Expr)substBody = this->body->subst(stringToMatch, replcExpr);
+        PTR(Expr) substBody = this->body->subst(stringToMatch, replcExpr);
         return NEW(LetExpr)(this->variable, substRhs, substBody);
     }
 

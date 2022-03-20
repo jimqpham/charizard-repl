@@ -1,24 +1,25 @@
 #include "call_expr.h"
 #include "../Vals/val.h"
+#include "env.h"
 
-CallExpr::CallExpr(PTR(Expr)to_be_called, PTR(Expr)actual_arg) {
+CallExpr::CallExpr(PTR(Expr) to_be_called, PTR(Expr) actual_arg) {
     this->to_be_called = to_be_called;
     this->actual_arg = actual_arg;
 }
 
-bool CallExpr::equals(PTR(Expr)o) {
-    PTR(CallExpr)otherCallExpr = CAST(CallExpr)(o);
+bool CallExpr::equals(PTR(Expr) o) {
+    PTR(CallExpr) otherCallExpr = CAST(CallExpr)(o);
 
     return otherCallExpr != nullptr &&
            otherCallExpr->to_be_called->equals(this->to_be_called) &&
            otherCallExpr->actual_arg->equals(this->actual_arg);
 }
 
-PTR(Val)CallExpr::interp() {
-    return this->to_be_called->interp()->call(actual_arg->interp());
+PTR(Val)CallExpr::interp_env(PTR(Env) env) {
+    return this->to_be_called->interp_env(env)->call(actual_arg->interp_env(env));
 }
 
-PTR(Expr)CallExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
+PTR(Expr)CallExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
     return NEW(CallExpr)(this->to_be_called->subst(stringToMatch, replcExpr),
                          this->actual_arg->subst(stringToMatch, replcExpr));
 }
