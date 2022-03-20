@@ -19,13 +19,6 @@ PTR(Val)AddExpr::interp_env(PTR(Env) env) {
     return (this->lhs->interp_env(env)->add_to(this->rhs->interp_env(env)));
 }
 
-PTR(Expr)AddExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    PTR(Expr) substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    PTR(AddExpr) result = NEW(AddExpr)(substLhs, substRhs);
-    return result;
-}
-
 void AddExpr::print(std::ostream &out) {
     out << std::string("(");
     this->lhs->print(out);

@@ -17,10 +17,6 @@ PTR(Val)NumExpr::interp_env(PTR(Env) env) {
     return NEW(NumVal)(val);
 }
 
-PTR(Expr)NumExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    return NEW(NumExpr)(this->val);
-}
-
 void NumExpr::print(std::ostream &out) {
     out << std::to_string(val);
 }

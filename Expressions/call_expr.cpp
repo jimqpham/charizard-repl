@@ -19,11 +19,6 @@ PTR(Val)CallExpr::interp_env(PTR(Env) env) {
     return this->to_be_called->interp_env(env)->call(actual_arg->interp_env(env));
 }
 
-PTR(Expr)CallExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    return NEW(CallExpr)(this->to_be_called->subst(stringToMatch, replcExpr),
-                         this->actual_arg->subst(stringToMatch, replcExpr));
-}
-
 void CallExpr::print(std::ostream &out) {
     this->to_be_called->print(out);
     out << "(";

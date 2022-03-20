@@ -24,19 +24,6 @@ PTR(Val)LetExpr::interp_env(PTR(Env) env) {
     return body->interp_env(new_env);
 }
 
-PTR(Expr)LetExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
-
-    // If the arg bound by let does not match the arg to replace (stringToMatch)
-    // go into the body
-    if (!variable->equals(NEW(VarExpr)(stringToMatch))) {
-        PTR(Expr) substBody = this->body->subst(stringToMatch, replcExpr);
-        return NEW(LetExpr)(this->variable, substRhs, substBody);
-    }
-
-    return NEW(LetExpr)(this->variable, substRhs, body);
-}
-
 void LetExpr::print(std::ostream &out) {
     out << "(_let ";
     variable->print(out);

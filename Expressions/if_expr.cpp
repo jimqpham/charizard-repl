@@ -29,12 +29,6 @@ PTR(Val) IfExpr::interp_env(PTR(Env) env) {
         throw std::runtime_error("non-boolean condition in if body");
 }
 
-PTR(Expr) IfExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    return NEW(IfExpr)(condition->subst(stringToMatch, replcExpr),
-                       thenBranch->subst(stringToMatch, replcExpr),
-                       elseBranch->subst(stringToMatch, replcExpr));
-}
-
 void IfExpr::print(std::ostream &out) {
     out << "(_if ";
     condition->print(out);

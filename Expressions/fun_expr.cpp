@@ -18,14 +18,6 @@ PTR(Val) FunExpr::interp_env(PTR(Env) env) {
     return NEW(FunVal)(this->formal_arg, this->body, env);
 }
 
-PTR(Expr)FunExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    if (stringToMatch != formal_arg)
-        return NEW(FunExpr)(this->formal_arg,
-                            this->body->subst(stringToMatch, replcExpr));
-
-    return NEW(FunExpr)(this->formal_arg, this->body);
-}
-
 void FunExpr::print(std::ostream &out) {
     out << "(_fun (" << this->formal_arg << ") ";
     this->body->print(out);

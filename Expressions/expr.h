@@ -12,6 +12,7 @@ typedef enum {
 } precedence_t;
 
 class Val;
+
 class Env;
 
 CLASS(Expr) {
@@ -19,8 +20,6 @@ public:
     virtual bool equals(PTR(Expr) o) = 0;
 
     virtual PTR(Val) interp_env(PTR(Env) env) = 0;
-
-    virtual PTR(Expr) subst(std::string stringToMatch, PTR(Expr) replcExpr) = 0;
 
     virtual void print(std::ostream &out) = 0;
 

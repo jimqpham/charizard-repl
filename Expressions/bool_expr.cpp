@@ -19,10 +19,6 @@ PTR(Val)BoolExpr::interp_env(PTR(Env) env) {
     return NEW(BoolVal)(val);
 }
 
-PTR(Expr)BoolExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    return NEW(BoolExpr)(this->val);
-}
-
 void BoolExpr::print(std::ostream &out) {
     out << (val ? "_true" : "_false");
 }

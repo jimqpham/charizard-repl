@@ -19,13 +19,6 @@ PTR(Val)MultExpr::interp_env(PTR(Env) env) {
     return (this->lhs->interp_env(env)->mult_by(this->rhs->interp_env(env)));
 }
 
-PTR(Expr)MultExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    PTR(Expr) substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    PTR(MultExpr) result = NEW(MultExpr)(substLhs, substRhs);
-    return result;
-}
-
 void MultExpr::print(std::ostream &out) {
     out << std::string("(");
     this->lhs->print(out);
