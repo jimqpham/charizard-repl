@@ -1,13 +1,13 @@
 #include "equal_expr.h"
 #include "../Vals/bool_val.h"
 
-EqualExpr::EqualExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
+EqualExpr::EqualExpr(PTR(Expr)lhs, PTR(Expr)rhs) {
     this->lhs = lhs;
     this->rhs = rhs;
 }
 
-bool EqualExpr::equals(PTR(Expr) o) {
-    PTR(EqualExpr) equalExpr = CAST(EqualExpr)(o);
+bool EqualExpr::equals(PTR(Expr)o) {
+    PTR(EqualExpr)equalExpr = CAST(EqualExpr)(o);
     if (equalExpr == nullptr)
         return false;
     else
@@ -15,14 +15,14 @@ bool EqualExpr::equals(PTR(Expr) o) {
                (this->rhs->equals(equalExpr->rhs));
 }
 
-PTR(Val)EqualExpr::interp_env(PTR(Env) env) {
+PTR(Val)EqualExpr::interp_env(PTR(Env)env) {
     return NEW(BoolVal)(this->lhs->interp_env(env)->value_equals(this->rhs->interp_env(env)));
 }
 
-PTR(Expr)EqualExpr::subst(std::string stringToMatch, PTR(Expr) replcExpr) {
-    PTR(Expr) substLhs = this->lhs->subst(stringToMatch, replcExpr);
-    PTR(Expr) substRhs = this->rhs->subst(stringToMatch, replcExpr);
-    PTR(EqualExpr) result = NEW(EqualExpr)(substLhs, substRhs);
+PTR(Expr)EqualExpr::subst(std::string stringToMatch, PTR(Expr)replcExpr) {
+    PTR(Expr)substLhs = this->lhs->subst(stringToMatch, replcExpr);
+    PTR(Expr)substRhs = this->rhs->subst(stringToMatch, replcExpr);
+    PTR(EqualExpr)result = NEW(EqualExpr)(substLhs, substRhs);
     return result;
 }
 

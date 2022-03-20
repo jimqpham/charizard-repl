@@ -5,8 +5,8 @@ NumVal::NumVal(int rep) {
     this->rep = rep;
 }
 
-bool NumVal::value_equals(PTR(Val)o) {
-    PTR(NumVal)otherVal = CAST(NumVal)(o);
+bool NumVal::value_equals(PTR(Val) o) {
+    PTR(NumVal) otherVal = CAST(NumVal)(o);
 
     if (otherVal != nullptr)
         return this->rep == otherVal->rep;
@@ -14,8 +14,8 @@ bool NumVal::value_equals(PTR(Val)o) {
         return false;
 }
 
-PTR(Val)NumVal::add_to(PTR(Val)o) {
-    PTR(NumVal)otherVal = CAST(NumVal)(o);
+PTR(Val)NumVal::add_to(PTR(Val) o) {
+    PTR(NumVal) otherVal = CAST(NumVal)(o);
 
     if (otherVal != nullptr)
         return NEW(NumVal)(this->rep + otherVal->rep);
@@ -23,8 +23,8 @@ PTR(Val)NumVal::add_to(PTR(Val)o) {
         throw std::runtime_error("add of non-number");
 }
 
-PTR(Val)NumVal::mult_by(PTR(Val)o) {
-    PTR(NumVal)otherVal = CAST(NumVal)(o);
+PTR(Val)NumVal::mult_by(PTR(Val) o) {
+    PTR(NumVal) otherVal = CAST(NumVal)(o);
 
     if (otherVal != nullptr)
         return NEW(NumVal)(this->rep * otherVal->rep);
@@ -36,10 +36,6 @@ std::string NumVal::to_string() {
     return std::to_string(this->rep);
 }
 
-PTR(Expr)NumVal::to_expr() {
-    return NEW(NumExpr)(this->rep);
-}
-
-PTR(Val)NumVal::call(PTR(Val)actual_arg) {
+PTR(Val)NumVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("call of non-function val");
 }

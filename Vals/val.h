@@ -14,7 +14,5 @@ public:
 
     virtual std::string to_string() = 0;
 
-    virtual PTR(Expr) to_expr() = 0;
-
-    virtual PTR(Val) call(PTR(Val)actual_arg) = 0;
+    virtual PTR(Val) call(PTR(Val) actual_arg) = 0;
 };

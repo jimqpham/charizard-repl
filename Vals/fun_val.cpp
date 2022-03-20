@@ -25,11 +25,7 @@ PTR(Val) FunVal::mult_by(PTR(Val) o) {
 }
 
 std::string FunVal::to_string() {
-    return this->to_expr()->to_string();
-}
-
-PTR(Expr) FunVal::to_expr() {
-    return NEW(FunExpr)(this->formal_arg, this->body);
+    return "[function]";
 }
 
 PTR(Val) FunVal::call(PTR(Val) actual_arg) {

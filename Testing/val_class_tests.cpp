@@ -12,14 +12,14 @@
 
 TEST_CASE("Test NumVal methods") {
 
-    PTR(NumVal)ten = NEW(NumVal)(10);
-    PTR(NumVal)otherTen = NEW(NumVal)(10);
-    PTR(NumVal)two = NEW(NumVal)(2);
-    PTR(NumVal)negTwo = NEW(NumVal)(-2);
-    PTR(NumVal)five = NEW(NumVal)(5);
-    PTR(NumVal)eight = NEW(NumVal)(8);
-    PTR(NumVal)twelve = NEW(NumVal)(12);
-    PTR(NumVal)nullVal = nullptr;
+    PTR(NumVal) ten = NEW(NumVal)(10);
+    PTR(NumVal) otherTen = NEW(NumVal)(10);
+    PTR(NumVal) two = NEW(NumVal)(2);
+    PTR(NumVal) negTwo = NEW(NumVal)(-2);
+    PTR(NumVal) five = NEW(NumVal)(5);
+    PTR(NumVal) eight = NEW(NumVal)(8);
+    PTR(NumVal) twelve = NEW(NumVal)(12);
+    PTR(NumVal) nullVal = nullptr;
 
     SECTION("The value_equals method") {
         CHECK(ten->value_equals(otherTen));
@@ -43,11 +43,6 @@ TEST_CASE("Test NumVal methods") {
         CHECK(strcmp(negTwo->to_string().c_str(), "-2") == 0);
     }
 
-    SECTION("The to_expr method") {
-        CHECK(ten->to_expr()->equals(NEW(NumExpr)(10)));
-        CHECK(negTwo->to_expr()->equals(NEW(NumExpr)(-2)));
-    }
-
     SECTION("The call method") {
         CHECK_THROWS_WITH(ten->call(NEW(NumVal)(-2)), "call of non-function val");
     }
@@ -55,10 +50,10 @@ TEST_CASE("Test NumVal methods") {
 
 TEST_CASE("Test BoolVal methods") {
 
-    PTR(BoolVal)tr = NEW(BoolVal)(true);
-    PTR(BoolVal)otherTr = NEW(BoolVal)(true);
-    PTR(BoolVal)fls = NEW(BoolVal)(false);
-    PTR(NumVal)two = NEW(NumVal)(2);
+    PTR(BoolVal) tr = NEW(BoolVal)(true);
+    PTR(BoolVal) otherTr = NEW(BoolVal)(true);
+    PTR(BoolVal) fls = NEW(BoolVal)(false);
+    PTR(NumVal) two = NEW(NumVal)(2);
 
     SECTION("The value_equals method") {
         CHECK(tr->value_equals(otherTr));
@@ -81,11 +76,6 @@ TEST_CASE("Test BoolVal methods") {
         CHECK(strcmp(fls->to_string().c_str(), "_false") == 0);
     }
 
-    SECTION("The to_expr method") {
-        CHECK(tr->to_expr()->equals(NEW(BoolExpr)(true)));
-        CHECK(fls->to_expr()->equals(NEW(BoolExpr)(false)));
-    }
-
     SECTION("The call method") {
         CHECK_THROWS_WITH(tr->call(NEW(BoolVal)(false)), "call of non-function val");
     }
@@ -93,10 +83,10 @@ TEST_CASE("Test BoolVal methods") {
 
 TEST_CASE("Test FunVal methods") {
 
-    PTR(FunVal)f1 = NEW(FunVal)("x", parse_str("x + 1"));
+    PTR(FunVal) f1 = NEW(FunVal)("x", parse_str("x + 1"));
 
     SECTION("The value_equals method") {
-        PTR(Val)otherF1 = parse_str("_fun (x) x + 1")->interp();
+        PTR(Val) otherF1 = parse_str("_fun (x) x + 1")->interp();
         CHECK(f1->value_equals(otherF1));
         CHECK(!f1->value_equals(NEW(FunVal)("y", parse_str("x + 1"))));
         CHECK(!f1->value_equals(NEW(FunVal)("x", parse_str("x + 2"))));
@@ -112,14 +102,10 @@ TEST_CASE("Test FunVal methods") {
     }
 
     SECTION("The to_string method") {
-        CHECK(f1->to_string() == "(_fun (x) (x+1))");
-    }
-
-    SECTION("The to_expr method") {
-        CHECK(f1->to_expr()->equals(NEW(FunExpr)("x", NEW(AddExpr)(NEW(VarExpr)("x"), NEW(NumExpr)(1)))));
+        CHECK(f1->to_string() == "[function]");
     }
 
     SECTION("The call method") {
-        CHECK(f1->call(NEW(NumVal)(10))->value_equals(NEW(NumVal)(11)));
+        CHECK(f1->call((NEW(NumVal)(10)))->value_equals(NEW(NumVal)(11)));
     }
 }

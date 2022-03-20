@@ -49,100 +49,100 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
 
     SECTION("Should evaluate AddExpr") {
         CHECK(add1->interp()->value_equals(NEW(NumVal)(1)));
-        CHECK_THROWS_WITH(NEW(AddExpr)(num1, var1)->interp(), "free variable: x");
-        CHECK(NEW(AddExpr)(num1, add1)->interp()->value_equals(NEW(NumVal)(4)));
-        CHECK(NEW(AddExpr)(num1, mult1)->interp()->value_equals(NEW(NumVal)(-3)));
+        CHECK_THROWS_WITH(((NEW(AddExpr)(num1, var1)))->interp(), "free variable: x");
+        CHECK(((NEW(AddExpr)(num1, add1)))->interp()->value_equals(NEW(NumVal)(4)));
+        CHECK(((NEW(AddExpr)(num1, mult1)))->interp()->value_equals(NEW(NumVal)(-3)));
 
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, num1)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, var2)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, add1)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(AddExpr)(var1, mult1)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(AddExpr)(var1, num1)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(AddExpr)(var1, var2)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(AddExpr)(var1, add1)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(AddExpr)(var1, mult1)))->interp(), "free variable: x");
 
-        CHECK(NEW(AddExpr)(add1, num1)->interp()->value_equals(NEW(NumVal)(4)));
-        CHECK_THROWS_WITH(NEW(AddExpr)(add1, var1)->interp(), "free variable: x");
-        CHECK(NEW(AddExpr)(add1, add1)->interp()->value_equals(NEW(NumVal)(2)));
-        CHECK(NEW(AddExpr)(add1, mult1)->interp()->value_equals(NEW(NumVal)(-5)));
+        CHECK(((NEW(AddExpr)(add1, num1)))->interp()->value_equals(NEW(NumVal)(4)));
+        CHECK_THROWS_WITH(((NEW(AddExpr)(add1, var1)))->interp(), "free variable: x");
+        CHECK(((NEW(AddExpr)(add1, add1)))->interp()->value_equals(NEW(NumVal)(2)));
+        CHECK(((NEW(AddExpr)(add1, mult1)))->interp()->value_equals(NEW(NumVal)(-5)));
 
-        CHECK(NEW(AddExpr)(mult1, num1)->interp()->value_equals(NEW(NumVal)(-3)));
-        CHECK_THROWS_WITH(NEW(AddExpr)(mult1, var1)->interp(), "free variable: x");
-        CHECK(NEW(AddExpr)(mult1, add1)->interp()->value_equals(NEW(NumVal)(-5)));
-        CHECK(NEW(AddExpr)(mult1, mult1)->interp()->value_equals(NEW(NumVal)(-12)));
+        CHECK(((NEW(AddExpr)(mult1, num1)))->interp()->value_equals(NEW(NumVal)(-3)));
+        CHECK_THROWS_WITH(((NEW(AddExpr)(mult1, var1)))->interp(), "free variable: x");
+        CHECK(((NEW(AddExpr)(mult1, add1)))->interp()->value_equals(NEW(NumVal)(-5)));
+        CHECK(((NEW(AddExpr)(mult1, mult1)))->interp()->value_equals(NEW(NumVal)(-12)));
 
-        CHECK_THROWS_WITH(NEW(AddExpr)(NEW(BoolExpr)(true), num1)->interp(), "add of non-number");
-        CHECK_THROWS_WITH(NEW(AddExpr)(num1, NEW(EqualExpr)(NEW(NumExpr)(1),
-                                                            NEW(NumExpr)(2)))->interp(), "add of non-number");
-        CHECK(NEW(AddExpr)(num1, NEW(IfExpr)(NEW(BoolExpr)(true),
-                                             num1,
-                                             num2))->interp()->value_equals(NEW(NumVal)(6)));
+        CHECK_THROWS_WITH((NEW(AddExpr)(NEW(BoolExpr)(true), num1))->interp(), "add of non-number");
+        CHECK_THROWS_WITH((NEW(AddExpr)(num1, NEW(EqualExpr)(NEW(NumExpr)(1),
+                                                             (NEW(NumExpr)(2)))))->interp(), "add of non-number");
+        CHECK((NEW(AddExpr)(num1, NEW(IfExpr)(NEW(BoolExpr)(true),
+                                              num1,
+                                              num2)))->interp()->value_equals(NEW(NumVal)(6)));
     }
 
 
     SECTION("Should evaluate MultExpr") {
         CHECK(mult1->interp()->value_equals(NEW(NumVal)(-6)));
-        CHECK_THROWS_WITH(NEW(MultExpr)(num1, var1)->interp(), "free variable: x");
-        CHECK(NEW(MultExpr)(num1, add1)->interp()->value_equals(NEW(NumVal)(3)));
-        CHECK(NEW(MultExpr)(num1, mult1)->interp()->value_equals(NEW(NumVal)(-18)));
+        CHECK_THROWS_WITH(((NEW(MultExpr)(num1, var1)))->interp(), "free variable: x");
+        CHECK(((NEW(MultExpr)(num1, add1)))->interp()->value_equals(NEW(NumVal)(3)));
+        CHECK(((NEW(MultExpr)(num1, mult1)))->interp()->value_equals(NEW(NumVal)(-18)));
 
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, num1)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, var2)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, add1)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(MultExpr)(var1, mult1)->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(MultExpr)(var1, num1)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(MultExpr)(var1, var2)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(MultExpr)(var1, add1)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH(((NEW(MultExpr)(var1, mult1)))->interp(), "free variable: x");
 
-        CHECK(NEW(MultExpr)(add1, num1)->interp()->value_equals(NEW(NumVal)(3)));
-        CHECK_THROWS_WITH(NEW(MultExpr)(add1, var1)->interp(), "free variable: x");
-        CHECK(NEW(MultExpr)(add1, add1)->interp()->value_equals(NEW(NumVal)(1)));
-        CHECK(NEW(MultExpr)(add1, mult1)->interp()->value_equals(NEW(NumVal)(-6)));
+        CHECK(((NEW(MultExpr)(add1, num1)))->interp()->value_equals(NEW(NumVal)(3)));
+        CHECK_THROWS_WITH(((NEW(MultExpr)(add1, var1)))->interp(), "free variable: x");
+        CHECK(((NEW(MultExpr)(add1, add1)))->interp()->value_equals(NEW(NumVal)(1)));
+        CHECK(((NEW(MultExpr)(add1, mult1)))->interp()->value_equals(NEW(NumVal)(-6)));
 
-        CHECK(NEW(MultExpr)(mult1, num1)->interp()->value_equals(NEW(NumVal)(-18)));
-        CHECK_THROWS_WITH(NEW(MultExpr)(mult1, var1)->interp(), "free variable: x");
-        CHECK(NEW(MultExpr)(mult1, add1)->interp()->value_equals(NEW(NumVal)(-6)));
-        CHECK(NEW(MultExpr)(mult1, mult1)->interp()->value_equals(NEW(NumVal)(36)));
+        CHECK(((NEW(MultExpr)(mult1, num1)))->interp()->value_equals(NEW(NumVal)(-18)));
+        CHECK_THROWS_WITH(((NEW(MultExpr)(mult1, var1)))->interp(), "free variable: x");
+        CHECK(((NEW(MultExpr)(mult1, add1)))->interp()->value_equals(NEW(NumVal)(-6)));
+        CHECK(((NEW(MultExpr)(mult1, mult1)))->interp()->value_equals(NEW(NumVal)(36)));
 
-        CHECK_THROWS_WITH(NEW(MultExpr)(NEW(EqualExpr)(num1, add1), num1)->interp(), "mult of non-number");
+        CHECK_THROWS_WITH((NEW(MultExpr)(NEW(EqualExpr)(num1, add1), num1))->interp(), "mult of non-number");
     }
 
     SECTION("Should evaluate EqualExpr") {
         // Interp EqualExpr with NumExpr
-        CHECK(NEW(EqualExpr)(num1, num2)->interp()->value_equals(NEW(BoolVal)(false)));
-        CHECK(NEW(EqualExpr)(num1, NEW(NumExpr)(3))->interp()
+        CHECK(((NEW(EqualExpr)(num1, num2)))->interp()->value_equals(NEW(BoolVal)(false)));
+        CHECK((NEW(EqualExpr)(num1, NEW(NumExpr)(3)))->interp()
                       ->value_equals(NEW(BoolVal)(true)));
 
         // Interp EqualExpr with Add
-        CHECK(NEW(EqualExpr)(add1, NEW(NumExpr)(1))->interp()
+        CHECK((NEW(EqualExpr)(add1, NEW(NumExpr)(1)))->interp()
                       ->value_equals(NEW(BoolVal)(true)));
-        CHECK(NEW(EqualExpr)(add1, NEW(NumExpr)(3))->interp()
+        CHECK((NEW(EqualExpr)(add1, NEW(NumExpr)(3)))->interp()
                       ->value_equals(NEW(BoolVal)(false)));
 
         // Interp EqualExpr with Mult
-        CHECK(NEW(EqualExpr)(mult1, NEW(NumExpr)(-6))->interp()
+        CHECK((NEW(EqualExpr)(mult1, NEW(NumExpr)(-6)))->interp()
                       ->value_equals(NEW(BoolVal)(true)));
-        CHECK(NEW(EqualExpr)(mult1, NEW(NumExpr)(0))->interp()
+        CHECK((NEW(EqualExpr)(mult1, NEW(NumExpr)(0)))->interp()
                       ->value_equals(NEW(BoolVal)(false)));
 
         // Interp EqualExpr with Let
-        CHECK(NEW(EqualExpr)(let1, add1)->interp()
+        CHECK(((NEW(EqualExpr)(let1, add1)))->interp()
                       ->value_equals(NEW(BoolVal)(true)));
-        CHECK(NEW(EqualExpr)(let1, mult1)->interp()
+        CHECK(((NEW(EqualExpr)(let1, mult1)))->interp()
                       ->value_equals(NEW(BoolVal)(false)));
 
         // Interp EqualExpr with Var
-        CHECK_THROWS_WITH(NEW(EqualExpr)(var1, add1)->interp(), "free variable: x");
-        CHECK_THROWS_WITH(NEW(EqualExpr)(NEW(LetExpr)(NEW(VarExpr)("x"),
-                                                      NEW(NumExpr)(2),
-                                                      NEW(AddExpr)(NEW(VarExpr)("y"), NEW(NumExpr)(2))),
-                                         add1)->interp(),
+        CHECK_THROWS_WITH(((NEW(EqualExpr)(var1, add1)))->interp(), "free variable: x");
+        CHECK_THROWS_WITH((NEW(EqualExpr)(NEW(LetExpr)(NEW(VarExpr)("x"),
+                                                       NEW(NumExpr)(2),
+                                                       NEW(AddExpr)(NEW(VarExpr)("y"), NEW(NumExpr)(2))),
+                                          add1))->interp(),
                           "free variable: y");
 
         // Interp EqualExpr with BoolExpr
-        CHECK(NEW(EqualExpr)(tr, fls)->interp()->value_equals(NEW(BoolVal)(false)));
-        CHECK(NEW(EqualExpr)(tr, tr)->interp()->value_equals(NEW(BoolVal)(true)));
-        CHECK(NEW(EqualExpr)(tr, num1)->interp()->value_equals(NEW(BoolVal)(false)));
+        CHECK(((NEW(EqualExpr)(tr, fls)))->interp()->value_equals(NEW(BoolVal)(false)));
+        CHECK(((NEW(EqualExpr)(tr, tr)))->interp()->value_equals(NEW(BoolVal)(true)));
+        CHECK(((NEW(EqualExpr)(tr, num1)))->interp()->value_equals(NEW(BoolVal)(false)));
 
         // Interp EqualExpr with IfExpr
-        CHECK(NEW(EqualExpr)(NEW(NumExpr)(2),
-                             NEW(IfExpr)(NEW(BoolExpr)(true),
-                                         NEW(NumExpr)(2),
-                                         NEW(VarExpr)("x")))->interp()->value_equals(NEW(BoolVal)(true)));
+        CHECK((NEW(EqualExpr)(NEW(NumExpr)(2),
+                              NEW(IfExpr)(NEW(BoolExpr)(true),
+                                          NEW(NumExpr)(2),
+                                          (NEW(VarExpr)("x")))))->interp()->value_equals(NEW(BoolVal)(true)));
     }
 
     SECTION("Should evaluate LetExpr") {
@@ -315,7 +315,7 @@ TEST_CASE("Interp Tests on NumExpr Objects") {
 
     SECTION("Should evaluate CallExpr") {
         CHECK(call1->interp()->value_equals(NEW(NumVal)(2)));
-        CHECK(parse_str("_fun (x) x + 1")->interp()->to_string() == "(_fun (x) (x+1))");
-        CHECK(parse_str("_let f = _fun (x) x + 1 _in f")->interp()->to_string() == "(_fun (x) (x+1))");
+        CHECK(parse_str("_fun (x) x + 1")->interp()->to_string() == "[function]");
+        CHECK(parse_str("_let f = _fun (x) x + 1 _in f")->interp()->to_string() == "[function]");
     }
 }

@@ -20,7 +20,5 @@ public:
 
     std::string to_string() override;
 
-    PTR(Expr) to_expr() override;
-
     PTR(Val) call(PTR(Val) actual_arg) override;
 };
