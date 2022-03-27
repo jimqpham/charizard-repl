@@ -2,7 +2,7 @@
 #include "../Vals/val.h"
 #include <cstring>
 #include <stdexcept>
-#include "env.h"
+#include "../Utils/env.h"
 
 VarExpr::VarExpr(std::string name) {
     this->name = name;

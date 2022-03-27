@@ -1,7 +1,7 @@
 #include "let_expr.h"
 #include "num_expr.h"
 #include "../Vals/val.h"
-#include "extended_env.h"
+#include "../Utils/extended_env.h"
 
 LetExpr::LetExpr(PTR(VarExpr) variable, PTR(Expr) rhs, PTR(Expr) body) {
     this->variable = variable;

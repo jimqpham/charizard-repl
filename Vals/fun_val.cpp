@@ -1,6 +1,6 @@
 #include "fun_val.h"
 #include "../Expressions/fun_expr.h"
-#include "../Expressions/extended_env.h"
+#include "../Utils/extended_env.h"
 
 FunVal::FunVal(std::string formal_arg, PTR(Expr) body, PTR(Env) env) {
     this->formal_arg = formal_arg;

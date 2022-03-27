@@ -7,7 +7,7 @@
 #include "../Testing/catch.h"
 #include "../Expressions/expr.h"
 #include "../Vals/num_val.h"
-#include "../Expressions/env.h"
+#include "../Utils/env.h"
 
 typedef enum {
     INTERP,
