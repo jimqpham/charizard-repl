@@ -14,6 +14,7 @@
 #include "../Expressions/call_expr.h"
 #include "../CmdLines/parse.h"
 #include "../Utils/step.h"
+#include "../Utils/cont.h"
 
 #include <stdexcept>
 
@@ -323,14 +324,18 @@ TEST_CASE("Step_interp Tests on NumExpr Objects") {
         CHECK(Step::interp_by_steps(call1)->value_equals(NEW(NumVal)(2)));
         CHECK(Step::interp_by_steps(parse_str("_fun (x) x + 1"))->to_string() == "[function]");
         CHECK(Step::interp_by_steps(parse_str("_let f = _fun (x) x + 1 _in f"))->to_string() == "[function]");
+        CHECK_THROWS_WITH(Step::interp_by_steps(parse_str("_true(5)")), "call of non-function val");
     }
 
-    SECTION("Step interp") {
+    SECTION("Miscellaneous") {
         CHECK(Step::interp_by_steps(parse_str("_let count = _fun(count)\n"
                                               "_fun(n)\n"
                                               "_if n == 0\n"
                                               "_then 0\n"
                                               "_else 1 + count(count)(n + -1)\n"
                                               "_in count(count)(100000)"))->value_equals(NEW(NumVal)(100000)));
+
+        PTR(Cont) done = NEW(DoneCont)();
+        CHECK_THROWS_WITH(done->step_continue(), "can't continue done");
     }
 }
