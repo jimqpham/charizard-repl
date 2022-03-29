@@ -1,6 +1,8 @@
 #include "call_expr.h"
 #include "../Vals/val.h"
 #include "../Utils/env.h"
+#include "../Utils/step.h"
+#include "../Utils/call_cont.h"
 
 CallExpr::CallExpr(PTR(Expr) to_be_called, PTR(Expr) actual_arg) {
     this->to_be_called = to_be_called;
@@ -15,8 +17,14 @@ bool CallExpr::equals(PTR(Expr) o) {
            otherCallExpr->actual_arg->equals(this->actual_arg);
 }
 
-PTR(Val)CallExpr::interp_env(PTR(Env) env) {
+PTR(Val) CallExpr::interp_env(PTR(Env) env) {
     return this->to_be_called->interp_env(env)->call(actual_arg->interp_env(env));
+}
+
+void CallExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = to_be_called;
+    Step::cont = NEW(ArgThenCallCont)(actual_arg, Step::env, Step::cont);
 }
 
 void CallExpr::print(std::ostream &out) {

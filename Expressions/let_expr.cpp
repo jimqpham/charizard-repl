@@ -2,6 +2,8 @@
 #include "num_expr.h"
 #include "../Vals/val.h"
 #include "../Utils/extended_env.h"
+#include "../Utils/step.h"
+#include "../Utils/let_cont.h"
 
 LetExpr::LetExpr(PTR(VarExpr) variable, PTR(Expr) rhs, PTR(Expr) body) {
     this->variable = variable;
@@ -18,10 +20,18 @@ bool LetExpr::equals(PTR(Expr) o) {
             this->body->equals(letExpr->body));
 }
 
-PTR(Val)LetExpr::interp_env(PTR(Env) env) {
+PTR(Val) LetExpr::interp_env(PTR(Env) env) {
     PTR(Val) evalRhs = this->rhs->interp_env(env);
     PTR(Env) new_env = NEW(ExtendedEnv)(variable->to_string(), evalRhs, env);
     return body->interp_env(new_env);
+}
+
+void LetExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = rhs;
+    Step::env = Step::env;
+    Step::cont = NEW(LetBodyCont)(variable->to_string(), body, Step::env, Step::cont);
+
 }
 
 void LetExpr::print(std::ostream &out) {

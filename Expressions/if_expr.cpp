@@ -1,6 +1,8 @@
 #include "if_expr.h"
 #include "../Vals/bool_val.h"
 #include "../Utils/env.h"
+#include "../Utils/step.h"
+#include "../Utils/if_cont.h"
 
 
 IfExpr::IfExpr(PTR(Expr) condition, PTR(Expr) thenBranch, PTR(Expr) elseBranch) {
@@ -27,6 +29,13 @@ PTR(Val) IfExpr::interp_env(PTR(Env) env) {
         return this->elseBranch->interp_env(env);
     else
         throw std::runtime_error("non-boolean condition in if body");
+}
+
+void IfExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = condition;
+    Step::env = Step::env;
+    Step::cont = NEW(IfBranchCont)(thenBranch, elseBranch, Step::env, Step::cont);
 }
 
 void IfExpr::print(std::ostream &out) {

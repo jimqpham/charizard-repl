@@ -1,6 +1,7 @@
 #include "../Vals/bool_val.h"
 #include "../Utils/env.h"
 #include "bool_expr.h"
+#include "../Utils/step.h"
 
 BoolExpr::BoolExpr(bool val) {
     this->val = val;
@@ -15,8 +16,14 @@ bool BoolExpr::equals(PTR(Expr) o) {
         return boolExpr->val == this->val;
 }
 
-PTR(Val)BoolExpr::interp_env(PTR(Env) env) {
+PTR(Val) BoolExpr::interp_env(PTR(Env) env) {
     return NEW(BoolVal)(val);
+}
+
+void BoolExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = NEW(BoolVal)(val);
+    Step::cont = Step::cont;
 }
 
 void BoolExpr::print(std::ostream &out) {

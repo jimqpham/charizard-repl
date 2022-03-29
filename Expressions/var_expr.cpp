@@ -3,6 +3,7 @@
 #include <cstring>
 #include <stdexcept>
 #include "../Utils/env.h"
+#include "../Utils/step.h"
 
 VarExpr::VarExpr(std::string name) {
     this->name = name;
@@ -18,6 +19,12 @@ bool VarExpr::equals(PTR(Expr) o) {
 
 PTR(Val) VarExpr::interp_env(PTR(Env) env) {
     return env->lookup(this->name);
+}
+
+void VarExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = Step::env->lookup(this->name);
+    Step::cont = Step::cont;
 }
 
 void VarExpr::print(std::ostream &out) {

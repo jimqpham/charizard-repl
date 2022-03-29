@@ -3,6 +3,8 @@
 #include "../shared_ptr.h"
 #include "../Utils/env.h"
 
+class Cont;
+
 class FunVal : public Val {
 private:
     std::string formal_arg;
@@ -21,4 +23,6 @@ public:
     std::string to_string() override;
 
     PTR(Val) call(PTR(Val) actual_arg) override;
+
+    void call_step(PTR(Val) actual_arg_val, PTR(Cont) rest) override;
 };

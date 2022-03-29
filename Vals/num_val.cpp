@@ -39,3 +39,7 @@ std::string NumVal::to_string() {
 PTR(Val)NumVal::call(PTR(Val) actual_arg) {
     throw std::runtime_error("call of non-function val");
 }
+
+void NumVal::call_step(std::shared_ptr<Val> actual_arg_val, std::shared_ptr<Cont> rest) {
+    throw std::runtime_error("call of non-function val");
+}

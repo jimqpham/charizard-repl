@@ -1,5 +1,6 @@
 #include "fun_expr.h"
 #include "../Vals/fun_val.h"
+#include "../Utils/step.h"
 
 FunExpr::FunExpr(std::string formal_arg, PTR(Expr) body) {
     this->formal_arg = formal_arg;
@@ -16,6 +17,12 @@ bool FunExpr::equals(PTR(Expr) o) {
 
 PTR(Val) FunExpr::interp_env(PTR(Env) env) {
     return NEW(FunVal)(this->formal_arg, this->body, env);
+}
+
+void FunExpr::step_interp() {
+    Step::mode = Step::continue_mode;
+    Step::val = NEW(FunVal)(this->formal_arg, this->body, Step::env);
+    Step::cont = Step::cont;
 }
 
 void FunExpr::print(std::ostream &out) {

@@ -1,6 +1,7 @@
 #include "fun_val.h"
 #include "../Expressions/fun_expr.h"
 #include "../Utils/extended_env.h"
+#include "../Utils/step.h"
 
 FunVal::FunVal(std::string formal_arg, PTR(Expr) body, PTR(Env) env) {
     this->formal_arg = formal_arg;
@@ -30,4 +31,11 @@ std::string FunVal::to_string() {
 
 PTR(Val) FunVal::call(PTR(Val) actual_arg) {
     return this->body->interp_env(NEW(ExtendedEnv)(formal_arg, actual_arg, env));
+}
+
+void FunVal::call_step(std::shared_ptr<Val> actual_arg_val, std::shared_ptr<Cont> rest) {
+    Step::mode = Step::interp_mode;
+    Step::expr = body;
+    Step::env = NEW(ExtendedEnv)(formal_arg, actual_arg_val, env);
+    Step::cont = rest;
 }

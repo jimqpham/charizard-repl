@@ -1,6 +1,9 @@
 #include "add_expr.h"
+#include "../Utils/step.h"
 #include "../Vals/val.h"
 #include "../Utils/env.h"
+#include "../Utils/cont.h"
+#include "../Utils/add_cont.h"
 
 AddExpr::AddExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
     this->lhs = lhs;
@@ -15,8 +18,15 @@ bool AddExpr::equals(PTR(Expr) o) {
         return (addExpr->lhs->equals(this->lhs)) && (addExpr->rhs->equals(this->rhs));
 }
 
-PTR(Val)AddExpr::interp_env(PTR(Env) env) {
+PTR(Val) AddExpr::interp_env(PTR(Env) env) {
     return (this->lhs->interp_env(env)->add_to(this->rhs->interp_env(env)));
+}
+
+void AddExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = lhs;
+    Step::env = Step::env;
+    Step::cont = NEW(RightThenAddCont)(rhs, Step::env, Step::cont);
 }
 
 void AddExpr::print(std::ostream &out) {

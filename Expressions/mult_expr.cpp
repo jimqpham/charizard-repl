@@ -1,6 +1,8 @@
 #include "mult_expr.h"
 #include "../Vals/val.h"
 #include "../Utils/env.h"
+#include "../Utils/step.h"
+#include "../Utils/add_cont.h"
 
 MultExpr::MultExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
     this->lhs = lhs;
@@ -15,8 +17,15 @@ bool MultExpr::equals(PTR(Expr) o) {
         return (multExpr->lhs->equals(this->lhs)) && (multExpr->rhs->equals(this->rhs));
 }
 
-PTR(Val)MultExpr::interp_env(PTR(Env) env) {
+PTR(Val) MultExpr::interp_env(PTR(Env) env) {
     return (this->lhs->interp_env(env)->mult_by(this->rhs->interp_env(env)));
+}
+
+void MultExpr::step_interp() {
+    Step::mode = Step::interp_mode;
+    Step::expr = lhs;
+    Step::env = Step::env;
+    Step::cont = NEW(RightThenAddCont)(rhs, Step::env, Step::cont);
 }
 
 void MultExpr::print(std::ostream &out) {

@@ -21,6 +21,8 @@ public:
 
     virtual PTR(Val) interp_env(PTR(Env) env) = 0;
 
+    virtual void step_interp() = 0;
+
     virtual void print(std::ostream &out) = 0;
 
     virtual void pretty_print_at(std::ostream &out,
