@@ -1,7 +1,7 @@
 #include "equal_expr.h"
 #include "../Vals/bool_val.h"
 #include "../Utils/step.h"
-#include "../Utils/equal_cont.h"
+#include "../Utils/cont.h"
 
 EqualExpr::EqualExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
     this->lhs = lhs;
