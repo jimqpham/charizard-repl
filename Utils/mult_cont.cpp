@@ -13,6 +13,6 @@ void RightThenMultCont::step_continue() {
 void MultCont::step_continue() {
     PTR(Val) rhs_val = Step::val;
     Step::mode = Step::continue_mode;
-    Step::val = lhs_val;
+    Step::val = lhs_val->mult_by(rhs_val);
     Step::cont = rest;
 }

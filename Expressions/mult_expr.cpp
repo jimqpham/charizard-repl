@@ -2,7 +2,7 @@
 #include "../Vals/val.h"
 #include "../Utils/env.h"
 #include "../Utils/step.h"
-#include "../Utils/add_cont.h"
+#include "../Utils/mult_cont.h"
 
 MultExpr::MultExpr(PTR(Expr) lhs, PTR(Expr) rhs) {
     this->lhs = lhs;
@@ -25,7 +25,7 @@ void MultExpr::step_interp() {
     Step::mode = Step::interp_mode;
     Step::expr = lhs;
     Step::env = Step::env;
-    Step::cont = NEW(RightThenAddCont)(rhs, Step::env, Step::cont);
+    Step::cont = NEW(RightThenMultCont)(rhs, Step::env, Step::cont);
 }
 
 void MultExpr::print(std::ostream &out) {

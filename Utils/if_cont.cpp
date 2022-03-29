@@ -8,8 +8,10 @@ void IfBranchCont::step_continue() {
     Step::mode = Step::interp_mode;
     if (test_val->value_equals(NEW(BoolVal)(true)))
         Step::expr = then_part;
-    else
+    else if (test_val->value_equals(NEW(BoolVal)(false)))
         Step::expr = else_part;
+    else
+        throw std::runtime_error("non-boolean condition in if body");
     Step::env = env;
     Step::cont = rest;
 }
