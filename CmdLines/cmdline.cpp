@@ -8,9 +8,11 @@
 #include "../Expressions/expr.h"
 #include "../Vals/num_val.h"
 #include "../Utils/env.h"
+#include "../Utils/step.h"
 
 typedef enum {
     INTERP,
+    STEP_INTERP,
     PRINT,
     PRETTY_PRINT
 } command_t;
@@ -22,6 +24,10 @@ void use_arguments(int argc, char **argv) {
     std::string helpText = "Allowed arguments:\n"
                            "\t > --help: Show manual\n"
                            "\t > --test: Run the test. Test passed when there is only one --test argument\n"
+                           "\t > --interp: Open the interpreter to evaluate expressions\n"
+                           "\t > --step: Open the interpreter in STEP mode to avoid stack overflow\n"
+                           "\t > --print: Print out the input with raw formatting\n"
+                           "\t > --pretty-print: Print out the input with pretty formatting\n"
                            "\t > Any other arguments: Throw an error and exit\n"
                            "\t > No argument: Return\n"
                            "Exiting...\n";
@@ -42,6 +48,8 @@ void use_arguments(int argc, char **argv) {
                 } else {
                     throw std::runtime_error("Duplicate --test params!");
                 }
+            } else if (strcmp(argv[i], "--step") == 0) {
+                interactiveCommand(STEP_INTERP);
             } else if (strcmp(argv[i], "--interp") == 0) {
                 interactiveCommand(INTERP);
             } else if (strcmp(argv[i], "--print") == 0) {
@@ -64,6 +72,9 @@ void interactiveCommand(command_t command) {
         switch (command) {
             case INTERP:
                 output = e->interp()->to_string();
+                break;
+            case STEP_INTERP:
+                output = Step::interp_by_steps(e)->to_string();
                 break;
             case PRINT:
                 output = e->to_string();
