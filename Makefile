@@ -1,5 +1,5 @@
 # TODO: Add folder paths containing .cpp files if necessary
-FOLDERS = CmdLines/ Expressions/ Vals/ Utils/
+FOLDERS = CmdLines/ Expressions/ Vals/ Utils/ APIs/
 TEST_FOLDER = Testing/
 
 CXX = c++
